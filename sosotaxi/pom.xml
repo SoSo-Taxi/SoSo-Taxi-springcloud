@@ -7,6 +7,10 @@
   <groupId>com.apicaller.sosotaxi</groupId>
   <artifactId>sosotaxi</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <modules>
+    <module>sosotext-service</module>
+  </modules>
+  
   <packaging>pom</packaging>
 
   <name>Maven</name>
