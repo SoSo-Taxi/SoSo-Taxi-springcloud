@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/SoSo-Taxi-springcloud.iml" filepath="$PROJECT_DIR$/.idea/SoSo-Taxi-springcloud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sosotaxi/eureka-server/eureka-server.iml" filepath="$PROJECT_DIR$/sosotaxi/eureka-server/eureka-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sosotaxi/sosotaxi.iml" filepath="$PROJECT_DIR$/sosotaxi/sosotaxi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sosotaxi/sosotaxi-service/sosotext-service.iml" filepath="$PROJECT_DIR$/sosotaxi/sosotaxi-service/sosotext-service.iml" />
+    </modules>
+  </component>
+</project>
