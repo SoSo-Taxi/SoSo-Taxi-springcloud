@@ -1,6 +1,7 @@
 package com.apicaller.sosotaxi.entity;
 
-import github.javaguide.springsecurityjwtguide.system.entity.User;
+import com.apicaller.sosotaxi.project.entity.User;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,6 +11,7 @@ import java.util.Collection;
  * @author shuang.kou
  * @description JWT用户对象
  */
+@Data
 public class JwtUser implements UserDetails {
 
     private Long id;

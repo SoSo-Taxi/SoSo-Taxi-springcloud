@@ -1,10 +1,11 @@
 package com.apicaller.sosotaxi.filter;
 
+import com.apicaller.sosotaxi.constants.SecurityConstants;
+import com.apicaller.sosotaxi.dto.LoginRequest;
+import com.apicaller.sosotaxi.entity.JwtUser;
+import com.apicaller.sosotaxi.utils.JwtTokenUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import github.javaguide.springsecurityjwtguide.security.constants.SecurityConstants;
-import github.javaguide.springsecurityjwtguide.security.dto.LoginRequest;
-import github.javaguide.springsecurityjwtguide.security.entity.JwtUser;
-import github.javaguide.springsecurityjwtguide.security.utils.JwtTokenUtils;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

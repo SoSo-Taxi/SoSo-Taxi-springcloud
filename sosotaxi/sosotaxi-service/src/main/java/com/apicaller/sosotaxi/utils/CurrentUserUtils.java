@@ -1,7 +1,7 @@
 package com.apicaller.sosotaxi.utils;
 
-import github.javaguide.springsecurityjwtguide.system.entity.User;
-import github.javaguide.springsecurityjwtguide.system.service.UserService;
+
+import com.apicaller.sosotaxi.project.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -13,13 +13,16 @@ import org.springframework.stereotype.Component;
  * @description 获取当前请求的用户
  */
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CurrentUserUtils {
 
-    private final UserService userService;
+//    private final UserService userService;
 
+    /**
+     * 之后根据自己写的实现
+     * @return User
+     */
     public User getCurrentUser() {
-        return userService.find(getCurrentUserName());
+        return null;
     }
 
     private static String getCurrentUserName() {
