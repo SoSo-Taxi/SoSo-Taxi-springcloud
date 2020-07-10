@@ -1,6 +1,7 @@
 server:
   port: 8001
+  name:soso-user-service
 
 spring:
   application:
-    name: cloud-payment-service
+    name: soso-service
