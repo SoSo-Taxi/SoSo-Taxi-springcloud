@@ -1,8 +1,8 @@
 package com.apicaller.sosotaxi.filter;
 
-import github.javaguide.springsecurityjwtguide.security.constants.SecurityConstants;
-import github.javaguide.springsecurityjwtguide.security.service.UserDetailsServiceImpl;
-import github.javaguide.springsecurityjwtguide.security.utils.JwtTokenUtils;
+import com.apicaller.sosotaxi.constants.SecurityConstants;
+import com.apicaller.sosotaxi.service.UserDetailsServiceImpl;
+import com.apicaller.sosotaxi.utils.JwtTokenUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
@@ -55,7 +55,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
      * 获取用户认证信息 Authentication
      */
     private UsernamePasswordAuthenticationToken getAuthentication(String authorization) {
-        log.info("get authentication");
+        logger.info("get authentication");
         String token = authorization.replace(SecurityConstants.TOKEN_PREFIX, "");
         try {
             String username = JwtTokenUtils.getUsernameByToken(token);

@@ -1,10 +1,11 @@
 package com.apicaller.sosotaxi.config;
 
-import github.javaguide.springsecurityjwtguide.security.exception.JwtAccessDeniedHandler;
-import github.javaguide.springsecurityjwtguide.security.exception.JwtAuthenticationEntryPoint;
-import github.javaguide.springsecurityjwtguide.security.filter.JwtAuthenticationFilter;
-import github.javaguide.springsecurityjwtguide.security.filter.JwtAuthorizationFilter;
-import github.javaguide.springsecurityjwtguide.security.service.UserDetailsServiceImpl;
+
+import com.apicaller.sosotaxi.exception.JwtAccessDeniedHandler;
+import com.apicaller.sosotaxi.exception.JwtAuthenticationEntryPoint;
+import com.apicaller.sosotaxi.filter.JwtAuthenticationFilter;
+import com.apicaller.sosotaxi.filter.JwtAuthorizationFilter;
+import com.apicaller.sosotaxi.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import javax.annotation.Resource;
+
 
 /**
  * @author shuang.kou
@@ -26,7 +29,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
+    @Resource
     UserDetailsServiceImpl userDetailsServiceImpl;
 
     /**
@@ -45,8 +48,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         // 设置自定义的userDetailsService以及密码编码器
-        auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(bCryptPasswordEncoder());
+        // auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(bCryptPasswordEncoder());
+
+        auth.userDetailsService(userDetailsServiceImpl);
     }
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -56,7 +62,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 // 指定路径下的资源需要验证了的用户才能访问
-                .antMatchers("/api/**").authenticated()
+//                .antMatchers("/api/**").authenticated()
+                .antMatchers("/user/**").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
                 // 其他都放行了
                 .anyRequest().permitAll()
