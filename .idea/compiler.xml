@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="sosotext-service" />
+        <module name="user-service" />
         <module name="eureka-server" />
       </profile>
     </annotationProcessing>
@@ -16,6 +17,7 @@
       <module name="sosotaxi" target="1.8" />
       <module name="sosotaxi-service" target="1.8" />
       <module name="sosotext-service" target="1.8" />
+      <module name="user-service" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
