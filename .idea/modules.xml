@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/SoSo-Taxi-springcloud.iml" filepath="$PROJECT_DIR$/.idea/SoSo-Taxi-springcloud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sosotaxi/common/common.iml" filepath="$PROJECT_DIR$/sosotaxi/common/common.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/eureka-server/eureka-server.iml" filepath="$PROJECT_DIR$/sosotaxi/eureka-server/eureka-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/sosotaxi.iml" filepath="$PROJECT_DIR$/sosotaxi/sosotaxi.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/sosotaxi-service/sosotaxi-service.iml" filepath="$PROJECT_DIR$/sosotaxi/sosotaxi-service/sosotaxi-service.iml" />

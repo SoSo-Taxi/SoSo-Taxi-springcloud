@@ -11,6 +11,7 @@
     <module>sosotaxi-service</module>
     <module>eureka-server</module>
     <module>user-service</module>
+    <module>common</module>
   </modules>
   
   <packaging>pom</packaging>

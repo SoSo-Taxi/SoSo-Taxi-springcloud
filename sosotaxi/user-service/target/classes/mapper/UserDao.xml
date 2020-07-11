@@ -54,8 +54,8 @@
 	
 	<!--新增所有列-->
 	<insert id="insert" keyProperty="userId" useGeneratedKeys="true">
-        insert into db01.user(user_name, password, phone)
-        values (#{userName}, #{password}, #{phone})
+        insert into db01.user(user_name, password, phone_number,role)
+        values (#{userName}, #{password}, #{phoneNumber},#{role})
     </insert>
 	
 	<!--通过主键修改数据-->
@@ -69,7 +69,7 @@
 				password = #{password},
 			</if>
 			<if test="phone != null and phone != ''">
-				phone = #{phone},
+				phone_number = #{phoneNumber},
 			</if>
 		</set>
 		where user_id = #{userId}
@@ -82,9 +82,9 @@
 	
 	<!--通过用户名查询-->
 	<select id="queryUserByUserName" resultMap="UserMap">
-        select
-          *
+        select *
         from db01.user
         where user_name = #{userName}
     </select>
+	
 </mapper>

@@ -1,12 +1,10 @@
 package com.apicaller.sosotaxi.controller;
 
 import com.apicaller.sosotaxi.entity.User;
+import com.apicaller.sosotaxi.entity.UserVo;
 import com.apicaller.sosotaxi.service.UserService;
-import org.apache.ibatis.annotations.Param;
 import org.junit.jupiter.api.Test;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -17,11 +15,13 @@ import javax.annotation.Resource;
  * @since 2020-07-11 10:09:17
  */
 @RestController
-@RequestMapping("user")
+@RequestMapping
 public class UserController {
     /**
      * 服务对象
      */
+
+
     @Resource
     private UserService userService;
 
@@ -31,16 +31,35 @@ public class UserController {
      * @param id 主键
      * @return 单条数据
      */
-    @GetMapping("selectOne")
+    @GetMapping("/selectOne")
     public User selectOne(Integer id) {
         return this.userService.queryById(id);
     }
 
 
-    @Test
-    public void myTest()
-    {
-        System.out.println(userService.queryById(1));
+    @GetMapping("/getUserByUserName")
+    public User getByName(@RequestParam(value = "userName") String userName){
+        return this.userService.queryUserByUserName(userName);
     }
+
+    @PostMapping("/insertUser")
+    public User insertUser(@RequestBody UserVo userVo)
+    {
+        String userName = userVo.getUserName();
+        String password = userVo.getPassword();
+        String role = userVo.getRole();
+        User user = new User();
+        user.setPassword(password);
+        user.setUserName(userName);
+        user.setRole(role);
+        return userService.insert(user);
+    }
+
+    @PostMapping ("/isExistUserName")
+    public boolean isExistUserName(@RequestParam String userName)
+    {
+        return userService.ifExistsByUserName(userName);
+    }
+
 
 }

@@ -60,4 +60,13 @@ public interface UserService {
      * @return User
      */
     User queryUserByUserName(String userName);
+
+
+    /**
+     * 通过手机号和密码注册
+     * @Param phoneNumber Password
+     * @return null
+     */
+
+    boolean ifExistsByUserName(String userName);
 }

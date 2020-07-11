@@ -15,8 +15,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author shuang.kou
+ * @author 张流潇潇
  * @description JWT工具类
+   @createTime 2020.7.8
  */
 public class JwtTokenUtils {
 
@@ -27,14 +28,14 @@ public class JwtTokenUtils {
     private static final byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SecurityConstants.JWT_SECRET_KEY);
     private static final SecretKey secretKey = Keys.hmacShaKeyFor(apiKeySecretBytes);
 
-    public static String createToken(String username, List<String> roles, boolean isRememberMe) {
+    public static String createToken(String username, String role, boolean isRememberMe) {
         long expiration = isRememberMe ? SecurityConstants.EXPIRATION_REMEMBER : SecurityConstants.EXPIRATION;
         final Date createdDate = new Date();
         final Date expirationDate = new Date(createdDate.getTime() + expiration * 1000);
         String tokenPrefix = Jwts.builder()
                 .setHeaderParam("type", SecurityConstants.TOKEN_TYPE)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
-                .claim(SecurityConstants.ROLE_CLAIMS, String.join(",", roles))
+                .claim(SecurityConstants.ROLE_CLAIMS, role)
                 .setIssuer("SoSoTaxi")
                 .setIssuedAt(createdDate)
                 .setSubject(username)
@@ -57,12 +58,11 @@ public class JwtTokenUtils {
      * @deprecated 弃用。改为从数据库中获取，保证权限的即时性。
      */
     @Deprecated
-    public static List<SimpleGrantedAuthority> getUserRolesByToken(String token) {
+    public static String getUserRolesByToken(String token) {
+
         String role = (String) getTokenBody(token)
                 .get(SecurityConstants.ROLE_CLAIMS);
-        return Arrays.stream(role.split(","))
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        return role;
     }
 
     private static Claims getTokenBody(String token) {
