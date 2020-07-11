@@ -42,5 +42,6 @@ eureka:
 mybatis:
   mapperLocations: classpath:mapper/*.xml
   type-aliases-package: com.apicaller.sosotaxi.entity    # 所有Entity别名类所在包
-
+  configuration:
+    jdbc-type-for-null: null
 
