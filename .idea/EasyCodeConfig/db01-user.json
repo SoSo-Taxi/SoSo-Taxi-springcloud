@@ -1,6 +1,8 @@
 {
   "name" : "User",
+  "preName" : "",
   "comment" : null,
+  "templateGroupName" : "Default",
   "fullColumn" : [ {
     "name" : "userId",
     "comment" : null,
@@ -33,6 +35,6 @@
   "pkColumn" : null,
   "otherColumn" : null,
   "savePackageName" : "com.apicaller.sosotaxi",
-  "savePath" : "./sosotaxi/sosotaxi-service/src/main/java/com/apicaller/sosotaxi",
-  "saveModelName" : "sosotext-service"
+  "savePath" : "./sosotaxi/user-service/src/main/java/com/apicaller/sosotaxi",
+  "saveModelName" : "user-service"
 }
