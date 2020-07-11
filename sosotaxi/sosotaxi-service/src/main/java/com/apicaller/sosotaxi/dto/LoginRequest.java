@@ -4,7 +4,9 @@ import lombok.Data;
 
 
 /**
- * @author shuang.kou
+ * @author 张流潇潇
+ * @createTime 2020.7.8
+ * @updateTime
  * @description 用户登录请求DTO
  */
 @Data

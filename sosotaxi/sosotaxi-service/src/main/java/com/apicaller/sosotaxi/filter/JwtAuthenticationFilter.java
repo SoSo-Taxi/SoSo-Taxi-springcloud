@@ -21,13 +21,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author shuang.kou
+ * @author 张流潇潇
+ * @createTime 2020.7.9
+ * @updateTime
  * @description 如果用户名和密码正确，那么过滤器将创建一个JWT Token 并在HTTP Response 的header中返回它，格式：token: "Bearer +具体token值"
  */
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final ThreadLocal<Boolean> rememberMe = new ThreadLocal<>();
     private final AuthenticationManager authenticationManager;
+
+
+
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -65,12 +70,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             Authentication authentication) {
 
         JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
-        List<String> authorities = jwtUser.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+//        List<String> authorities = jwtUser.getAuthorities()
+//                .stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.toList());
         // 创建 Token
-        String token = JwtTokenUtils.createToken(jwtUser.getUsername(), authorities, rememberMe.get());
+        String token = JwtTokenUtils.createToken(jwtUser.getUsername(), jwtUser.getRole(), rememberMe.get());
         rememberMe.remove();
         // Http Response Header 中返回 Token
         response.setHeader(SecurityConstants.TOKEN_HEADER, token);

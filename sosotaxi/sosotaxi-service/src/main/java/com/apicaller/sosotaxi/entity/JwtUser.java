@@ -7,7 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 /**
- * @author shuang.kou
+ * @author 张流潇潇
+ * @createTime 2020.7.9
+ * @updateTime
  * @description JWT用户对象
  */
 @Data
@@ -56,8 +58,7 @@ public class JwtUser implements UserDetails {
         userName = user.getUserName();
         password = user.getPassword();
 
-//        enabled = user.getEnabled() == null ? true : user.getEnabled();
-//        authorities = user.getRoles();
+
 
         role = user.getRole();
         gender = user.getGender();

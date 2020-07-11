@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @author shuang.kou
+ * @author 张流潇潇
+ * @createTime 2020.7.9
+ * @updateTime
  * @description AuthenticationEntryPoint 用来解决匿名用户访问需要权限才能访问的资源时的异常
  */
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {

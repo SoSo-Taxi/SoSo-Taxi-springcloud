@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @author shuang.kou
+ * @author 张流潇潇
+ * @createTime 2020.7.9
+ * @updateTime
  * @description AccessDeineHandler 用来解决认证过的用户访问无权限资源时的异常
  */
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {

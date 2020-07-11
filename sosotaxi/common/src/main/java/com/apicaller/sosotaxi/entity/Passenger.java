@@ -2,8 +2,6 @@ package com.apicaller.sosotaxi.entity;
 
 import lombok.Data;
 
-import java.util.HashMap;
-
 /**
  * @author 骆荟州
  */

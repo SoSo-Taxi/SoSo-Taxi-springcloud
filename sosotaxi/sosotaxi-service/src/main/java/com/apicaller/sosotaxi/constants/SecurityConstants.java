@@ -1,7 +1,9 @@
 package com.apicaller.sosotaxi.constants;
 
 /**
- * @author shuang.kou
+ * @author 张流潇潇
+ * @createTime 2020.7.8
+ * @updateTime
  * @description Spring Security相关配置常量
  */
 public class SecurityConstants {

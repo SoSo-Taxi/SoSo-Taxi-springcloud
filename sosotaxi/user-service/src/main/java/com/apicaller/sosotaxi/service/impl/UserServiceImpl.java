@@ -81,4 +81,15 @@ public class UserServiceImpl implements UserService {
     public User queryUserByUserName(String userName) {
         return userDao.queryUserByUserName(userName);
     }
+
+    @Override
+    public boolean ifExistsByUserName(String userName) {
+        if (userDao.queryUserByUserName(userName)==null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
 }

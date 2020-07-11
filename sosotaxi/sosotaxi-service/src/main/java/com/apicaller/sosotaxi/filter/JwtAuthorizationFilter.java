@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
- * @author shuang.kou
+ * @author张流潇潇
+ * @createTime 2020.7.9
+ * @updateTime 2020.7.11
  * @description 过滤器处理所有HTTP请求，并检查是否存在带有正确令牌的Authorization标头。例如，如果令牌未过期或签名密钥正确。
  */
 @Slf4j
