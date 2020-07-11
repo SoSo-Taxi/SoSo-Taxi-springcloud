@@ -49,6 +49,46 @@ public class User extends AbstractAuditBase {
         roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName())));
         return authorities;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 //    public UserRepresentation toUserRepresentation() {
 //        return UserRepresentation.builder().fullName(this.fullName)
 //                .userName(this.userName).build();
