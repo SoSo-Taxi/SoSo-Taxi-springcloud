@@ -1,5 +1,7 @@
 package com.apicaller.sosotaxi.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 /**
@@ -8,48 +10,38 @@ import java.io.Serializable;
  * @author makejava
  * @since 2020-07-11 10:09:14
  */
+@Data
 public class User implements Serializable {
     private static final long serialVersionUID = -54620145478166527L;
 
-    private Integer userId;
+    /** 用户id */
+    private long userId;
 
-    private String userName;
-
+    /** 用户密码 */
     private String password;
 
-    private String phone;
+    /** 用户角色，乘客或司机 */
+    private String role;
 
+    /** 用户名，暂定就是电话号码 */
+    private String userName;
 
-    public Integer getUserId() {
-        return userId;
-    }
+    /** 电话号码 */
+    private String phoneNumber;
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
+    /** 性别 */
+    private String gender;
 
-    public String getUserName() {
-        return userName;
-    }
+    /** 年龄 */
+    private Short birthYear;
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+    /** 头像路径 */
+    private String avatarPath;
 
-    public String getPassword() {
-        return password;
-    }
+    /** 真实姓名 */
+    private String realName;
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+    /** 身份证号 */
+    private String idCardNumber;
 
 }

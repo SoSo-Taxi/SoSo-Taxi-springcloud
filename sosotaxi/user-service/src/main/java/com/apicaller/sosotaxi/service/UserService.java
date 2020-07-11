@@ -18,7 +18,7 @@ public interface UserService {
      * @param userId 主键
      * @return 实例对象
      */
-    User queryById(Integer userId);
+    User queryById(long userId);
 
     /**
      * 查询多条数据

@@ -3,11 +3,16 @@
 <mapper namespace="com.apicaller.sosotaxi.dao.UserDao">
 	
 	<resultMap type="com.apicaller.sosotaxi.entity.User" id="UserMap">
-		<result property="userId" column="user_id" jdbcType="INTEGER"/>
-		<result property="userName" column="user_name" jdbcType="VARCHAR"/>
+		<result property="userId" column="user_id" jdbcType="BIGINT"/>
 		<result property="password" column="password" jdbcType="VARCHAR"/>
-		<result property="phone" column="phone_number" jdbcType="VARCHAR"/>
-		
+		<result property="role" column="role" jdbcType="VARCHAR"/>
+		<result property="userName" column="user_name" jdbcType="VARCHAR"/>
+		<result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+		<result property="gender" column="gender" jdbcType="VARCHAR"/>
+		<result property="birthYear" column="birth_year" jdbcType="SMALLINT"/>
+		<result property="avatarPath" column="avatar_path" jdbcType="VARCHAR"/>
+		<result property="realName" column="real_name" jdbcType="VARCHAR"/>
+		<result property="idCardNumber" column="idcard_number" jdbcType="VARCHAR"/>
 	</resultMap>
 	
 	<!--查询单个-->
