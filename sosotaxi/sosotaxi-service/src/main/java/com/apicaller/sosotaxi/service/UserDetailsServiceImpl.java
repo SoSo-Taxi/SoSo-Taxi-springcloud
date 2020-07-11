@@ -2,7 +2,7 @@ package com.apicaller.sosotaxi.service;
 
 import com.apicaller.sosotaxi.entity.JwtUser;
 
-import com.apicaller.sosotaxi.project.entity.User;
+import com.apicaller.sosotaxi.entity.User;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +33,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 //        this.userService = userService;
 //    }
 
+    @Resource
+    UserService userService;
+
     private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
 
@@ -46,12 +49,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
          * 先假装验证过程会返回如下一个对象
          * 所以登陆输入以下的用户即可成功
          */
-        User user = new User();
-        user.setFullName("zhangliuxiaoxiao");
-        user.setUserName("zlxx");
-        String encode = bCryptPasswordEncoder.encode("123456");
-        user.setPassword(encode);
-        user.setId((long)1);
+//        User user = new User();
+//        user.setFullName("zhangliuxiaoxiao");
+//        user.setUserName("zlxx");
+//        String encode = bCryptPasswordEncoder.encode("123456");
+//        user.setPassword(encode);
+//        user.setId((long)1);
+        User user = userService.queryUserByUserName(name);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+
 
         return new JwtUser(user);
     }

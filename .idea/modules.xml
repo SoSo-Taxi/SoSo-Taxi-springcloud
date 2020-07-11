@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/SoSo-Taxi-springcloud.iml" filepath="$PROJECT_DIR$/.idea/SoSo-Taxi-springcloud.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/eureka-server/eureka-server.iml" filepath="$PROJECT_DIR$/sosotaxi/eureka-server/eureka-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/sosotaxi.iml" filepath="$PROJECT_DIR$/sosotaxi/sosotaxi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sosotaxi/sosotaxi-service/sosotaxi-service.iml" filepath="$PROJECT_DIR$/sosotaxi/sosotaxi-service/sosotaxi-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/sosotaxi-service/sosotext-service.iml" filepath="$PROJECT_DIR$/sosotaxi/sosotaxi-service/sosotext-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/user-service/user-service.iml" filepath="$PROJECT_DIR$/sosotaxi/user-service/user-service.iml" />
     </modules>

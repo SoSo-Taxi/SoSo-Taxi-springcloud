@@ -8,8 +8,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="sosotext-service" />
-        <module name="user-service" />
         <module name="eureka-server" />
+        <module name="user-service" />
+        <module name="sosotaxi-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="12">

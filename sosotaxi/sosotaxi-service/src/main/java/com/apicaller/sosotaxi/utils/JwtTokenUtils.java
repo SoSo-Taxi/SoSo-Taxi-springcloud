@@ -35,7 +35,7 @@ public class JwtTokenUtils {
                 .setHeaderParam("type", SecurityConstants.TOKEN_TYPE)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .claim(SecurityConstants.ROLE_CLAIMS, String.join(",", roles))
-                .setIssuer("SnailClimb")
+                .setIssuer("SoSoTaxi")
                 .setIssuedAt(createdDate)
                 .setSubject(username)
                 .setExpiration(expirationDate)

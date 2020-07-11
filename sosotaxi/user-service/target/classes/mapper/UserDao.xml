@@ -79,5 +79,12 @@
 	<delete id="deleteById">
         delete from db01.user where user_id = #{userId}
     </delete>
-
+	
+	<!--通过用户名查询-->
+	<select id="queryUserByUserName" resultMap="UserMap">
+        select
+          *
+        from db01.user
+        where user_name = #{userName}
+    </select>
 </mapper>

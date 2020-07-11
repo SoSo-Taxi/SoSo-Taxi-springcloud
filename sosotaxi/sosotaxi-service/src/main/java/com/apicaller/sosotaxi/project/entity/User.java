@@ -18,37 +18,51 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @Data
-
 public class User extends AbstractAuditBase {
 
 
-    private Long id;
-    private String userName;
-    private String fullName;
+    private static final long serialVersionUID = -54620145478166527L;
+
+    /** 用户id */
+    private long userId;
+
+    /** 用户密码 */
     private String password;
-    private Boolean enabled;
 
-    public User() {
-    }
+    /** 用户角色，乘客或司机 */
+    private String role;
 
-    public User(Long id, String userName, String fullName, String password, Boolean enabled, List<UserRole> userRoles) {
-        this.id = id;
-        this.userName = userName;
-        this.fullName = fullName;
-        this.password = password;
-        this.enabled = enabled;
-        this.userRoles = userRoles;
-    }
+    /** 用户名，暂定就是电话号码 */
+    private String userName;
 
-    @JsonIgnore
-    private List<UserRole> userRoles = new ArrayList<>();
+    /** 电话号码 */
+    private String phoneNumber;
 
-    public List<SimpleGrantedAuthority> getRoles() {
-        List<Role> roles = userRoles.stream().map(UserRole::getRole).collect(Collectors.toList());
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName())));
-        return authorities;
-    }
+    /** 性别 */
+    private String gender;
+
+    /** 年龄 */
+    private Short birthYear;
+
+    /** 头像路径 */
+    private String avatarPath;
+
+    /** 真实姓名 */
+    private String realName;
+
+    /** 身份证号 */
+    private String idCardNumber;
+
+
+//    @JsonIgnore
+//    private List<UserRole> userRoles = new ArrayList<>();
+//
+//    public List<SimpleGrantedAuthority> getRoles() {
+//        List<Role> roles = userRoles.stream().map(UserRole::getRole).collect(Collectors.toList());
+//        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+//        roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName())));
+//        return authorities;
+//    }
 //    public UserRepresentation toUserRepresentation() {
 //        return UserRepresentation.builder().fullName(this.fullName)
 //                .userName(this.userName).build();

@@ -1,6 +1,5 @@
 package com.apicaller.sosotaxi.entity;
 
-import com.apicaller.sosotaxi.project.entity.User;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,11 +13,37 @@ import java.util.Collection;
 @Data
 public class JwtUser implements UserDetails {
 
-    private Long id;
-    private String username;
+    private static final long serialVersionUID = -54620145478166527L;
+
+    /** 用户id */
+    private long userId;
+
+    /** 用户密码 */
     private String password;
-    private Boolean enabled;
-    private Collection<? extends GrantedAuthority> authorities;
+
+    /** 用户角色，乘客或司机 */
+    private String role;
+
+    /** 用户名，暂定就是电话号码 */
+    private String userName;
+
+    /** 电话号码 */
+    private String phoneNumber;
+
+    /** 性别 */
+    private String gender;
+
+    /** 年龄 */
+    private Short birthYear;
+
+    /** 头像路径 */
+    private String avatarPath;
+
+    /** 真实姓名 */
+    private String realName;
+
+    /** 身份证号 */
+    private String idCardNumber;
 
     public JwtUser() {
     }
@@ -27,16 +52,24 @@ public class JwtUser implements UserDetails {
      * 通过 user 对象创建jwtUser
      */
     public JwtUser(User user) {
-        id = user.getId();
-        username = user.getUserName();
+        userId = user.getUserId();
+        userName = user.getUserName();
         password = user.getPassword();
-        enabled = user.getEnabled() == null ? true : user.getEnabled();
-        authorities = user.getRoles();
+
+//        enabled = user.getEnabled() == null ? true : user.getEnabled();
+//        authorities = user.getRoles();
+
+        role = user.getRole();
+        gender = user.getGender();
+        birthYear = user.getBirthYear();
+        avatarPath = user.getAvatarPath();
+        realName = user.getRealName();
+        idCardNumber = user.getIdCardNumber();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return null;
     }
 
     @Override
@@ -46,7 +79,7 @@ public class JwtUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return userName;
     }
 
     @Override
@@ -66,16 +99,16 @@ public class JwtUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return this.enabled;
+        return true;
     }
 
     @Override
     public String toString() {
         return "JwtUser{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
+                "id=" + userId +
+                ", username='" + userName + '\'' +
                 ", password='" + password + '\'' +
-                ", authorities=" + authorities +
+                ", role=" + role +
                 '}';
     }
 
