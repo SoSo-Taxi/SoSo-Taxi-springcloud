@@ -21,7 +21,7 @@ public interface UserDao {
      * @param userId 主键
      * @return 实例对象
      */
-    User queryById(Integer userId);
+    User queryById(long userId);
 
     /**
      * 查询指定行数据

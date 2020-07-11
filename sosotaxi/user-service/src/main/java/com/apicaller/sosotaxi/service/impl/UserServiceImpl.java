@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
      * @return 实例对象
      */
     @Override
-    public User queryById(Integer userId) {
+    public User queryById(long userId) {
         return this.userDao.queryById(userId);
     }
 
