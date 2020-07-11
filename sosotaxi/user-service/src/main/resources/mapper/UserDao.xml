@@ -26,7 +26,7 @@
 	<!--查询指定行数据-->
 	<select id="queryAllByLimit" resultMap="UserMap">
         select
-          user_id, user_name, password, phone
+          user_id, user_name, password, phone_number
         from db01.user
         limit #{offset}, #{limit}
     </select>
@@ -34,7 +34,7 @@
 	<!--通过实体作为筛选条件查询-->
 	<select id="queryAll" resultMap="UserMap">
 		select
-		user_id, user_name, password, phone
+		user_id, user_name, password, phone_number
 		from db01.user
 		<where>
 			<if test="userId != null">
@@ -46,16 +46,16 @@
 			<if test="password != null and password != ''">
 				and password = #{password}
 			</if>
-			<if test="phone != null and phone != ''">
-				and phone = #{phone}
+			<if test="phoneNumber != null and phoneNumber != ''">
+				and phone_number = #{phoneNumber}
 			</if>
 		</where>
 	</select>
 	
 	<!--新增所有列-->
 	<insert id="insert" keyProperty="userId" useGeneratedKeys="true">
-        insert into db01.user(user_name, password, phone)
-        values (#{userName}, #{password}, #{phone})
+        insert into db01.user(user_name, password, phone_number)
+        values (#{userName}, #{password}, #{phoneNumber})
     </insert>
 	
 	<!--通过主键修改数据-->
@@ -68,8 +68,8 @@
 			<if test="password != null and password != ''">
 				password = #{password},
 			</if>
-			<if test="phone != null and phone != ''">
-				phone = #{phone},
+			<if test="phoneNumber != null and phoneNumber != ''">
+				phone_number = #{phoneNumber},
 			</if>
 		</set>
 		where user_id = #{userId}
