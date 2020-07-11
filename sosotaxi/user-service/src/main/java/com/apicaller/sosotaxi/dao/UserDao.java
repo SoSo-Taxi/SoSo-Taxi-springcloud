@@ -65,4 +65,11 @@ public interface UserDao {
      */
     int deleteById(Integer userId);
 
+    /**
+     * 通过用户名查询
+     * @param userName
+     * @return User
+     */
+    User queryUserByUserName(String userName);
+
 }
