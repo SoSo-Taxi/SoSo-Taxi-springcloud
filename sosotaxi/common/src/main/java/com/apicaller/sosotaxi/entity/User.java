@@ -5,10 +5,9 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * (User)实体类
- *
- * @author makejava
- * @since 2020-07-11 10:09:14
+ * @author 骆荟州
+ * @CreateTime 2020/7/8
+ * UpdateTime 2020/7/11
  */
 @Data
 public class User implements Serializable {
