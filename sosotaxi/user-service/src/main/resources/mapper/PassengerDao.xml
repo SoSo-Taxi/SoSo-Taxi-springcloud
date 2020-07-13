@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.apicaller.sosotaxi.dao.PassengerDao">
+
+    <resultMap type="com.apicaller.sosotaxi.entity.Passenger" id="PassengerMap">
+        <result property="userId" column="passenger_id" jdbcType="INTEGER"/>
+        <result property="nickname" column="nickName" jdbcType="VARCHAR"/>
+        <result property="industry" column="industry" jdbcType="TINYINT"/>
+        <result property="company" column="company" jdbcType="VARCHAR"/>
+        <result property="occupation" column="occupation" jdbcType="VARCHAR"/>
+        <result property="urgentContact" column="urgent_contact" jdbcType="OTHER"/>
+        <result property="commonAddress" column="common_address" jdbcType="OTHER"/>
+        <result property="preference" column="preference" jdbcType="OTHER"/>
+    </resultMap>
+
+    <!-- 将用户表与乘客表联合查询 -->
+    <resultMap type="com.apicaller.sosotaxi.entity.Passenger" id="PassengerFullMap">
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="role" column="role" jdbcType="VARCHAR"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="gender" column="gender" jdbcType="VARCHAR"/>
+        <result property="birthYear" column="birth_year" jdbcType="SMALLINT"/>
+        <result property="avatarPath" column="avatar_path" jdbcType="VARCHAR"/>
+        <result property="realName" column="real_name" jdbcType="VARCHAR"/>
+        <result property="idCardNumber" column="idcard_number" jdbcType="VARCHAR"/>
+        <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+        <result property="industry" column="industry" jdbcType="TINYINT"/>
+        <result property="company" column="company" jdbcType="VARCHAR"/>
+        <result property="occupation" column="occupation" jdbcType="VARCHAR"/>
+        <result property="urgentContact" column="urgent_contact" jdbcType="OTHER"/>
+        <result property="commonAddress" column="common_address" jdbcType="OTHER"/>
+        <result property="preference" column="preference" jdbcType="OTHER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <!-- 将用户表与乘客表联合查询 -->
+    <select id="queryById" resultMap="PassengerFullMap">
+        select
+          user_id, user_name, password, phone_number, role, gender, birth_year, avatar_path, real_name, idcard_number,
+          nickname, industry, company, occupation, urgent_contact, common_address, preference
+        from db01.user, db01.passenger
+        where passenger_id = #{passengerId} and db01.user.user_id = db01.passenger.passenger_id
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="PassengerMap">
+        select
+          passenger_id, nickName, industry, company, occupation, urgent_contact, common_address, preference
+        from db01.passenger
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="PassengerMap">
+        select
+        passenger_id, nickName, industry, company, occupation, urgent_contact, common_address, preference
+        from db01.passenger
+        <where>
+            <if test="userId != null">
+                and passenger_id = #{userId}
+            </if>
+            <if test="nickname != null and nickname != ''">
+                and nickName = #{nickname}
+            </if>
+            <if test="industry != null">
+                and industry = #{industry}
+            </if>
+            <if test="company != null and company != ''">
+                and company = #{company}
+            </if>
+            <if test="occupation != null and occupation != ''">
+                and occupation = #{occupation}
+            </if>
+            <if test="urgentContact != null">
+                and urgent_contact = #{urgentContact}
+            </if>
+            <if test="commonAddress != null">
+                and common_address = #{commonAddress}
+            </if>
+            <if test="preference != null">
+                and preference = #{preference}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="userId">
+        insert into db01.passenger(passenger_id, nickName, industry, company, occupation, urgent_contact, common_address, preference)
+        values (#{userId}, #{nickname}, #{industry}, #{company}, #{occupation},
+        #{urgentContact}, #{commonAddress}, #{preference})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update db01.passenger
+        <set>
+            <if test="nickname != null and nickname != ''">
+                nickName = #{nickname},
+            </if>
+            <if test="industry != null">
+                industry = #{industry},
+            </if>
+            <if test="company != null and company != ''">
+                company = #{company},
+            </if>
+            <if test="occupation != null and occupation != ''">
+                occupation = #{occupation},
+            </if>
+            <if test="urgentContact != null">
+                urgent_contact = #{urgentContact},
+            </if>
+            <if test="commonAddress != null">
+                common_address = #{commonAddress},
+            </if>
+            <if test="preference != null">
+                preference = #{preference},
+            </if>
+        </set>
+        where passenger_id = #{userId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from db01.passenger where passenger_id = #{passengerId}
+    </delete>
+
+</mapper>

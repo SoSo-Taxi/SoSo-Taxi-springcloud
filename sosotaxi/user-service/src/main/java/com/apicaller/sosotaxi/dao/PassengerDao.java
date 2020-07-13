@@ -1,26 +1,28 @@
 package com.apicaller.sosotaxi.dao;
 
-import com.apicaller.sosotaxi.entity.User;
+import com.apicaller.sosotaxi.entity.Passenger;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
+
 /**
- * (User)表数据库访问层
+ * Passenger表数据库访问层
  *
- * @author makejava
- * @since 2020-07-11 10:09:15
+ * @author 骆荟州
+ * @createTime  2020-07-13 21:56:48
+ * @updateTime
  */
 @Mapper
-public interface UserDao {
+public interface PassengerDao {
 
     /**
      * 通过ID查询单条数据
      *
-     * @param userId 主键
+     * @param passengerId 主键
      * @return 实例对象
      */
-    User queryById(long userId);
+    Passenger queryById(Long passengerId);
 
     /**
      * 查询指定行数据
@@ -29,46 +31,39 @@ public interface UserDao {
      * @param limit  查询条数
      * @return 对象列表
      */
-    List<User> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
+    List<Passenger> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
 
 
     /**
      * 通过实体作为筛选条件查询
      *
-     * @param user 实例对象
+     * @param passenger 实例对象
      * @return 对象列表
      */
-    List<User> queryAll(User user);
+    List<Passenger> queryAll(Passenger passenger);
 
     /**
      * 新增数据
      *
-     * @param user 实例对象
+     * @param passenger 实例对象
      * @return 影响行数
      */
-    int insert(User user);
+    int insert(Passenger passenger);
 
     /**
      * 修改数据
      *
-     * @param user 实例对象
+     * @param passenger 实例对象
      * @return 影响行数
      */
-    int update(User user);
+    int update(Passenger passenger);
 
     /**
      * 通过主键删除数据
      *
-     * @param userId 主键
+     * @param passengerId 主键
      * @return 影响行数
      */
-    int deleteById(Integer userId);
-
-    /**
-     * 通过用户名查询
-     * @param userName
-     * @return User
-     */
-    User queryUserByUserName(String userName);
+    int deleteById(Long passengerId);
 
 }

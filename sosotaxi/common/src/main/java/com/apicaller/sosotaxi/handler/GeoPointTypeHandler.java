@@ -8,6 +8,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.io.WKBReader;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -19,9 +20,10 @@ import java.sql.SQLException;
 /**
  * mySQL中point类型到自定义类型GeoPoint的映射。
  * @author 骆荟州
- * @CreateTime 2020/7/13 15:20
- * @UpdateTime
+ * @createTime 2020/7/13 15:20
+ * @updateTime
  */
+@MappedJdbcTypes(JdbcType.OTHER)
 @MappedTypes(value = {GeoPoint.class})
 public class GeoPointTypeHandler extends BaseTypeHandler<GeoPoint> {
 

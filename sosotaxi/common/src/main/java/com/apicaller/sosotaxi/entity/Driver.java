@@ -4,8 +4,8 @@ import lombok.Data;
 
 /**
  * @author 骆荟州
- * @CreateTime 2020/7/8
- * UpdateTime 2020/7/11
+ * @createTime 2020/7/8
+ * @updateTime 2020/7/11
  */
 @Data
 public class Driver {
