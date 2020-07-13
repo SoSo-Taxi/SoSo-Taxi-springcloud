@@ -1,8 +1,7 @@
 package com.apicaller.sosotaxi.config;
 
 
-import com.apicaller.sosotaxi.exception.JwtAccessDeniedHandler;
-import com.apicaller.sosotaxi.exception.JwtAuthenticationEntryPoint;
+import com.apicaller.sosotaxi.exception.*;
 import com.apicaller.sosotaxi.filter.JwtAuthenticationFilter;
 import com.apicaller.sosotaxi.filter.JwtAuthorizationFilter;
 import com.apicaller.sosotaxi.service.UserDetailsServiceImpl;
@@ -49,10 +48,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // 设置自定义的userDetailsService以及密码编码器
-        // auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(bCryptPasswordEncoder());
+//         设置自定义的userDetailsService以及密码编码器
+         auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(bCryptPasswordEncoder());
 
-        auth.userDetailsService(userDetailsServiceImpl);
+//        auth.userDetailsService(userDetailsServiceImpl);
     }
 
 
@@ -65,7 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 // 指定路径下的资源需要验证了的用户才能访问
 //                .antMatchers("/api/**").authenticated()
-//                .antMatchers("/user/**").authenticated()
+                .antMatchers("/user/**").authenticated()
+//                .antMatchers(HttpMethod.POST,"/user/registry").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
                 // 其他都放行了
                 .anyRequest().permitAll()

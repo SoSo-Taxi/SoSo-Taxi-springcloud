@@ -2,9 +2,12 @@ package com.apicaller.sosotaxi.entity;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author 张流潇潇
@@ -47,6 +50,8 @@ public class JwtUser implements UserDetails {
     /** 身份证号 */
     private String idCardNumber;
 
+    private Collection<? extends GrantedAuthority> authorities;
+
     public JwtUser() {
     }
 
@@ -57,20 +62,24 @@ public class JwtUser implements UserDetails {
         userId = user.getUserId();
         userName = user.getUserName();
         password = user.getPassword();
-
-
-
         role = user.getRole();
         gender = user.getGender();
         birthYear = user.getBirthYear();
         avatarPath = user.getAvatarPath();
         realName = user.getRealName();
         idCardNumber = user.getIdCardNumber();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        this.authorities = authorities;
+
     }
+
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
     }
 
     @Override
