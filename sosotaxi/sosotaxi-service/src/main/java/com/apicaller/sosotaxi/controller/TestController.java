@@ -1,15 +1,15 @@
 package com.apicaller.sosotaxi.controller;
 
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.apicaller.sosotaxi.entity.ResponseBean;
 import com.apicaller.sosotaxi.entity.User;
 import com.apicaller.sosotaxi.entity.UserVo;
 import com.apicaller.sosotaxi.feignClients.UserServiceFeignClient;
-import com.apicaller.sosotaxi.service.UserService;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -40,12 +40,24 @@ public class TestController {
     }
 
 
-    @GetMapping(value = "/getUserByUserName")
-    public ResponseBean getUserByName(@RequestParam(value = "userName",required = true) String userName)
+//    @Test
+//    public void jsonTest()
+//    {
+//        String jsonString = "{\"userName\": \"+86 13996996996\" }";
+//        JSONObject object = JSON.parseObject(jsonString);
+//        System.out.println(object.get("userName"));
+//    }
+
+    @PreAuthorize("hasAnyRole('ROLE_admin')")
+    @PostMapping(value = "/getUserByUserName")
+    public ResponseBean getUserByName(@RequestBody String userName)
     {
+        JSONObject object = JSONObject.parseObject(userName);
         System.out.println(userName);
-        System.out.println(userServiceFeignClient.getUserByUserName(userName));
-        User user = userServiceFeignClient.getUserByUserName(userName);
+        String userNameString = (String) object.get("userName");
+        System.out.println(userNameString);
+        User user = userServiceFeignClient.getUserByUserName(userNameString);
+        System.out.println(user);
         return new ResponseBean(200,"查询成功",user);
     }
 
@@ -54,6 +66,7 @@ public class TestController {
     {
         String userName = userVo.getUserName();
         System.out.println(userVo);
+        System.out.println(userName);
         if(userServiceFeignClient.isExistUserName(userName))
         {
             return new ResponseBean(201,"用户已存在",null);
@@ -62,6 +75,22 @@ public class TestController {
         userVo.setPassword(bCryptPasswordEncoder.encode(password));
         User user = userServiceFeignClient.insertUser(userVo);
         return new ResponseBean(200,"创建成功",user);
+    }
+
+    @PostMapping(value = "/isRegistered")
+    public ResponseBean isRegistered(@RequestBody String userName)
+    {
+        JSONObject object = JSONObject.parseObject(userName);
+        String userNameString = (String) object.get("userName");
+        System.out.println(userNameString);
+        boolean isRegistered = userServiceFeignClient.isExistUserName(userNameString);
+        if (isRegistered)
+        {
+            return new ResponseBean(201,"该手机号已经注册",null);
+        }
+        else {
+            return new ResponseBean(200,"该手机号未注册",null);
+        }
     }
 }
 

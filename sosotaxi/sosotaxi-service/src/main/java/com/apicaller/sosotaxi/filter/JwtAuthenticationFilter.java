@@ -10,15 +10,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author 张流潇潇
@@ -52,7 +49,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // 这部分和attemptAuthentication方法中的源码是一样的，
             // 只不过由于这个方法源码的是把用户名和密码这些参数的名字是死的，所以我们重写了一下
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    loginRequest.getUsername(), loginRequest.getPassword());
+                    loginRequest.getUserName(), loginRequest.getPassword());
             return authenticationManager.authenticate(authentication);
         } catch (IOException e) {
             e.printStackTrace();
@@ -70,14 +67,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             Authentication authentication) {
 
         JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
-//        List<String> authorities = jwtUser.getAuthorities()
-//                .stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .collect(Collectors.toList());
-        // 创建 Token
         String token = JwtTokenUtils.createToken(jwtUser.getUsername(), jwtUser.getRole(), rememberMe.get());
         rememberMe.remove();
         // Http Response Header 中返回 Token
+
         response.setHeader(SecurityConstants.TOKEN_HEADER, token);
     }
 

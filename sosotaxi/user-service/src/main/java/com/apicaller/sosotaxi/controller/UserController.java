@@ -37,8 +37,8 @@ public class UserController {
     }
 
 
-    @GetMapping("/getUserByUserName")
-    public User getByName(@RequestParam(value = "userName") String userName){
+    @PostMapping("/getUserByUserName")
+    public User getByName(@RequestBody String userName){
         return this.userService.queryUserByUserName(userName);
     }
 
@@ -56,7 +56,7 @@ public class UserController {
     }
 
     @PostMapping ("/isExistUserName")
-    public boolean isExistUserName(@RequestParam String userName)
+    public boolean isExistUserName(@RequestBody String userName)
     {
         return userService.ifExistsByUserName(userName);
     }

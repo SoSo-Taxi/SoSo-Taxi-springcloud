@@ -28,19 +28,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Resource
     UserServiceFeignClient userServiceFeignClient;
 
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-
 
     public UserDetailsServiceImpl() {
     }
-
     @Override
     public JwtUser loadUserByUsername(String name) throws UsernameNotFoundException {
 
 
         User user = userServiceFeignClient.getUserByUserName(name);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-
 
         return new JwtUser(user);
     }
