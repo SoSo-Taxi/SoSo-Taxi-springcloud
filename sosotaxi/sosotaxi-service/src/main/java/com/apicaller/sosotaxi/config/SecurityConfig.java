@@ -5,7 +5,6 @@ import com.apicaller.sosotaxi.exception.*;
 import com.apicaller.sosotaxi.filter.JwtAuthenticationFilter;
 import com.apicaller.sosotaxi.filter.JwtAuthorizationFilter;
 import com.apicaller.sosotaxi.service.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

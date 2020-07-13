@@ -3,6 +3,7 @@ package com.apicaller.sosotaxi.config;
 import com.apicaller.sosotaxi.constants.SecurityConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -20,10 +21,11 @@ import java.util.List;
 /**
  * @author zlxx
  * @createTime 2020.7.11
- * @updateTime
+ * @updateTime 2020.7.13
  */
 @Configuration
 @EnableSwagger2
+//@EnableWebMvc
 public class SwaggerConfig {
     @Bean
     public Docket createRestApi() {
