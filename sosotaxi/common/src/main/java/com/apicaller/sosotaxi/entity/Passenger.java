@@ -1,6 +1,10 @@
 package com.apicaller.sosotaxi.entity;
 
 import lombok.Data;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+import java.util.HashMap;
 
 /**
  * @author 骆荟州
@@ -9,8 +13,6 @@ import lombok.Data;
  */
 @Data
 public class Passenger extends User {
-    /**乘客的用户id */
-    private long userId;
 
     /** 昵称 */
     private String nickName;
@@ -24,14 +26,13 @@ public class Passenger extends User {
     /** 职业 */
     private String occupation;
 
-    //这些东西暂时不懂怎么存放在数据库中好
     /** 紧急联系人 */
-    //private HashMap<String, String> urgentContact;
+    private JSONObject urgentContact;
 
     /** 常用地址 */
-    //private HashMap<String, String> commonAddress;
+    private JSONObject commonAddress;
 
     /** 乘车偏好 */
-    //private String[] ridePreference;
+    private JSONArray ridePreference;
 
 }

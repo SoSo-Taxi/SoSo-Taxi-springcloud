@@ -9,8 +9,6 @@ import lombok.Data;
  */
 @Data
 public class Driver {
-    /** 司机的用户id */
-    private long driverId;
 
     /** 车型 */
     private String carModel;
