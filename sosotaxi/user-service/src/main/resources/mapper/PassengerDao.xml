@@ -41,9 +41,16 @@
           user_id, user_name, password, phone_number, role, gender, birth_year, avatar_path, real_name, idcard_number,
           nickname, industry, company, occupation, urgent_contact, common_address, preference
         from db01.user, db01.passenger
-        where passenger_id = #{passengerId} and db01.user.user_id = db01.passenger.passenger_id
+        where db01.passenger.passenger_id = #{passengerId} and db01.user.user_id = db01.passenger.passenger_id
     </select>
 
+    <select id="queryByUsername" resultMap="PassengerFullMap">
+        select
+          user_id, user_name, password, phone_number, role, gender, birth_year, avatar_path, real_name, idcard_number,
+          nickname, industry, company, occupation, urgent_contact, common_address, preference
+        from db01.user, db01.passenger
+        where db01.user.user_name = #{username} and db01.user.user_id = db01.passenger.passenger_id
+    </select>
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="PassengerMap">
         select

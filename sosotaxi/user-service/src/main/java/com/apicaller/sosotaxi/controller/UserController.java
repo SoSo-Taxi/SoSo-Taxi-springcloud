@@ -69,9 +69,9 @@ public class UserController {
     }
 
     @GetMapping("/test")
-    public Passenger getPassenger(long id) {
+    public Passenger getPassenger(String username) {
 
-        return passengerService.queryById(id);
+        return passengerService.queryByUsername(username);
     }
 
 }

@@ -31,13 +31,15 @@ public class PassengerServiceImpl implements PassengerService {
      */
     @Override
     public Passenger queryById(Long passengerId) {
-//        User u = userDao.queryById(passengerId);
-//        Passenger p = passengerDao.queryById(passengerId);
-//        if(u != null && p != null && p.mergeInfoFromUser(u)) {
-//            return p;
-//        }
-//        return null;
         return passengerDao.queryById(passengerId);
+    }
+
+    @Override
+    public Passenger queryByUsername(String username) {
+        if(username == null || username.isEmpty()) {
+            return null;
+        }
+        return passengerDao.queryByUsername(username);
     }
 
     /**

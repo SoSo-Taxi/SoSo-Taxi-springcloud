@@ -22,6 +22,14 @@ public interface PassengerService {
     Passenger queryById(Long passengerId);
 
     /**
+     * 通过用户名查询单条数据
+     *
+     * @param username 用户名
+     * @return 实例对象
+     */
+    Passenger queryByUsername(String username);
+
+    /**
      * 查询多条数据
      *
      * @param offset 查询起始位置

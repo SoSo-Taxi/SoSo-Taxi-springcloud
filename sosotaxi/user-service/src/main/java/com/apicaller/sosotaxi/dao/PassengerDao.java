@@ -25,6 +25,14 @@ public interface PassengerDao {
     Passenger queryById(Long passengerId);
 
     /**
+     * 通过用户名查询单条数据
+     *
+     * @param username
+     * @return 实例对象
+     */
+    Passenger queryByUsername(String username);
+
+    /**
      * 查询指定行数据
      *
      * @param offset 查询起始位置
