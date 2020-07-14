@@ -21,7 +21,7 @@ public interface UserServiceFeignClient {
      * @param userName
      * @return User
      */
-    @RequestMapping(method = RequestMethod.POST,value = "/getUserByUserName")
+    @RequestMapping(method = RequestMethod.POST,value = "/user/getUserByUserName")
     User getUserByUserName(@RequestBody String userName);
 
     /**
@@ -29,7 +29,7 @@ public interface UserServiceFeignClient {
      * @param userVo
      * @return
      */
-    @RequestMapping(method = RequestMethod.POST,value = "/insertUser")
+    @RequestMapping(method = RequestMethod.POST,value = "/user/insertUser")
     User insertUser(@RequestBody UserVo userVo);
 
     /**
@@ -37,6 +37,6 @@ public interface UserServiceFeignClient {
      * @param userName
      * @return
      */
-    @RequestMapping(method = RequestMethod.POST,value = "/isExistUserName")
+    @RequestMapping(method = RequestMethod.POST,value = "/user/isExistUserName")
     boolean isExistUserName(@RequestBody String userName);
 }

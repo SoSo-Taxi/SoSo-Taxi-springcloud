@@ -19,18 +19,13 @@ import java.security.PublicKey;
  * @since 2020-07-11 10:09:17
  */
 @RestController
-@RequestMapping
+@RequestMapping("/user")
 public class UserController {
     /**
      * 服务对象
      */
-
-
     @Resource
     private UserService userService;
-
-    @Resource
-    private PassengerService passengerService;
 
     /**
      * 通过主键查询单条数据
@@ -68,10 +63,6 @@ public class UserController {
         return userService.ifExistsByUserName(userName);
     }
 
-    @GetMapping("/test")
-    public Passenger getPassenger(String username) {
 
-        return passengerService.queryByUsername(username);
-    }
 
 }
