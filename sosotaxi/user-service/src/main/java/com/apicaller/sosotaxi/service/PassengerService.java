@@ -1,6 +1,8 @@
 package com.apicaller.sosotaxi.service;
 
 import com.apicaller.sosotaxi.entity.Passenger;
+import com.apicaller.sosotaxi.entity.PassengerVo;
+
 import java.util.List;
 
 
@@ -44,7 +46,7 @@ public interface PassengerService {
      * @param passenger 实例对象
      * @return 实例对象
      */
-    Passenger insert(Passenger passenger);
+    int insert(PassengerVo passenger);
 
     /**
      * 修改数据
@@ -52,7 +54,7 @@ public interface PassengerService {
      * @param passenger 实例对象
      * @return 实例对象
      */
-    Passenger update(Passenger passenger);
+    int update(PassengerVo passenger);
 
     /**
      * 通过主键删除数据

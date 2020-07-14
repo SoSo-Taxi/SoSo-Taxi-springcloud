@@ -3,6 +3,7 @@ package com.apicaller.sosotaxi.service.impl;
 import com.apicaller.sosotaxi.dao.PassengerDao;
 import com.apicaller.sosotaxi.dao.UserDao;
 import com.apicaller.sosotaxi.entity.Passenger;
+import com.apicaller.sosotaxi.entity.PassengerVo;
 import com.apicaller.sosotaxi.entity.User;
 import com.apicaller.sosotaxi.service.PassengerService;
 import org.springframework.stereotype.Service;
@@ -36,9 +37,6 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public Passenger queryByUsername(String username) {
-        if(username == null || username.isEmpty()) {
-            return null;
-        }
         return passengerDao.queryByUsername(username);
     }
 
@@ -61,9 +59,8 @@ public class PassengerServiceImpl implements PassengerService {
      * @return 实例对象
      */
     @Override
-    public Passenger insert(Passenger passenger) {
-        this.passengerDao.insert(passenger);
-        return passenger;
+    public int insert(PassengerVo passenger) {
+        return this.passengerDao.insert(passenger);
     }
 
     /**
@@ -73,9 +70,8 @@ public class PassengerServiceImpl implements PassengerService {
      * @return 实例对象
      */
     @Override
-    public Passenger update(Passenger passenger) {
-        this.passengerDao.update(passenger);
-        return this.queryById(passenger.getUserId());
+    public int update(PassengerVo passenger) {
+        return this.passengerDao.update(passenger);
     }
 
     /**

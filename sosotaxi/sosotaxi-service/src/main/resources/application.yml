@@ -2,6 +2,10 @@ server:
   port: 8001
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    time-zone: GMT+8
   application:
     name: soso-service
 
