@@ -1,10 +1,9 @@
 package com.apicaller.sosotaxi.controller;
 
 import com.apicaller.sosotaxi.entity.Passenger;
+import com.apicaller.sosotaxi.entity.PassengerVo;
 import com.apicaller.sosotaxi.service.PassengerService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -20,9 +19,24 @@ public class PassengerController {
     @Resource
     private PassengerService passengerService;
 
-    @GetMapping("/test")
-    public Passenger getPassenger(String username) {
-
+    @GetMapping("/getByName")
+    public Passenger getPassengerByName(String username) {
         return passengerService.queryByUsername(username);
     }
+
+    @GetMapping("/getById")
+    public Passenger getPassengerById(long userId) {
+        return passengerService.queryById(userId);
+    }
+
+    @PostMapping("/addPassenger")
+    public int insertPassenger(@RequestBody PassengerVo passenger) {
+        return passengerService.insert(passenger);
+    }
+
+    @PutMapping("/updatePassenger")
+    public int updatePassenger(@RequestBody PassengerVo passenger) {
+        return passengerService.update(passenger);
+    }
+
 }

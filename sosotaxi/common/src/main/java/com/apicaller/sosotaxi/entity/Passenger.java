@@ -1,6 +1,7 @@
 package com.apicaller.sosotaxi.entity;
 
 import lombok.Data;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import java.io.Serializable;
 
@@ -32,7 +33,7 @@ public class Passenger extends User implements Serializable {
     private JSONObject commonAddress;
 
     /** 乘车偏好 */
-    private JSONObject preference;
+    private JSONArray preference;
 
     public boolean mergeInfoFromUser(User user) {
         if(this.getUserId() != user.getUserId()) {

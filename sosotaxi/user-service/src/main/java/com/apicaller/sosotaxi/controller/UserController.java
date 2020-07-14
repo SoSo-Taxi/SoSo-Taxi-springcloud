@@ -1,5 +1,6 @@
 package com.apicaller.sosotaxi.controller;
 
+import com.apicaller.sosotaxi.dao.UserDao;
 import com.apicaller.sosotaxi.entity.Passenger;
 import com.apicaller.sosotaxi.entity.User;
 import com.apicaller.sosotaxi.entity.UserVo;
@@ -34,7 +35,7 @@ public class UserController {
      * @return 单条数据
      */
     @GetMapping("/selectOne")
-    public User selectOne(Integer id) {
+    public User selectOne(long id) {
         return this.userService.queryById(id);
     }
 
@@ -57,12 +58,15 @@ public class UserController {
         return userService.insert(user);
     }
 
-    @PostMapping ("/isExistUserName")
+    @PostMapping("/isExistUserName")
     public boolean isExistUserName(@RequestBody String userName)
     {
         return userService.ifExistsByUserName(userName);
     }
 
-
+    @PutMapping("/updateUser")
+    public User updateUserInfo(@RequestBody User user) {
+        return userService.update(user);
+    }
 
 }

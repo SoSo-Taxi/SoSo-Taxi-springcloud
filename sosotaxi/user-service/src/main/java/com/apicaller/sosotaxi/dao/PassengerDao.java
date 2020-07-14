@@ -1,6 +1,7 @@
 package com.apicaller.sosotaxi.dao;
 
 import com.apicaller.sosotaxi.entity.Passenger;
+import com.apicaller.sosotaxi.entity.PassengerVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import java.util.List;
@@ -56,7 +57,7 @@ public interface PassengerDao {
      * @param passenger 实例对象
      * @return 影响行数
      */
-    int insert(Passenger passenger);
+    int insert(PassengerVo passenger);
 
     /**
      * 修改数据
@@ -64,7 +65,7 @@ public interface PassengerDao {
      * @param passenger 实例对象
      * @return 影响行数
      */
-    int update(Passenger passenger);
+    int update(PassengerVo passenger);
 
     /**
      * 通过主键删除数据

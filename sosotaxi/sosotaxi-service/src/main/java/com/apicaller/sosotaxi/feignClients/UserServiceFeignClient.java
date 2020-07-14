@@ -39,4 +39,12 @@ public interface UserServiceFeignClient {
      */
     @RequestMapping(method = RequestMethod.POST,value = "/user/isExistUserName")
     boolean isExistUserName(@RequestBody String userName);
+
+    /**
+     * 更新用户信息
+     * @param user
+     * @return User
+     */
+    @RequestMapping(method = RequestMethod.PUT,value = "/user/updateUser")
+    User updateUser(@RequestBody User user);
 }
