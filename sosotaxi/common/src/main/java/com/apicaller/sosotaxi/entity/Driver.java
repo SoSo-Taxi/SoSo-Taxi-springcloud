@@ -4,11 +4,11 @@ import lombok.Data;
 
 /**
  * @author 骆荟州
+ * @CreateTime 2020/7/8
+ * UpdateTime 2020/7/11
  */
 @Data
 public class Driver {
-    /** 司机的用户id */
-    private long driverId;
 
     /** 车型 */
     private String carModel;
