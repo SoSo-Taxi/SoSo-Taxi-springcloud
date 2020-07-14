@@ -18,7 +18,7 @@
 	<!--查询单个-->
 	<select id="queryById" resultMap="UserMap">
         select
-          user_id, user_name, password, phone_number
+          user_id, user_name, password, phone_number, gender, birth_year, avatar_path, real_name, idcard_number
         from db01.user
         where user_id = #{userId}
     </select>
@@ -26,7 +26,7 @@
 	<!--查询指定行数据-->
 	<select id="queryAllByLimit" resultMap="UserMap">
         select
-          user_id, user_name, password, phone
+          user_id, user_name, password, phone_number, gender, birth_year, avatar_path, real_name, idcard_number
         from db01.user
         limit #{offset}, #{limit}
     </select>
@@ -34,7 +34,7 @@
 	<!--通过实体作为筛选条件查询-->
 	<select id="queryAll" resultMap="UserMap">
 		select
-		user_id, user_name, password, phone
+		user_id, user_name, password, phone_number
 		from db01.user
 		<where>
 			<if test="userId != null">
@@ -46,8 +46,23 @@
 			<if test="password != null and password != ''">
 				and password = #{password}
 			</if>
-			<if test="phone != null and phone != ''">
-				and phone = #{phone}
+			<if test="phoneNumber != null and phoneNumber != ''">
+				and phone_number = #{phoneNumber}
+			</if>
+			<if test="gender != null and gender != ''">
+				and gender = #{gender}
+			</if>
+			<if test="birthYear != null and birthYear != ''">
+				and birth_year = #{birthYear}
+			</if>
+			<if test="avatarPath != null and avatarPath != ''">
+				and avatar_path = #{avatarPath}
+			</if>
+			<if test="realName != null and realName != ''">
+				and real_name = #{realName}
+			</if>
+			<if test="idCardNumber != null and idCardNumber != ''">
+				and idcard_number = #{idCardNumber}
 			</if>
 		</where>
 	</select>
@@ -65,11 +80,23 @@
 			<if test="userName != null and userName != ''">
 				user_name = #{userName},
 			</if>
-			<if test="password != null and password != ''">
-				password = #{password},
-			</if>
-			<if test="phone != null and phone != ''">
+			<if test="phoneNumber != null and phoneNumber != ''">
 				phone_number = #{phoneNumber},
+			</if>
+			<if test="gender != null and gender != ''">
+				gender = #{gender},
+			</if>
+			<if test="birthYear != null and birthYear != ''">
+				birth_year = #{birthYear},
+			</if>
+			<if test="avatarPath != null and avatarPath != ''">
+				avatar_path = #{avatarPath},
+			</if>
+			<if test="realName != null and realName != ''">
+				real_name = #{realName},
+			</if>
+			<if test="idCardNumber != null and idCardNumber != ''">
+				idcard_number = #{idCardNumber},
 			</if>
 		</set>
 		where user_id = #{userId}

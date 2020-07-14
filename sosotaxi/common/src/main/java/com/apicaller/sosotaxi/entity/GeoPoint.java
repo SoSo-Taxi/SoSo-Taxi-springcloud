@@ -7,8 +7,8 @@ import java.io.Serializable;
  * 表示一个地理上的点。
  *
  * @author 骆荟州
- * @CreateTime 2020/7/13 13:11
- * @UpdateTime
+ * @createTime 2020/7/13 13:11
+ * @updateTime
  */
 @Data
 public class GeoPoint implements Serializable {

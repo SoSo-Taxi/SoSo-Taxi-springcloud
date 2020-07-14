@@ -1,12 +1,17 @@
 package com.apicaller.sosotaxi.controller;
 
+import com.apicaller.sosotaxi.dao.UserDao;
+import com.apicaller.sosotaxi.entity.Passenger;
 import com.apicaller.sosotaxi.entity.User;
 import com.apicaller.sosotaxi.entity.UserVo;
+import com.apicaller.sosotaxi.service.PassengerService;
 import com.apicaller.sosotaxi.service.UserService;
+import net.sf.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.security.PublicKey;
 
 /**
  * (User)表控制层
@@ -15,13 +20,11 @@ import javax.annotation.Resource;
  * @since 2020-07-11 10:09:17
  */
 @RestController
-@RequestMapping
+@RequestMapping("/user")
 public class UserController {
     /**
      * 服务对象
      */
-
-
     @Resource
     private UserService userService;
 
@@ -32,7 +35,7 @@ public class UserController {
      * @return 单条数据
      */
     @GetMapping("/selectOne")
-    public User selectOne(Integer id) {
+    public User selectOne(long id) {
         return this.userService.queryById(id);
     }
 
@@ -55,11 +58,15 @@ public class UserController {
         return userService.insert(user);
     }
 
-    @PostMapping ("/isExistUserName")
+    @PostMapping("/isExistUserName")
     public boolean isExistUserName(@RequestBody String userName)
     {
         return userService.ifExistsByUserName(userName);
     }
 
+    @PutMapping("/updateUser")
+    public User updateUserInfo(@RequestBody User user) {
+        return userService.update(user);
+    }
 
 }

@@ -1,8 +1,13 @@
 package com.apicaller.sosotaxi.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedJdbcTypes;
+import org.apache.ibatis.type.MappedTypes;
+
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,9 +30,12 @@ import java.sql.SQLException;
  *
  *
  * @author 骆荟州
- * @CreateTime 2020/7/13 12:33
- * @UpdateTime
+ * @createTime 2020/7/13 12:33
+ * @updateTime
  */
+
+@MappedJdbcTypes(JdbcType.OTHER)
+@MappedTypes({JSONArray.class, JSONObject.class})
 public class JsonTypeHandler<T extends Object> extends BaseTypeHandler<T> {
     private static final ObjectMapper mapper = new ObjectMapper();
     private Class<T> clazz;
