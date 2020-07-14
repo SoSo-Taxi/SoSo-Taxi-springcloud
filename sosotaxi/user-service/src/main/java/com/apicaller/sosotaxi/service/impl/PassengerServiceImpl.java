@@ -37,9 +37,6 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public Passenger queryByUsername(String username) {
-        if(username == null || username.isEmpty()) {
-            return null;
-        }
         return passengerDao.queryByUsername(username);
     }
 
