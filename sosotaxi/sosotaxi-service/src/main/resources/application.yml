@@ -2,6 +2,8 @@ server:
   port: 8001
 
 spring:
+  jackson:
+    time-zone: GMT+8
   application:
     name: soso-service
 
