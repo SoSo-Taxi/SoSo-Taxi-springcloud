@@ -3,7 +3,6 @@ package com.apicaller.sosotaxi.dao;
 import com.apicaller.sosotaxi.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
 
 /**
