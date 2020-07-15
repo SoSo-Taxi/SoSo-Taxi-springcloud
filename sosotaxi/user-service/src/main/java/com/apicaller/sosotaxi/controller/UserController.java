@@ -1,17 +1,14 @@
 package com.apicaller.sosotaxi.controller;
 
-import com.apicaller.sosotaxi.dao.UserDao;
-import com.apicaller.sosotaxi.entity.Passenger;
+
 import com.apicaller.sosotaxi.entity.User;
 import com.apicaller.sosotaxi.entity.UserVo;
-import com.apicaller.sosotaxi.service.PassengerService;
 import com.apicaller.sosotaxi.service.UserService;
-import net.sf.json.JSONObject;
-import org.junit.jupiter.api.Test;
+
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.security.PublicKey;
+
 
 /**
  * (User)表控制层

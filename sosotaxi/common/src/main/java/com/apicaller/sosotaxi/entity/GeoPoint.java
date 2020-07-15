@@ -14,6 +14,8 @@ import java.io.Serializable;
 public class GeoPoint implements Serializable {
     private static final long serialVersionUID = 42345441L;
 
+    public GeoPoint() { }
+
     public GeoPoint(double lat, double lng) {
         this.lng = lng;
         this.lat = lat;
