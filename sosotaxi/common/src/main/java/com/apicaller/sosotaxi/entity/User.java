@@ -1,12 +1,9 @@
 package com.apicaller.sosotaxi.entity;
 
 import lombok.Data;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+
 
 /**
  * @author 骆荟州
