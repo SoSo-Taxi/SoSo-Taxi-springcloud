@@ -23,15 +23,17 @@ public class Order implements Serializable {
     private GeoPoint departPoint;
     
     private GeoPoint destPoint;
-    
-    private Date time;
+
+    private Date createTime;
+
+    private Date departTime;
     
     private String departName;
     
     private String destName;
 
     /** 服务类型，经济型、舒适型等 */
-    private Short carType;
+    private Short serviceType;
     
     private Double cost;
 
