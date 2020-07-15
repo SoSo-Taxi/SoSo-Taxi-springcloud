@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.apicaller.sosotaxi.dao.DriverDao">
+
+    <resultMap id="BaseResultMap" type="com.apicaller.sosotaxi.entity.Driver">
+        <!--@Table driver-->
+        <result property="userId" column="driver_id" jdbcType="BIGINT"/>
+        <result property="carBrand" column="car_brand" jdbcType="VARCHAR"/>
+        <result property="carModel" column="car_model" jdbcType="VARCHAR"/>
+        <result property="carColor" column="car_color" jdbcType="VARCHAR"/>
+        <result property="licensePlate" column="license_plate" jdbcType="VARCHAR"/>
+        <result property="carLevel" column="car_level" jdbcType="VARCHAR"/>
+        <result property="driverLicenseNumber" column="driver_license_number" jdbcType="VARCHAR"/>
+        <result property="vin" column="vin" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="ResultFullMap" type="com.apicaller.sosotaxi.entity.Driver">
+        <!--@Table driver-->
+        <result property="userId" column="driver_id" jdbcType="BIGINT"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="role" column="role" jdbcType="VARCHAR"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="gender" column="gender" jdbcType="VARCHAR"/>
+        <result property="birthYear" column="birth_year" jdbcType="SMALLINT"/>
+        <result property="avatarPath" column="avatar_path" jdbcType="VARCHAR"/>
+        <result property="realName" column="real_name" jdbcType="VARCHAR"/>
+        <result property="idCardNumber" column="idcard_number" jdbcType="VARCHAR"/>
+        <result property="carBrand" column="car_brand" jdbcType="VARCHAR"/>
+        <result property="carModel" column="car_model" jdbcType="VARCHAR"/>
+        <result property="carColor" column="car_color" jdbcType="VARCHAR"/>
+        <result property="licensePlate" column="license_plate" jdbcType="VARCHAR"/>
+        <result property="carLevel" column="car_level" jdbcType="VARCHAR"/>
+        <result property="driverLicenseNumber" column="driver_license_number" jdbcType="VARCHAR"/>
+        <result property="vin" column="vin" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ResultFullMap">
+        select
+          user_name, password, phone_number, role, gender, birth_year, avatar_path, real_name, idcard_number,
+          driver_id, car_brand, car_model, car_color, license_plate, car_level, driver_license_number, vin
+        from db01.user, db01.driver
+        where db01.user.user_id = #{driverId} and db01.user.user_id = db01.driver.driver_id
+    </select>
+
+    <!--查询单个-->
+    <select id="queryByUsername" resultMap="ResultFullMap">
+        select
+          user_name, password, phone_number, role, gender, birth_year, avatar_path, real_name, idcard_number,
+          driver_id, car_brand, car_model, car_color, license_plate, car_level, driver_license_number, vin
+        from db01.user, db01.driver
+        where db01.user.user_name = #{username} and db01.user.user_id = db01.driver.driver_id
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+          driver_id, car_brand, car_model, car_color, license_plate, car_level, driver_license_number, vin
+        from db01.driver
+        limit #{offset}, #{limit}
+    </select>
+
+
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="driverId" useGeneratedKeys="true">
+        insert into db01.driver(driver_id, car_brand, car_model, car_color, license_plate, car_level, driver_license_number, vin)
+        values (#{userId}, #{carBrand}, #{carModel}, #{carColor}, #{licensePlate}, #{carLevel}, #{driverLicenseNumber}, #{vin})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update db01.driver
+        <set>
+            <if test="carBrand != null and carBrand != ''">
+                car_brand = #{carBrand},
+            </if>
+            <if test="carModel != null and carModel != ''">
+                car_model = #{carModel},
+            </if>
+            <if test="carColor != null and carColor != ''">
+                car_color = #{carColor},
+            </if>
+            <if test="licensePlate != null and licensePlate != ''">
+                license_plate = #{licensePlate},
+            </if>
+            <if test="carLevel != null and carLevel != ''">
+                car_level = #{carLevel},
+            </if>
+            <if test="driverLicenseNumber != null and driverLicenseNumber != ''">
+                driver_license_number = #{driverLicenseNumber},
+            </if>
+            <if test="vin != null and vin != ''">
+                vin = #{vin},
+            </if>
+        </set>
+        where driver_id = #{userId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from db01.driver where driver_id = #{driverId}
+    </delete>
+
+</mapper>

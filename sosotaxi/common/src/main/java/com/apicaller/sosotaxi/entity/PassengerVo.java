@@ -1,9 +1,8 @@
 package com.apicaller.sosotaxi.entity;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import java.io.Serializable;
 
 /**

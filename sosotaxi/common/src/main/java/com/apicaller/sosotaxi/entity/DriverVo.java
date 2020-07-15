@@ -5,16 +5,16 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @author 骆荟州
- * @createTime 2020/7/8
- * @updateTime 2020/7/11
+ * @author: 骆荟州
+ * @createTime: 2020/7/14 10:18 下午
+ * @updateTime:
  */
 @Data
-public class Driver extends User implements Serializable {
-    private static final long serialVersionUID = 576078151345057696L;
+public class DriverVo implements Serializable {
+    private static final long serialVersionUID = 576078345057696L;
 
-    /** 车品牌 */
-    private String carBrand;
+    /** 用户id */
+    private long userId;
 
     /** 车型 */
     private String carModel;

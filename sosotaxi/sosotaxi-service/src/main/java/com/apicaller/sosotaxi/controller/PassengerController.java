@@ -22,7 +22,6 @@ public class PassengerController {
 
     @GetMapping("/getByName")
     public ResponseBean getByName(String userName) {
-
         Passenger passenger = passengerInfoFeignClient.getPassengerByName(userName);
         if(passenger == null) {
             return new ResponseBean(404,"未找到该乘客的信息", null);
@@ -40,7 +39,7 @@ public class PassengerController {
         return new ResponseBean(200,"查询成功", passenger);
     }
 
-    @PutMapping("/addPassenger")
+    @PostMapping("/addPassenger")
     public ResponseBean addPassenger(@RequestBody PassengerVo passenger) {
         int result = passengerInfoFeignClient.addPassenger(passenger);
         if(result == 0) {
