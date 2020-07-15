@@ -2,6 +2,10 @@ server:
   port: 7001
 
 
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
 eureka:
   instance:
     hostname: eureka7001.com #eureka服务端的实例名称
