@@ -1,5 +1,6 @@
 package com.apicaller.sosotaxi.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.apicaller.sosotaxi.entity.Passenger;
 import com.apicaller.sosotaxi.entity.PassengerVo;
 import com.apicaller.sosotaxi.entity.ResponseBean;
@@ -22,6 +23,7 @@ public class PassengerController {
 
     @GetMapping("/getByName")
     public ResponseBean getByName(String userName) {
+        JSONObject a = new JSONObject();
 
         Passenger passenger = passengerInfoFeignClient.getPassengerByName(userName);
         if(passenger == null) {
@@ -40,7 +42,7 @@ public class PassengerController {
         return new ResponseBean(200,"查询成功", passenger);
     }
 
-    @PutMapping("/addPassenger")
+    @PostMapping("/addPassenger")
     public ResponseBean addPassenger(@RequestBody PassengerVo passenger) {
         int result = passengerInfoFeignClient.addPassenger(passenger);
         if(result == 0) {
