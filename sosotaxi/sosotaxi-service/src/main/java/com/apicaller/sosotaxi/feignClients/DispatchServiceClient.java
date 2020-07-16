@@ -6,4 +6,6 @@ package com.apicaller.sosotaxi.feignClients;
  * @updateTime
  */
 public interface DispatchServiceClient {
+
+
 }

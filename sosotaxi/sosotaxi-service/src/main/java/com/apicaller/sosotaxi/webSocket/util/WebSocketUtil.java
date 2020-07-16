@@ -1,6 +1,7 @@
 package com.apicaller.sosotaxi.webSocket.util;
 
 import com.alibaba.fastjson.JSONObject;
+import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
 import com.apicaller.sosotaxi.webSocket.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,41 @@ public class WebSocketUtil {
     private static final Map<String, Session> USER_SESSION_MAP = new ConcurrentHashMap<>();
 
 
+    /**
+     * 已登录司机状态和session的映射
+     */
+    private static final Map<LoginDriver,Session> LOGIN_DRIVER_SESSION_MAP = new ConcurrentHashMap<>();
+
+//    /**
+//     * session和已登录司机的映射
+//     */
+//    private static final Map<Session,LoginDriver> SESSION_LOGIN_DRIVER_MAP = new ConcurrentHashMap<>();
+
+    /**
+     * 找到session对应的driver
+     */
+
+    public static LoginDriver findDriverBySession(Session session)
+    {
+        LoginDriver loginDriver = new LoginDriver();
+        for (LoginDriver key:LOGIN_DRIVER_SESSION_MAP.keySet()) {
+            if(session == LOGIN_DRIVER_SESSION_MAP.get(key))
+            {
+                loginDriver = key;
+                break;
+            }
+        }
+        return loginDriver;
+    }
+
+    /**
+     * 添加登陆司机的状态
+     */
+    public static void addLoginDriver(Session session,LoginDriver loginDriver)
+    {
+        LOGIN_DRIVER_SESSION_MAP.put(loginDriver, session);
+
+    }
 
 
     /**
