@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * @author: 骆荟州
  * @createTime: 2020/7/15 9:28 上午
- * @updateTime:
+ * @updateTime: 2020/7/16 12:04 下午
  */
 @FeignClient(name = "user-service")
 @Service
-public interface DriverInfofeignClient {
+public interface DriverFeignClient {
     /**
      * 根据用户id获取司机信息
      * @param userId

@@ -1,23 +1,23 @@
 package com.apicaller.sosotaxi.feignClients;
 
+import com.apicaller.sosotaxi.entity.Order;
 import com.apicaller.sosotaxi.entity.Passenger;
 import com.apicaller.sosotaxi.entity.PassengerVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author: 骆荟州
  * @createTime: 2020/7/14 3:24 下午
- * @updateTime:
+ * @updateTime: 2020/7/16 12:04 下午
  */
 
 @FeignClient(name = "user-service")
 @Service
-public interface PassengerInfoFeignClient {
+public interface PassengerFeignClient {
 
     /**
      * 根据用户id获取乘客信息
@@ -50,4 +50,5 @@ public interface PassengerInfoFeignClient {
      */
     @RequestMapping(method = RequestMethod.PUT,value = "/passenger/updatePassenger")
     int updatePassenger(@RequestBody PassengerVo passenger);
+
 }
