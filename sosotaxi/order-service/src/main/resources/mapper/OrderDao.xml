@@ -17,6 +17,7 @@
         <result property="pointDiscount" column="point_discount" jdbcType="NUMERIC"/>
         <result property="couponDiscount" column="coupon_discount" jdbcType="NUMERIC"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="rate" column="rate" jdbcType="TINYINT"/>
         <result property="distance" column="distance" jdbcType="NUMERIC"/>
         <result property="driverId" column="driver_id" jdbcType="INTEGER"/>
         <result property="passengerId" column="passenger_id" jdbcType="INTEGER"/>
@@ -55,8 +56,11 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="orderId" useGeneratedKeys="true">
-        insert into db01.order(city, depart_point, dest_point, create_time, depart_time, depart_name, dest_name, service_type, cost, point_discount, coupon_discount, status, distance, driver_id, passenger_id)
-        values (#{city}, GeomFromText(#{departPoint}), GeomFromText(#{destPoint}), #{createTime}, #{departTime}, #{departName}, #{destName}, #{serviceType}, #{cost}, #{pointDiscount}, #{couponDiscount}, #{status}, #{distance}, #{driverId}, #{passengerId})
+        insert into db01.order(city, depart_point, dest_point, create_time, depart_time, depart_name,
+        dest_name, service_type, cost, point_discount, coupon_discount, status, rate, distance, driver_id, passenger_id)
+        values (#{city}, GeomFromText(#{departPoint}), GeomFromText(#{destPoint}), #{createTime},
+        #{departTime}, #{departName}, #{destName}, #{serviceType}, #{cost}, #{pointDiscount},
+        #{couponDiscount}, #{status}, #{rate}, #{distance}, #{driverId}, #{passengerId})
     </insert>
 
     <!--通过主键修改数据-->
@@ -98,6 +102,9 @@
             </if>
             <if test="status != null">
                 status = #{status},
+            </if>
+            <if test="rate != null">
+                rate = #{rate},
             </if>
             <if test="distance != null">
                 distance = #{distance},
