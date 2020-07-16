@@ -1,0 +1,25 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: dispatch-service
+  redis:
+    database: 0
+    host: 39.98.65.135
+    port: 6379
+    password: 20200715
+    lettuce:
+      pool:
+        #连接池最大连接数，负值表示无限制，默认8
+        max-active: 8
+        #连接池最大阻塞等待时间，负值表示无限制，默认-1
+        max-wait: -1
+        #连接池最大空闲连接，默认8
+        max-idle: 8
+        #连接池最小空闲连接，默认0
+        min-idle: 0
+
+baiduapi:
+  ak: 7nt7ok0IOYiu8Zx2R1gKiUwhRMnHjrDy
+  url: http://api.map.baidu.com

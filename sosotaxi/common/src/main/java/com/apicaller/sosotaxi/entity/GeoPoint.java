@@ -35,4 +35,8 @@ public class GeoPoint implements Serializable {
     public String toPointFormat() {
         return "POINT(" + lat + " " + lng + ")";
     }
+
+    public String toBDFormat(){
+        return lat + "," + lng;
+    }
 }
