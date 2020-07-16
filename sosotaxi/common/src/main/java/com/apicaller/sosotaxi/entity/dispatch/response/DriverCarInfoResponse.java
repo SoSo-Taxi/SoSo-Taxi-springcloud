@@ -1,6 +1,8 @@
 package com.apicaller.sosotaxi.entity.dispatch.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -13,10 +15,12 @@ import java.io.Serializable;
  * @updateTime:
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class DriverCarInfoResponse implements Serializable {
     private static final long serialVersionUID = -4484485641L;
 
-    private String driverId;
+    private long driverId;
 
     private String driverName;
 
