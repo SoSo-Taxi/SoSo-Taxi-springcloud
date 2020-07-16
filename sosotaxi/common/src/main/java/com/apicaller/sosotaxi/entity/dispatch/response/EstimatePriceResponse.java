@@ -1,7 +1,9 @@
 package com.apicaller.sosotaxi.entity.dispatch.response;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author 张流潇潇
@@ -10,6 +12,8 @@ import lombok.Data;
  * 预计价格
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class EstimatePriceResponse{
 	private int serviceType;
 
