@@ -1,5 +1,7 @@
 package com.apicaller.sosotaxi.controller;
 
+import com.apicaller.sosotaxi.entity.ResponseBean;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,4 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class DispatchController {
 
 
+    @PostMapping("/")
+    public ResponseBean callCar()
+    {
+
+        return new ResponseBean();
+    }
 }
