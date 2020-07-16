@@ -1,5 +1,6 @@
 package com.apicaller.sosotaxi.controller;
 
+
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.entity.ResponseBean;
 import com.apicaller.sosotaxi.entity.dispatch.dto.GenerateOrderDTO;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 
 /**
  * @author 张流潇潇
@@ -122,4 +124,10 @@ public class DispatchController {
     }
 
 
+    @PostMapping("/")
+    public ResponseBean callCar()
+    {
+
+        return new ResponseBean();
+    }
 }
