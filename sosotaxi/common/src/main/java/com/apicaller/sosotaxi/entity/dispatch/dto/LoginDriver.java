@@ -1,5 +1,6 @@
 package com.apicaller.sosotaxi.entity.dispatch.dto;
 
+import com.apicaller.sosotaxi.entity.GeoPoint;
 import lombok.Data;
 
 /**
@@ -12,11 +13,8 @@ import lombok.Data;
 public class LoginDriver {
 
 
-    /** 纬度 */
-    private double lat;
 
-    /** 经度 */
-    private double lng;
+    private GeoPoint geoPoint;
 
     /** 用户名 */
     private String userName;
