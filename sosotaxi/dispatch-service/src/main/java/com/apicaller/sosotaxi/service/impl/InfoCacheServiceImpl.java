@@ -9,18 +9,22 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
+//TODO:添加事务管理，防止严重错误的产生
 @Component
-@EnableTransactionManagement
 public class InfoCacheServiceImpl implements InfoCacheService {
 
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    @Resource
+    private RedisTemplate<String, Serializable> redisTemplate;
+
+    @Resource
+    private RedisTemplate<String, String> sRedisTemplate;
 
     /**
      * 订单列表
@@ -48,10 +52,9 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return
      */
     @Override
-    @Transactional
     public MinimizedDriver getDriver(String driverId){
         HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
-        String key = sHashOperations.get(U_ORDER_HASH_KEY, driverId);
+        String key = sHashOperations.get(DRIVER_HASH_KEY, driverId);
         String city = key.substring(key.indexOf("_")+1, key.lastIndexOf("_"));
         String typeStr = key.substring(key.lastIndexOf("_")+1);
         int type = Integer.parseInt(typeStr);
@@ -63,7 +66,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return
      */
     @Override
-    @Transactional
     public Set<String> getAllDrivers(){
         HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
         return sHashOperations.keys(DRIVER_HASH_KEY);
@@ -79,7 +81,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @throws Exception
      */
     @Override
-    @Transactional
     public Boolean updateDriverField(String city, int type, String driverId, GeoPoint point) throws Exception {
         HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
         String hashKey = "driverHash_"+city+"_"+Integer.toString(type);
@@ -104,7 +105,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @throws Exception
      */
     @Override
-    @Transactional
     public Boolean updateDriverField(MinimizedDriver driver, GeoPoint point) throws Exception{
         return updateDriverField(driver.getCity(),driver.getType(),driver.getDriverId(),point);
     }
@@ -115,7 +115,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return
      */
     @Override
-    @Transactional
     public GeoPoint getDriverPosition(String driverId){
         HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
         HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
@@ -129,7 +128,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @throws Exception
      */
     @Override
-    @Transactional
     public void deleteDriverField(String driverId) throws Exception {
         HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
         HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
@@ -149,7 +147,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @param point
      */
     @Override
-    @Transactional
     public void updatePoint(String driverId, GeoPoint point){
         HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
         String hashKey = sHashOperations.get(DRIVER_HASH_KEY, driverId);
@@ -163,7 +160,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @param uOrder
      */
     @Override
-    @Transactional
     public void updateUOrderField(String orderId, UnsettledOrder uOrder){
         HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
         operations.put(U_ORDER_HASH_KEY, orderId, uOrder);
@@ -175,7 +171,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return
      */
     @Override
-    @Transactional
     public UnsettledOrder getUOrder(String orderId){
         HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
         return operations.get(U_ORDER_HASH_KEY, orderId);
@@ -186,7 +181,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return
      */
     @Override
-    @Transactional
     public List<UnsettledOrder> getAllUOrder(){
         HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
         return operations.values(U_ORDER_HASH_KEY);
@@ -197,7 +191,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @param orderId
      */
     @Override
-    @Transactional
     public void deleteUOrder(String orderId){
         HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
         operations.delete(U_ORDER_HASH_KEY, orderId);
@@ -210,7 +203,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return
      */
     @Override
-    @Transactional
     public Set<String> getHashByPattern(String city, int type){
         return redisTemplate.keys(city+"_"+Integer.toString(type)+"_*");
     }
@@ -221,7 +213,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @param dispatchedOrders
      */
     @Override
-    @Transactional
     public void updateDispatch(String driverId, List<UnsettledOrder> dispatchedOrders){
         HashOperations<String, String, List<UnsettledOrder>> operations = redisTemplate.opsForHash();
         operations.put(DISPATCH_HASH_KEY,driverId,dispatchedOrders);
@@ -233,11 +224,13 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @param dispatchedOrder
      */
     @Override
-    @Transactional
     public void updateDispatch(String driverId, UnsettledOrder dispatchedOrder){
         HashOperations<String, String, List<UnsettledOrder>> operations = redisTemplate.opsForHash();
         List<UnsettledOrder> orders = operations.get(DISPATCH_HASH_KEY, driverId);
         orders.add(dispatchedOrder);
+        //保险起见，先删后加，防止有旧版本的bug
+        operations.delete(DISPATCH_HASH_KEY,driverId);
+        operations.put(DISPATCH_HASH_KEY,driverId,orders);
     }
 
     /**
@@ -246,7 +239,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return
      */
     @Override
-    @Transactional
     public List<UnsettledOrder> getDispatch(String driverId){
         HashOperations<String, String, List<UnsettledOrder>> operations = redisTemplate.opsForHash();
         return operations.get(DISPATCH_HASH_KEY, driverId);
@@ -257,7 +249,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @param driverId
      */
     @Override
-    @Transactional
     public void clearDispatch(String driverId){
         HashOperations<String, String, List<UnsettledOrder>> operations = redisTemplate.opsForHash();
         operations.delete(DISPATCH_HASH_KEY, driverId);
@@ -270,7 +261,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return 订单是否存在
      */
     @Override
-    @Transactional
     public Boolean deleteDispatch(String driverId, String orderId){
         HashOperations<String, String, List<UnsettledOrder>> operations = redisTemplate.opsForHash();
         List<UnsettledOrder> orders = operations.get(DISPATCH_HASH_KEY, driverId);
@@ -290,9 +280,8 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @param duration
      */
     @Override
-    @Transactional
     public void updateDurationSet(String orderId, String driverId, double duration){
-        ZSetOperations<String, String> operations = redisTemplate.opsForZSet();
+        ZSetOperations<String, String> operations = sRedisTemplate.opsForZSet();
         String Key = "duration_"+ orderId;
         operations.add(Key, driverId, duration);
     }
@@ -303,7 +292,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @param driverId
      */
     @Override
-    @Transactional
     public void clearDurationSet(String orderId, String driverId){
         String Key = "duration_"+ orderId;
         redisTemplate.delete(Key);
@@ -314,7 +302,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return
      */
     @Override
-    @Transactional
     public Set<String> getAllDurationSetKeys(){
         return redisTemplate.keys("duration_*");
     }
@@ -324,7 +311,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @param keys
      */
     @Override
-    @Transactional
     public void deleteDurationSets(Set<String> keys){
         redisTemplate.delete(keys);
     }
@@ -335,11 +321,15 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return
      */
     @Override
-    @Transactional
     public Set<String> getDriverIdByRank(String orderId){
-        ZSetOperations<String, String> operations = redisTemplate.opsForZSet();
-        String Key = "duration_"+ orderId;
-        return operations.range(Key, 0, ORDER_ASSIGN_COUNT);
+        try{
+            ZSetOperations<String, String> operations = sRedisTemplate.opsForZSet();
+            String Key = "duration_"+ orderId;
+            return operations.range(Key, 0, ORDER_ASSIGN_COUNT);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -349,7 +339,6 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return
      */
     @Override
-    @Transactional
     public Boolean acceptOrder(String orderId, String driverId){
         HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
         //如果不存在这个订单（已被其他司机接单）

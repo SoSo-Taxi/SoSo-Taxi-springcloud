@@ -6,19 +6,16 @@ import com.apicaller.sosotaxi.service.impl.InfoCacheServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.websocket.server.PathParam;
 
 @RestController
-@RequestMapping("/dispatch/passenger/{passengerId}")
+@RequestMapping("/dispatch/passenger/")
 public class PassengerSubmitController {
     @Resource
     InfoCacheServiceImpl dispatchService;
 
     @PostMapping(value = "/submit")
-    public ResponseBean submit(@PathParam(value="passengerId") String userId, @RequestBody UnsettledOrder order){
-        ResponseBean response = new ResponseBean();
-        response.setCode(500);
-        response.setMsg("请求未被处理");
+    public ResponseBean submit(@RequestParam(value="passengerId") String userId, @RequestBody UnsettledOrder order){
+        ResponseBean response = new ResponseBean(500,userId+"的请求未被处理",order);
         try{
             dispatchService.updateUOrderField(userId, order);
             response.setCode(200);
@@ -32,14 +29,17 @@ public class PassengerSubmitController {
     }
 
     @GetMapping(value = "/inquire")
-    public ResponseBean inquire(String orderId){
-        ResponseBean response = new ResponseBean();
-        response.setCode(500);
-        response.setMsg("查询失败");
+    public ResponseBean inquire(@RequestParam(value="passengerId") String orderId){
+        ResponseBean response = new ResponseBean(500,"查询失败",null);
         try{
+            //TODO:查询Mysql数据库的订单状态，不是查redis！！
             Boolean accepted = true;
             response.setCode(200);
             response.setMsg("查询成功");
+            //暂时拿来测试
+            if(dispatchService == null){
+                response.setMsg("找不到Bean");
+            }
             response.setData(accepted);
             return response;
         }catch (Exception e){

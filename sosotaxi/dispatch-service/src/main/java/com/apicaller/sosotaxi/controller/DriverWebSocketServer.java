@@ -5,9 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.apicaller.sosotaxi.entity.*;
 import com.apicaller.sosotaxi.service.impl.DispatchServiceImpl;
 import com.apicaller.sosotaxi.service.impl.InfoCacheServiceImpl;
+import com.apicaller.sosotaxi.utils.SpringContextUtils;
 import org.springframework.stereotype.Controller;
 
-import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -15,21 +15,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-@ServerEndpoint("/dispatch/driver/{driverId}")
 @Controller
+@ServerEndpoint(value="/dispatch/driver/{driverId}")
 public class DriverWebSocketServer {
 
     //暂时没加log，后面考虑加上
 
-    @Resource
     private InfoCacheServiceImpl infoCacheService;
 
-    @Resource
     private DispatchServiceImpl dispatchService;
-
-    public DriverWebSocketServer(){
-        dispatchService.dispatch();
-    }
 
     /**
      * 安全存放每个客户端对应的Server
@@ -65,6 +59,15 @@ public class DriverWebSocketServer {
 
     @OnOpen
     public void onOpen(Session session, @PathParam(value = "driverId") String userId) throws Exception {
+
+        if(infoCacheService == null){
+            infoCacheService = (InfoCacheServiceImpl)SpringContextUtils.getBean(InfoCacheServiceImpl.class);
+        }
+
+        if(dispatchService == null){
+            dispatchService = (DispatchServiceImpl)SpringContextUtils.getBean(DispatchServiceImpl.class);
+        }
+
         sessionPools.put(userId, session);
         ResponseBean response = new ResponseBean(200, "连接成功", null);
         String returnMsg = JSON.toJSONString(response);
@@ -88,19 +91,25 @@ public class DriverWebSocketServer {
         GeoPoint point = msg.getPoint();
         String requestType = msg.getRequest();
         String detail = msg.getDetail();
+
+        ResponseBean response = new ResponseBean(500, "服务器处理出错",msg);
+
+        if(dispatchService == null){
+            response.setMsg("找不到bean");
+        }
         try{
             infoCacheService.updateDriverField(driver, point);
+            response.setMsg("更新信息成功");
         }catch (Exception e){
             e.printStackTrace();
         }
-        ResponseBean response = new ResponseBean(500, "服务器处理出错",null);
-        if(PulseMsg.RequestType.getOrders.equals(PulseMsg.RequestType.valueOf(requestType))){
+        if(PulseMsg.RequestType.getOrders.toString().equals(requestType)){
             List<UnsettledOrder> orders = infoCacheService.getDispatch(driver.getDriverId());
             response.setCode(200);
             response.setMsg("订单列表");
             response.setData(orders);
         }
-        else if((PulseMsg.RequestType.acceptOrder.equals(PulseMsg.RequestType.valueOf(requestType)))){
+        else if((PulseMsg.RequestType.acceptOrder.toString().equals(requestType))){
             Boolean isSuccess = infoCacheService.acceptOrder(detail,driver.getDriverId());
             response.setCode(200);
             if(isSuccess){
@@ -113,7 +122,6 @@ public class DriverWebSocketServer {
         }
         else{
             response.setCode(200);
-            response.setMsg("位置信息上传成功");
         }
         String returnMsg = JSON.toJSONString(response);
         try{

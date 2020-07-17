@@ -4,8 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.apicaller.sosotaxi.entity.UnsettledOrder;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.service.DispatchService;
-import com.apicaller.sosotaxi.utils.MapUtil;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import com.apicaller.sosotaxi.utils.MapUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 
 @Component
-@EnableScheduling
 public class DispatchServiceImpl implements DispatchService {
 
     @Resource
@@ -23,12 +21,13 @@ public class DispatchServiceImpl implements DispatchService {
     //5s处理一次
     @Override
     @Scheduled(fixedDelay = 5000)
-    public void dispatch(){
+    public void dispatch() throws Exception {
         List<UnsettledOrder> orders = infoCacheService.getAllUOrder();
         Set<String> driverIds = infoCacheService.getAllDrivers();
         infoCacheService.deleteDurationSets(infoCacheService.getAllDurationSetKeys());
 
         //TODO:将该方法封装到infoCacheService
+        //并且将清除的方式更改，防止用户在处理时读不到数据
         for(String driverId:driverIds){
             infoCacheService.clearDispatch(driverId);
         }
@@ -40,20 +39,26 @@ public class DispatchServiceImpl implements DispatchService {
             for(String driverId:drivers){
                 GeoPoint point = infoCacheService.getDriverPosition(driverId);
                 try{
-                    String result = MapUtil.getDirection(point, order.getOriginPoint());
+                    String result = MapUtils.getDirection(point, order.getOriginPoint());
                     JSONObject resultJson = JSONObject.parseObject(result);
-                    String durationStr = MapUtil.getDuration(resultJson);
+                    String durationStr = MapUtils.getDuration(resultJson);
                     double duration = Double.parseDouble(durationStr);
                     infoCacheService.updateDurationSet(order.getOrderId(),driverId,duration);
                 }catch(Exception e){
                     e.printStackTrace();
                 }
             }
-
-            Set<String> driversToDispatch = infoCacheService.getDriverIdByRank(order.getOrderId());
-
+            Set<String> driversToDispatch = null;
+            try {
+                driversToDispatch = infoCacheService.getDriverIdByRank(order.getOrderId());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             //TODO:司机的分派单上的订单应当按照距离排列
             //分配
+            if(driversToDispatch==null){
+                continue;
+            }
             for(String driverId:driversToDispatch){
                 infoCacheService.updateDispatch(driverId, order);
             }

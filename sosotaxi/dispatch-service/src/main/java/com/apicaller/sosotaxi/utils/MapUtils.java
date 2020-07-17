@@ -12,7 +12,7 @@ import org.springframework.http.HttpRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MapUtil {
+public class MapUtils {
 
     @Value("${baiduapi.ak}")
     private static String AK;

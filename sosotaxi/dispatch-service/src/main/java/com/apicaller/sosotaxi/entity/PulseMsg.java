@@ -18,7 +18,12 @@ public class PulseMsg implements Serializable {
         /**
          * 接受订单
          */
-        acceptOrder
+        acceptOrder,
+        /**
+         * todo
+         * 更新位置（当前版本是更新所有信息）
+         */
+        update
     }
 
     /**
