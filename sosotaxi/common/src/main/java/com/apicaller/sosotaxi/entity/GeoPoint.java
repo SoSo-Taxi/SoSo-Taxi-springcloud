@@ -2,6 +2,7 @@ package com.apicaller.sosotaxi.entity;
 
 import lombok.Data;
 import java.io.Serializable;
+import java.text.NumberFormat;
 
 /**
  * 表示一个地理上的点。
@@ -34,5 +35,21 @@ public class GeoPoint implements Serializable {
 
     public String toPointFormat() {
         return "POINT(" + lat + " " + lng + ")";
+    }
+
+    public String toBDFormat(){
+        return formatDouble(lat) + "," + formatDouble(lng);
+    }
+
+    /**
+     * 取消科学计数法
+     * @param d
+     * @return
+     */
+    private static String formatDouble(double d) {
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(20);
+        nf.setGroupingUsed(false);
+        return nf.format(d);
     }
 }
