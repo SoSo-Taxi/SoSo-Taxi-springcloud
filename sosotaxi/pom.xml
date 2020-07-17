@@ -11,11 +11,15 @@
   
   <modules>
     <module>sosotaxi-service</module>
+    <module>order-service</module>
     <module>eureka-server</module>
     <module>order-service</module>
     <module>user-service</module>
     <module>common</module>
+
+    <module>dispatch-service</module>
     <module>order-service</module>
+
   </modules>
   
 
@@ -117,6 +121,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>2.3.1.RELEASE</version>
         <configuration>
           <fork>true</fork>
           <addResources>true</addResources>
