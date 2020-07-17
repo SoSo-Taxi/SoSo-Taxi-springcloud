@@ -133,7 +133,7 @@ public class DriverWebSocketServer {
     }
 
     @OnClose
-    public void onClose(@PathParam(value = "driverId") String userId){
+    public void onClose(@PathParam(value = "driverId") String userId) throws Exception {
         sessionPools.remove(userId);
         try{
             infoCacheService.deleteDriverField(userId);

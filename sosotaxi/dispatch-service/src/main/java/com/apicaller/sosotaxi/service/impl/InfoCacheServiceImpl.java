@@ -7,12 +7,14 @@ import com.apicaller.sosotaxi.service.InfoCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -24,7 +26,7 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     private RedisTemplate<String, Serializable> redisTemplate;
 
     @Resource
-    private RedisTemplate<String, String> sRedisTemplate;
+    private StringRedisTemplate sRedisTemplate;
 
     /**
      * 订单列表
@@ -53,7 +55,7 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      */
     @Override
     public MinimizedDriver getDriver(String driverId){
-        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
+        HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
         String key = sHashOperations.get(DRIVER_HASH_KEY, driverId);
         String city = key.substring(key.indexOf("_")+1, key.lastIndexOf("_"));
         String typeStr = key.substring(key.lastIndexOf("_")+1);
@@ -67,7 +69,7 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      */
     @Override
     public Set<String> getAllDrivers(){
-        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
+        HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
         return sHashOperations.keys(DRIVER_HASH_KEY);
     }
 
@@ -92,7 +94,7 @@ public class InfoCacheServiceImpl implements InfoCacheService {
             throw new Exception("redisTemplate注入失败");
         }
         gHashOperations.put(hashKey, driverId, point);
-        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
+        HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
         sHashOperations.put(DRIVER_HASH_KEY,driverId,hashKey);
         return exist != null && !exist;
     }
@@ -117,7 +119,7 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     @Override
     public GeoPoint getDriverPosition(String driverId){
         HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
-        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
+        HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
         String key = sHashOperations.get(DRIVER_HASH_KEY, driverId);
         return gHashOperations.get(key, driverId);
     }
@@ -130,7 +132,7 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     @Override
     public void deleteDriverField(String driverId) throws Exception {
         HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
-        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
+        HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
         String hashKey = sHashOperations.get(DRIVER_HASH_KEY,driverId);
         if(hashKey!=null){
             gHashOperations.delete(hashKey, driverId);
@@ -148,7 +150,7 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      */
     @Override
     public void updatePoint(String driverId, GeoPoint point){
-        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
+        HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
         String hashKey = sHashOperations.get(DRIVER_HASH_KEY, driverId);
         HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
         gHashOperations.put(hashKey, driverId, point);
@@ -204,7 +206,8 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      */
     @Override
     public Set<String> getHashByPattern(String city, int type){
-        return redisTemplate.keys(city+"_"+Integer.toString(type)+"_*");
+        HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
+        return gHashOperations.keys("driverHash_"+city+"_"+Integer.toString(type));
     }
 
     /**
@@ -227,6 +230,9 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     public void updateDispatch(String driverId, UnsettledOrder dispatchedOrder){
         HashOperations<String, String, List<UnsettledOrder>> operations = redisTemplate.opsForHash();
         List<UnsettledOrder> orders = operations.get(DISPATCH_HASH_KEY, driverId);
+        if(orders == null){
+            orders = new LinkedList<UnsettledOrder>();
+        }
         orders.add(dispatchedOrder);
         //保险起见，先删后加，防止有旧版本的bug
         operations.delete(DISPATCH_HASH_KEY,driverId);
@@ -348,5 +354,26 @@ public class InfoCacheServiceImpl implements InfoCacheService {
             this.deleteUOrder(orderId);
             return true;
         }
+    }
+
+    /**
+     * 测试用，添加
+     * @param testKey
+     * @param value
+     */
+    @Override
+    public void addTestMsgKey(String testKey, String value) {
+        HashOperations<String, String, String> operations = sRedisTemplate.opsForHash();
+        operations.put(testKey,"testField",value);
+    }
+
+    /**
+     * 测试用，删除
+     * @param testKey
+     */
+    @Override
+    public void deleteTestMsgKey(String testKey) {
+        HashOperations<String, String, String> operations = sRedisTemplate.opsForHash();
+        operations.delete(testKey,"testField");
     }
 }

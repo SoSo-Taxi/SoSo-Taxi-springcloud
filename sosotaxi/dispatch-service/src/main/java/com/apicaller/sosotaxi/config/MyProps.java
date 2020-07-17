@@ -1,14 +1,13 @@
 package com.apicaller.sosotaxi.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 /**
  * 可配置属性集合
- * 暂时不用这个，但考虑到后面可能会有更多参数，还是写了
  */
 @ConfigurationProperties(prefix = "baiduapi")
-@Repository
+@Component
 public class MyProps {
 
     /**

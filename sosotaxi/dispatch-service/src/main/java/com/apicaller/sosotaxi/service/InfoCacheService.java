@@ -174,4 +174,18 @@ public interface InfoCacheService {
      * @return
      */
     Boolean acceptOrder(String orderId, String driverId);
+
+
+    /**
+     * 测试用，添加
+     * @param testKey
+     * @param value
+     */
+    void addTestMsgKey(String testKey, String value);
+
+    /**
+     * 测试用，删除
+     * @param testKey
+     */
+    void deleteTestMsgKey(String testKey);
 }

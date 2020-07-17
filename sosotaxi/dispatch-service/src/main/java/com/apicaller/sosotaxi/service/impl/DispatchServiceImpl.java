@@ -18,6 +18,9 @@ public class DispatchServiceImpl implements DispatchService {
     @Resource
     private InfoCacheServiceImpl infoCacheService;
 
+    @Resource
+    private MapUtils mapUtils;
+
     //5s处理一次
     @Override
     @Scheduled(fixedDelay = 5000)
@@ -28,6 +31,7 @@ public class DispatchServiceImpl implements DispatchService {
 
         //TODO:将该方法封装到infoCacheService
         //并且将清除的方式更改，防止用户在处理时读不到数据
+        //现在的效果只能做演示，绝对绝对不能留到最后！！
         for(String driverId:driverIds){
             infoCacheService.clearDispatch(driverId);
         }
@@ -39,10 +43,8 @@ public class DispatchServiceImpl implements DispatchService {
             for(String driverId:drivers){
                 GeoPoint point = infoCacheService.getDriverPosition(driverId);
                 try{
-                    String result = MapUtils.getDirection(point, order.getOriginPoint());
-                    JSONObject resultJson = JSONObject.parseObject(result);
-                    String durationStr = MapUtils.getDuration(resultJson);
-                    double duration = Double.parseDouble(durationStr);
+                    String result = mapUtils.getDirection(point, order.getOriginPoint());
+                    double duration = MapUtils.getDuration(result);
                     infoCacheService.updateDurationSet(order.getOrderId(),driverId,duration);
                 }catch(Exception e){
                     e.printStackTrace();
