@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.apicaller.sosotaxi.dao.UserWalletDao">
+
+    <resultMap id="BaseResultMap" type="com.apicaller.sosotaxi.entity.UserWallet">
+        <!--@Table user_wallet-->
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="balance" column="balance" jdbcType="NUMERIC"/>
+        <result property="point" column="point" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+          user_id, balance, point
+        from db01.user_wallet
+        where user_id = #{userId}
+    </select>
+
+    <!--查询单个-->
+    <select id="queryByUsername" resultMap="BaseResultMap">
+        select
+          db01.user_wallet.user_id, balance, point
+        from db01.user, db01.user_wallet
+        where db01.user.user_name = #{username} and db01.user_wallet.user_id = db01.user.user_id
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+          user_id, balance, point
+        from db01.user_wallet
+        limit #{offset}, #{limit}
+    </select>
+
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="userId" useGeneratedKeys="true">
+        insert into db01.user_wallet(user_id, balance, point)
+        values (#{userId}, #{balance}, #{point})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update db01.user_wallet
+        <set>
+            <if test="balance != null">
+                balance = #{balance},
+            </if>
+            <if test="point != null">
+                point = #{point},
+            </if>
+        </set>
+        where user_id = #{userId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from db01.user_wallet where user_id = #{userId}
+    </delete>
+
+</mapper>

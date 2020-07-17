@@ -15,24 +15,35 @@ import java.io.Serializable;
 @Data
 public class Order implements Serializable {
     private static final long serialVersionUID = 825899775666216793L;
-    
+
+    /** 订单Id */
     private Long orderId;
-    
+
+    /** 城市 */
     private String city;
-    
+
+    /** 出发地 */
     private GeoPoint departPoint;
-    
+
+    /** 目的地 */
     private GeoPoint destPoint;
-    
-    private Date time;
-    
+
+    /** 订单创建时间 */
+    private Date createTime;
+
+    /** 出发时间 */
+    private Date departTime;
+
+    /** 起点名称 */
     private String departName;
-    
+
+    /** 目的地名称 */
     private String destName;
 
     /** 服务类型，经济型、舒适型等 */
-    private Short carType;
-    
+    private Short serviceType;
+
+    /** 原始费用 */
     private Double cost;
 
     /** 积分减免 */
@@ -40,13 +51,20 @@ public class Order implements Serializable {
 
     /** 优惠券减免 */
     private Double couponDiscount;
-    
-    private Short status;
 
+    /** 订单状态 */
+    private String status;
+
+    /** 订单评分 */
+    private Short rate;
+
+    /** 订单路程 */
     private Double distance;
 
+    /** 司机Id */
     private Long driverId;
-    
+
+    /** 乘客Id */
     private Long passengerId;
 
 
