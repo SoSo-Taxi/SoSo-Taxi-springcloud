@@ -1,0 +1,363 @@
+package com.apicaller.sosotaxi.service.impl;
+
+import com.apicaller.sosotaxi.entity.MinimizedDriver;
+import com.apicaller.sosotaxi.entity.UnsettledOrder;
+import com.apicaller.sosotaxi.entity.GeoPoint;
+import com.apicaller.sosotaxi.service.InfoCacheService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
+
+@Component
+@EnableTransactionManagement
+public class InfoCacheServiceImpl implements InfoCacheService {
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    /**
+     * 订单列表
+     */
+    private static final String U_ORDER_HASH_KEY = "uOrderHash";
+
+    /**
+     * 订单分配表
+     */
+    private static final String DISPATCH_HASH_KEY = "dispatchHash";
+
+    /**
+     * 司机索引表
+     */
+    private static final String DRIVER_HASH_KEY = "driversIndexHash";
+
+    /**
+     * 每个订单分配给的司机数
+     */
+    private static final long ORDER_ASSIGN_COUNT = 8;
+
+    /**
+     * 获取司机信息
+     * @param driverId
+     * @return
+     */
+    @Override
+    @Transactional
+    public MinimizedDriver getDriver(String driverId){
+        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
+        String key = sHashOperations.get(U_ORDER_HASH_KEY, driverId);
+        String city = key.substring(key.indexOf("_")+1, key.lastIndexOf("_"));
+        String typeStr = key.substring(key.lastIndexOf("_")+1);
+        int type = Integer.parseInt(typeStr);
+        return new MinimizedDriver(city, type, driverId);
+    }
+
+    /**
+     * 获取所有当前在线司机的名单
+     * @return
+     */
+    @Override
+    @Transactional
+    public Set<String> getAllDrivers(){
+        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
+        return sHashOperations.keys(DRIVER_HASH_KEY);
+    }
+
+    /**
+     * 通过详细信息更新司机hash
+     * @param city
+     * @param type
+     * @param driverId
+     * @param point
+     * @return 是否是新创建的hash
+     * @throws Exception
+     */
+    @Override
+    @Transactional
+    public Boolean updateDriverField(String city, int type, String driverId, GeoPoint point) throws Exception {
+        HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
+        String hashKey = "driverHash_"+city+"_"+Integer.toString(type);
+        Boolean exist = null;
+        try{
+            exist = redisTemplate.hasKey(hashKey);
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new Exception("redisTemplate注入失败");
+        }
+        gHashOperations.put(hashKey, driverId, point);
+        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
+        sHashOperations.put(DRIVER_HASH_KEY,driverId,hashKey);
+        return exist != null && !exist;
+    }
+
+    /**
+     * 更新司机hash
+     * @param driver
+     * @param point
+     * @return
+     * @throws Exception
+     */
+    @Override
+    @Transactional
+    public Boolean updateDriverField(MinimizedDriver driver, GeoPoint point) throws Exception{
+        return updateDriverField(driver.getCity(),driver.getType(),driver.getDriverId(),point);
+    }
+
+    /**
+     * 获取司机位置
+     * @param driverId
+     * @return
+     */
+    @Override
+    @Transactional
+    public GeoPoint getDriverPosition(String driverId){
+        HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
+        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
+        String key = sHashOperations.get(DRIVER_HASH_KEY, driverId);
+        return gHashOperations.get(key, driverId);
+    }
+
+    /**
+     * 通过司机id删除field
+     * @param driverId
+     * @throws Exception
+     */
+    @Override
+    @Transactional
+    public void deleteDriverField(String driverId) throws Exception {
+        HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
+        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
+        String hashKey = sHashOperations.get(DRIVER_HASH_KEY,driverId);
+        if(hashKey!=null){
+            gHashOperations.delete(hashKey, driverId);
+        }
+        else{
+            throw new Exception("删除司机信息缓存时发现信息不存在");
+        }
+        sHashOperations.delete(DRIVER_HASH_KEY,driverId);
+    }
+
+    /**
+     * 通过司机id更新位置，性能比通过完整信息更新差，优先考虑使用updateDriverHash
+     * @param driverId
+     * @param point
+     */
+    @Override
+    @Transactional
+    public void updatePoint(String driverId, GeoPoint point){
+        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
+        String hashKey = sHashOperations.get(DRIVER_HASH_KEY, driverId);
+        HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
+        gHashOperations.put(hashKey, driverId, point);
+    }
+
+    /**
+     * 更新订单hash
+     * @param orderId
+     * @param uOrder
+     */
+    @Override
+    @Transactional
+    public void updateUOrderField(String orderId, UnsettledOrder uOrder){
+        HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
+        operations.put(U_ORDER_HASH_KEY, orderId, uOrder);
+    }
+
+    /**
+     * 获取未分配订单
+     * @param orderId
+     * @return
+     */
+    @Override
+    @Transactional
+    public UnsettledOrder getUOrder(String orderId){
+        HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
+        return operations.get(U_ORDER_HASH_KEY, orderId);
+    }
+
+    /**
+     * 获取所有未分配订单
+     * @return
+     */
+    @Override
+    @Transactional
+    public List<UnsettledOrder> getAllUOrder(){
+        HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
+        return operations.values(U_ORDER_HASH_KEY);
+    }
+
+    /**
+     * 删除订单
+     * @param orderId
+     */
+    @Override
+    @Transactional
+    public void deleteUOrder(String orderId){
+        HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
+        operations.delete(U_ORDER_HASH_KEY, orderId);
+    }
+
+    /**
+     * 获取特定城市特定类型的司机集合
+     * @param city
+     * @param type
+     * @return
+     */
+    @Override
+    @Transactional
+    public Set<String> getHashByPattern(String city, int type){
+        return redisTemplate.keys(city+"_"+Integer.toString(type)+"_*");
+    }
+
+    /**
+     *更新分配的订单
+     * @param driverId
+     * @param dispatchedOrders
+     */
+    @Override
+    @Transactional
+    public void updateDispatch(String driverId, List<UnsettledOrder> dispatchedOrders){
+        HashOperations<String, String, List<UnsettledOrder>> operations = redisTemplate.opsForHash();
+        operations.put(DISPATCH_HASH_KEY,driverId,dispatchedOrders);
+    }
+
+    /**
+     * 为某司机添加新可选订单
+     * @param driverId
+     * @param dispatchedOrder
+     */
+    @Override
+    @Transactional
+    public void updateDispatch(String driverId, UnsettledOrder dispatchedOrder){
+        HashOperations<String, String, List<UnsettledOrder>> operations = redisTemplate.opsForHash();
+        List<UnsettledOrder> orders = operations.get(DISPATCH_HASH_KEY, driverId);
+        orders.add(dispatchedOrder);
+    }
+
+    /**
+     * 获得被分配的订单
+     * @param driverId
+     * @return
+     */
+    @Override
+    @Transactional
+    public List<UnsettledOrder> getDispatch(String driverId){
+        HashOperations<String, String, List<UnsettledOrder>> operations = redisTemplate.opsForHash();
+        return operations.get(DISPATCH_HASH_KEY, driverId);
+    }
+
+    /**
+     * 按司机id删除司机的所有订单
+     * @param driverId
+     */
+    @Override
+    @Transactional
+    public void clearDispatch(String driverId){
+        HashOperations<String, String, List<UnsettledOrder>> operations = redisTemplate.opsForHash();
+        operations.delete(DISPATCH_HASH_KEY, driverId);
+    }
+
+    /**
+     * 为司机删除特定已分配的订单
+     * @param driverId
+     * @param orderId
+     * @return 订单是否存在
+     */
+    @Override
+    @Transactional
+    public Boolean deleteDispatch(String driverId, String orderId){
+        HashOperations<String, String, List<UnsettledOrder>> operations = redisTemplate.opsForHash();
+        List<UnsettledOrder> orders = operations.get(DISPATCH_HASH_KEY, driverId);
+        for(UnsettledOrder order:orders){
+            if(order.toString() == orderId){
+                orders.remove(order);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 更新时间集合
+     * @param orderId
+     * @param driverId
+     * @param duration
+     */
+    @Override
+    @Transactional
+    public void updateDurationSet(String orderId, String driverId, double duration){
+        ZSetOperations<String, String> operations = redisTemplate.opsForZSet();
+        String Key = "duration_"+ orderId;
+        operations.add(Key, driverId, duration);
+    }
+
+    /**
+     * 清空某时间集合
+     * @param orderId
+     * @param driverId
+     */
+    @Override
+    @Transactional
+    public void clearDurationSet(String orderId, String driverId){
+        String Key = "duration_"+ orderId;
+        redisTemplate.delete(Key);
+    }
+
+    /**
+     * 获取所有时间集合key
+     * @return
+     */
+    @Override
+    @Transactional
+    public Set<String> getAllDurationSetKeys(){
+        return redisTemplate.keys("duration_*");
+    }
+
+    /**
+     * 删除所有时间集合
+     * @param keys
+     */
+    @Override
+    @Transactional
+    public void deleteDurationSets(Set<String> keys){
+        redisTemplate.delete(keys);
+    }
+
+    /**
+     * 获取订单分配给的司机名单
+     * @param orderId
+     * @return
+     */
+    @Override
+    @Transactional
+    public Set<String> getDriverIdByRank(String orderId){
+        ZSetOperations<String, String> operations = redisTemplate.opsForZSet();
+        String Key = "duration_"+ orderId;
+        return operations.range(Key, 0, ORDER_ASSIGN_COUNT);
+    }
+
+    /**
+     * 尝试接受订单
+     * @param orderId
+     * @param driverId
+     * @return
+     */
+    @Override
+    @Transactional
+    public Boolean acceptOrder(String orderId, String driverId){
+        HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
+        //如果不存在这个订单（已被其他司机接单）
+        if(!operations.keys(U_ORDER_HASH_KEY).contains(orderId)){
+            return false;
+        }else{
+            this.deleteUOrder(orderId);
+            return true;
+        }
+    }
+}

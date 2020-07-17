@@ -1,4 +1,4 @@
-package com.apicaller.sosotaxi.bean;
+package com.apicaller.sosotaxi.entity;
 
 import lombok.Data;
 

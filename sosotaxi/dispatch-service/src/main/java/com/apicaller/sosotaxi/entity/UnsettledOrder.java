@@ -1,6 +1,5 @@
-package com.apicaller.sosotaxi.bean;
+package com.apicaller.sosotaxi.entity;
 
-import com.apicaller.sosotaxi.entity.GeoPoint;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -58,5 +57,10 @@ public class UnsettledOrder implements Serializable {
         this.originPoint = originPoint;
         this.destinationPoint = destinationPoint;
         this.createdTime = createdTime;
+    }
+
+    @Override
+    public String toString(){
+        return orderId;
     }
 }

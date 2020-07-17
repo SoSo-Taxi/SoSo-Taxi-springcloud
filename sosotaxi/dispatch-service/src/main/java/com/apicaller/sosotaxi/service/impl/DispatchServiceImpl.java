@@ -1,135 +1,62 @@
 package com.apicaller.sosotaxi.service.impl;
 
-import com.apicaller.sosotaxi.bean.MinimizedDriver;
-import com.apicaller.sosotaxi.bean.UnsettledOrder;
+import com.alibaba.fastjson.JSONObject;
+import com.apicaller.sosotaxi.entity.UnsettledOrder;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.service.DispatchService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
+import com.apicaller.sosotaxi.utils.MapUtil;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import java.util.List;
 import java.util.Set;
 
 @Component
+@EnableScheduling
 public class DispatchServiceImpl implements DispatchService {
 
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    @Resource
+    private InfoCacheServiceImpl infoCacheService;
 
-    private static String uOrderHashKey = "uOrderHash";
-
-    /**
-     * 通过详细信息更新司机hash
-     * @param city
-     * @param type
-     * @param driverId
-     * @param point
-     * @return 是否是新创建的hash
-     * @throws Exception
-     */
+    //5s处理一次
     @Override
-    public Boolean updateDriverField(String city, int type, String driverId, GeoPoint point) throws Exception {
-        HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
-        String hashKey = "driverHash_"+city+"_"+Integer.toString(type);
-        Boolean exist = null;
-        try{
-            exist = redisTemplate.hasKey(hashKey);
-        }catch(Exception e){
-            e.printStackTrace();
-            throw new Exception("redisTemplate注入失败");
+    @Scheduled(fixedDelay = 5000)
+    public void dispatch(){
+        List<UnsettledOrder> orders = infoCacheService.getAllUOrder();
+        Set<String> driverIds = infoCacheService.getAllDrivers();
+        infoCacheService.deleteDurationSets(infoCacheService.getAllDurationSetKeys());
+
+        //TODO:将该方法封装到infoCacheService
+        for(String driverId:driverIds){
+            infoCacheService.clearDispatch(driverId);
         }
-        gHashOperations.put(hashKey, driverId, point);
-        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
-        sHashOperations.put("drivers",driverId,hashKey);
-        return exist != null && !exist;
-    }
 
-    /**
-     * 更新司机hash
-     * @param driver
-     * @param point
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public Boolean updateDriverField(MinimizedDriver driver, GeoPoint point) throws Exception{
-        return updateDriverField(driver.getCity(),driver.getType(),driver.getDriverId(),point);
-    }
+        for (UnsettledOrder order:orders) {
+            Set<String> drivers = infoCacheService.getHashByPattern(order.getCity(),order.getType());
 
-    /**
-     * 通过司机id删除field
-     * @param driverId
-     * @throws Exception
-     */
-    @Override
-    public void deleteDriverField(String driverId) throws Exception {
-        HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
-        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
-        String hashKey = sHashOperations.get("drivers",driverId);
-        if(hashKey!=null){
-            gHashOperations.delete(hashKey, driverId);
+            //排序
+            for(String driverId:drivers){
+                GeoPoint point = infoCacheService.getDriverPosition(driverId);
+                try{
+                    String result = MapUtil.getDirection(point, order.getOriginPoint());
+                    JSONObject resultJson = JSONObject.parseObject(result);
+                    String durationStr = MapUtil.getDuration(resultJson);
+                    double duration = Double.parseDouble(durationStr);
+                    infoCacheService.updateDurationSet(order.getOrderId(),driverId,duration);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            Set<String> driversToDispatch = infoCacheService.getDriverIdByRank(order.getOrderId());
+
+            //TODO:司机的分派单上的订单应当按照距离排列
+            //分配
+            for(String driverId:driversToDispatch){
+                infoCacheService.updateDispatch(driverId, order);
+            }
         }
-        else{
-            throw new Exception("删除司机信息缓存时发现信息不存在");
-        }
-        sHashOperations.delete("drivers",driverId);
     }
-
-    /**
-     * 通过司机id更新位置，性能比通过完整信息更新差，优先考虑使用updateDriverHash
-     * @param driverId
-     * @param point
-     */
-    @Override
-    public void updatePoint(String driverId, GeoPoint point){
-        HashOperations<String, String, String> sHashOperations = redisTemplate.opsForHash();
-        String hashKey = sHashOperations.get("drivers", driverId);
-        HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
-        gHashOperations.put(hashKey, driverId, point);
-    }
-
-    /**
-     * 更新订单hash
-     * @param orderId
-     * @param uOrder
-     */
-    @Override
-    public void updateUOrderField(String orderId, UnsettledOrder uOrder){
-        HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
-        operations.put(uOrderHashKey, orderId, uOrder);
-    }
-
-    /**
-     * 获取未分配订单
-     * @param orderId
-     * @return
-     */
-    @Override
-    public UnsettledOrder getUOrder(String orderId){
-        HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
-        return operations.get(uOrderHashKey, orderId);
-    }
-
-    /**
-     * 删除订单
-     * @param orderId
-     */
-    @Override
-    public void deleteUOrder(String orderId){
-        HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
-        operations.delete(uOrderHashKey, orderId);
-    }
-
-    /**
-     * 获取特定城市特定类型的司机集合
-     * @param city
-     * @param type
-     * @return
-     */
-    @Override
-    public Set<String> getHashByPattern(String city, int type){
-        return redisTemplate.keys(city+"_"+Integer.toString(type)+"_*");
-    }
-
 }
