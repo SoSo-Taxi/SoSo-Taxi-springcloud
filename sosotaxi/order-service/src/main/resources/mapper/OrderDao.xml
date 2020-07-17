@@ -16,7 +16,7 @@
         <result property="cost" column="cost" jdbcType="NUMERIC"/>
         <result property="pointDiscount" column="point_discount" jdbcType="NUMERIC"/>
         <result property="couponDiscount" column="coupon_discount" jdbcType="NUMERIC"/>
-        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
         <result property="rate" column="rate" jdbcType="TINYINT"/>
         <result property="distance" column="distance" jdbcType="NUMERIC"/>
         <result property="driverId" column="driver_id" jdbcType="INTEGER"/>
