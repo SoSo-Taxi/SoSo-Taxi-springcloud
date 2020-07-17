@@ -23,7 +23,7 @@ public class DriverController {
     @Resource
     private DriverService driverService;
 
-    @GetMapping("getById")
+    @GetMapping("/getById")
     public Driver getDriverById(Long userId) {
         return this.driverService.queryById(userId);
     }

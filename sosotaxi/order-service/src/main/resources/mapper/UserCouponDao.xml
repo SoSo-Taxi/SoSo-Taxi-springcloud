@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.apicaller.sosotaxi.dao.UserCouponDao">
+
+    <resultMap id="BaseResultMap" type="com.apicaller.sosotaxi.entity.UserCoupon">
+        <!--@Table user_coupon-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="worth" column="worth" jdbcType="NUMERIC"/>
+        <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select
+          id, user_id, worth, expire_time
+        from db01.user_coupon
+        where id = #{id}
+    </select>
+
+    <!--查询一个用户所有的优惠券-->
+    <select id="queryByUserId" resultMap="BaseResultMap">
+        select
+          id, user_id, worth, expire_time
+        from db01.user_coupon
+        where user_id = #{userId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+          id, user_id, worth, expire_time
+        from db01.user_coupon
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into db01.user_coupon(user_id, worth, expire_time)
+        values (#{userId}, #{worth}, #{expireTime})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update db01.user_coupon
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="worth != null">
+                worth = #{worth},
+            </if>
+            <if test="expireTime != null">
+                expire_time = #{expireTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from db01.user_coupon where id = #{id}
+    </delete>
+
+</mapper>
