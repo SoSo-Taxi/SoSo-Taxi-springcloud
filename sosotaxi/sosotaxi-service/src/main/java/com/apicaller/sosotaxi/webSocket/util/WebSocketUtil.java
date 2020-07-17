@@ -61,6 +61,10 @@ public class WebSocketUtil {
         return loginDriver;
     }
 
+    public static Session getSessionByLoginDrier(LoginDriver loginDriver)
+    {
+        return LOGIN_DRIVER_SESSION_MAP.get(loginDriver);
+    }
     /**
      * 添加登陆司机的状态
      */
