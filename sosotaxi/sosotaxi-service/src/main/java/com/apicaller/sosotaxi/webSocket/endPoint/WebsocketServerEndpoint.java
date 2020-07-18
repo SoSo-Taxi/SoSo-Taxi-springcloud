@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 
@@ -34,8 +36,16 @@ public class WebsocketServerEndpoint implements InitializingBean {
 
     private static final Map<String, MessageHandler> HANDLERS = new HashMap<>();
 
+    @Autowired
+    ApplicationContext applicationContext;
+
     @Override
     public void afterPropertiesSet() throws Exception {
+        applicationContext.getBeansOfType(MessageHandler.class).values()
+                // 获得所有 MessageHandler Bean
+                .forEach(messageHandler -> HANDLERS.put(messageHandler.getMessageType(), messageHandler));
+        // 添加到 handlers 中
+        logger.info("[afterPropertiesSet][消息处理器数量：{}]", HANDLERS.size());
 
     }
     private Logger logger = LoggerFactory.getLogger(getClass());

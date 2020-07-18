@@ -13,6 +13,10 @@ import lombok.Data;
 public class LoginDriver {
 
 
+    public LoginDriver()
+    {
+        geoPoint = new GeoPoint();
+    }
 
     private GeoPoint geoPoint;
 
