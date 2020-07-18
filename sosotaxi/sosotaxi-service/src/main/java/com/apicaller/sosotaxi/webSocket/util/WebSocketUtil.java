@@ -1,7 +1,9 @@
 package com.apicaller.sosotaxi.webSocket.util;
 
 import com.alibaba.fastjson.JSONObject;
+import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
+import com.apicaller.sosotaxi.utils.JwtTokenUtils;
 import com.apicaller.sosotaxi.webSocket.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,9 +11,11 @@ import org.slf4j.LoggerFactory;
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.stream.Collectors;
+
 
 /**
  * @author 张流潇潇
@@ -39,13 +43,59 @@ public class WebSocketUtil {
      */
     private static final Map<LoginDriver,Session> LOGIN_DRIVER_SESSION_MAP = new ConcurrentHashMap<>();
 
-//    /**
-//     * session和已登录司机的映射
-//     */
-//    private static final Map<Session,LoginDriver> SESSION_LOGIN_DRIVER_MAP = new ConcurrentHashMap<>();
 
     /**
-     * 找到session对应的driver
+     * 派单后乘客用户名和司机的映射
+     */
+    private static final Map<String, LoginDriver> USERNAME_LOGIN_DRIVER_MAP = new ConcurrentHashMap<>();
+
+
+    /**
+     * 订单开始时，添加司机和用户的映射
+     * @param session
+     * @param loginDriver
+     */
+
+    public static void bondUserNameAndLoginDriver (Session session, LoginDriver loginDriver)
+    {
+        String userToken = SESSION_USER_MAP.get(session);
+        String usernameByToken = JwtTokenUtils.getUsernameByToken(userToken);
+        USERNAME_LOGIN_DRIVER_MAP.put(usernameByToken,loginDriver);
+    }
+
+    /**
+     * 找到所有可用的司机，返回司机引用
+     */
+    public static List<LoginDriver> getAllAvailableDrivers()
+    {
+        List<LoginDriver> availableLoginDrivers = LOGIN_DRIVER_SESSION_MAP.keySet().stream()
+                .filter(a -> a.getIsDispatched().equals("no"))
+                .collect(Collectors.toList());
+
+        return availableLoginDrivers;
+    }
+
+
+    /**
+     * 找到所有未被派遣的司机，返回坐标
+     */
+    public static List<GeoPoint> getAllAvailableDriverGeo()
+    {
+        String no = "no";
+        List<GeoPoint> geoPointList = LOGIN_DRIVER_SESSION_MAP.keySet().stream()
+                .filter(loginDriver -> loginDriver.getIsDispatched().equals(no))
+                .map(a ->
+                { return new GeoPoint(a.getGeoPoint().getLat(),a.getGeoPoint().getLng()); })
+                .collect(Collectors.toList());
+        return geoPointList;
+    }
+
+
+    /**
+     *
+     * @param session
+     * @return LoginDriver
+     * 根据司机session找到司机
      */
 
     public static LoginDriver findDriverBySession(Session session)
@@ -61,6 +111,10 @@ public class WebSocketUtil {
         return loginDriver;
     }
 
+    public static Session getSessionByLoginDrier(LoginDriver loginDriver)
+    {
+        return LOGIN_DRIVER_SESSION_MAP.get(loginDriver);
+    }
     /**
      * 添加登陆司机的状态
      */
