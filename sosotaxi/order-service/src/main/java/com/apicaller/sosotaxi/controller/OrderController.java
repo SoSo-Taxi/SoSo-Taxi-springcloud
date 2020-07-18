@@ -40,8 +40,8 @@ public class OrderController {
     }
 
     @PutMapping("/updateOrder")
-    public int updateOrder(@RequestBody Order order) {
-        return orderService.update(order);
+    public boolean updateOrder(@RequestBody Order order) {
+        return orderService.update(order) == 1;
     }
 
     @DeleteMapping("deleteOrder")

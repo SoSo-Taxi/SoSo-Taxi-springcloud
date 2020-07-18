@@ -9,7 +9,9 @@
         <result property="departPoint" column="depart_point" jdbcType="OTHER"/>
         <result property="destPoint" column="dest_point" jdbcType="OTHER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="appointedTime" column="appointed_time" jdbcType="TIMESTAMP"/>
         <result property="departTime" column="depart_time" jdbcType="TIMESTAMP"/>
+        <result property="arriveTime" column="arrive_time" jdbcType="TIMESTAMP"/>
         <result property="departName" column="depart_name" jdbcType="VARCHAR"/>
         <result property="destName" column="dest_name" jdbcType="VARCHAR"/>
         <result property="serviceType" column="service_type" jdbcType="INTEGER"/>
@@ -17,7 +19,7 @@
         <result property="pointDiscount" column="point_discount" jdbcType="NUMERIC"/>
         <result property="couponDiscount" column="coupon_discount" jdbcType="NUMERIC"/>
         <result property="status" column="status" jdbcType="VARCHAR"/>
-        <result property="rate" column="rate" jdbcType="TINYINT"/>
+        <result property="driverRate" column="driver_rate" jdbcType="TINYINT"/>
         <result property="distance" column="distance" jdbcType="NUMERIC"/>
         <result property="driverId" column="driver_id" jdbcType="INTEGER"/>
         <result property="passengerId" column="passenger_id" jdbcType="INTEGER"/>
@@ -56,11 +58,11 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="orderId" useGeneratedKeys="true">
-        insert into db01.order(city, depart_point, dest_point, create_time, depart_time, depart_name,
-        dest_name, service_type, cost, point_discount, coupon_discount, status, rate, distance, driver_id, passenger_id)
-        values (#{city}, GeomFromText(#{departPoint}), GeomFromText(#{destPoint}), #{createTime},
-        #{departTime}, #{departName}, #{destName}, #{serviceType}, #{cost}, #{pointDiscount},
-        #{couponDiscount}, #{status}, #{rate}, #{distance}, #{driverId}, #{passengerId})
+        insert into db01.order(city, depart_point, dest_point, create_time, appointed_time, depart_time, arrive_time, depart_name,
+        dest_name, service_type, cost, point_discount, coupon_discount, status, driver_rate, passenger_rate, distance, driver_id, passenger_id)
+        values (#{city}, GeomFromText(#{departPoint}), GeomFromText(#{destPoint}), #{createTime}, #{appointedTime},
+        #{departTime}, #{arriveTime}, #{departName}, #{destName}, #{serviceType}, #{cost}, #{pointDiscount},
+        #{couponDiscount}, #{status}, #{driverRate},#{passengerRate}, #{distance}, #{driverId}, #{passengerId})
     </insert>
 
     <!--通过主键修改数据-->
@@ -79,8 +81,14 @@
             <if test="createTime != null">
                 create_time = #{createTime},
             </if>
+            <if test="appointedTime != null">
+                appointed_time = #{appointedTime},
+            </if>
             <if test="departTime != null">
                 depart_time = #{departTime},
+            </if>
+            <if test="arriveTime != null">
+                arrive_time = #{arriveTime},
             </if>
             <if test="departName != null and departName != ''">
                 depart_name = #{departName},
@@ -103,8 +111,11 @@
             <if test="status != null">
                 status = #{status},
             </if>
-            <if test="rate != null">
-                rate = #{rate},
+            <if test="driverRate != null">
+                driver_rate = #{driverRate},
+            </if>
+            <if test="passengerRate != null">
+                passenger_rate = #{passengerRate},
             </if>
             <if test="distance != null">
                 distance = #{distance},

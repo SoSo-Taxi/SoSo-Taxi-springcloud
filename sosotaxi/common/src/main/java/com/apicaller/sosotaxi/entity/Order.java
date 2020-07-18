@@ -31,8 +31,14 @@ public class Order implements Serializable {
     /** 订单创建时间 */
     private Date createTime;
 
+    /** 用户预约的时间 */
+    private Date appointedTime;
+
     /** 出发时间 */
     private Date departTime;
+
+    /** 到达时间 */
+    private Date arriveTime;
 
     /** 起点名称 */
     private String departName;
@@ -55,8 +61,11 @@ public class Order implements Serializable {
     /** 订单状态 */
     private String status;
 
-    /** 订单评分 */
-    private Short rate;
+    /** 订单中，司机获得的评分 */
+    private Short driverRate;
+
+    /** 订单中，乘客获得的评分 */
+    private Short passengerRate;
 
     /** 订单路程 */
     private Double distance;
