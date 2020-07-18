@@ -6,6 +6,7 @@ import lombok.Data;
  * @author 张流潇潇
  * @createTime 2020/7/16
  * @updateTime
+ * 司机更新自己位置
  */
 @Data
 public class UpdateRequest implements Message {

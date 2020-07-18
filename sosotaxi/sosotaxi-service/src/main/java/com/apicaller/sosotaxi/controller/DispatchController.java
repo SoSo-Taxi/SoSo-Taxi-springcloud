@@ -133,19 +133,4 @@ public class DispatchController {
     }
 
 
-    @PostMapping("/")
-    public ResponseBean callCar(GenerateOrderDTO generateOrderDTO)
-    {
-
-        DispatchDriverMessage dispatchDriverMessage = new DispatchDriverMessage();
-
-        /**
-         * 根据算法找到loginDriver
-         */
-
-        LoginDriver loginDriver = new LoginDriver();
-        WebSocketUtil.getSessionByLoginDrier(loginDriver);
-        return new ResponseBean();
-
-    }
 }
