@@ -5,6 +5,7 @@ import com.apicaller.sosotaxi.entity.UnsettledOrder;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface InfoCacheService {
@@ -21,6 +22,13 @@ public interface InfoCacheService {
      * @return
      */
     Set<String> getAllDrivers();
+
+    /**
+     * 查看某司机是否注册了该服务
+     * @param driverId
+     * @return
+     */
+    Boolean hasDriver(String driverId);
 
     /**
      * 通过详细信息更新司机hash
@@ -84,6 +92,13 @@ public interface InfoCacheService {
      * @return
      */
     List<UnsettledOrder> getAllUOrder();
+
+    /**
+     * 查看某订单是否存在
+     * @param orderId
+     * @return
+     */
+    Boolean hasUOrder(String orderId);
 
     /**
      * 删除订单
@@ -170,10 +185,9 @@ public interface InfoCacheService {
     /**
      * 尝试接受订单
      * @param orderId
-     * @param driverId
      * @return
      */
-    Boolean acceptOrder(String orderId, String driverId);
+    Map<String, Object> acceptOrder(String orderId);
 
 
     /**
