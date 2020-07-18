@@ -24,7 +24,7 @@ public class BDmapUtil {
      * @param radius
      * @return
      */
-    public static String reverseGeocoding(GeoPoint point, CoordType coordType, int radius) {
+    public static JSONObject reverseGeocoding(GeoPoint point, CoordType coordType, int radius) {
 
         return BDmapUtil.reverseGeocoding(point.getLat(), point.getLng(), coordType, radius);
     }
@@ -37,7 +37,7 @@ public class BDmapUtil {
      * @param radius
      * @return
      */
-    public static String reverseGeocoding(double lat, double lng, CoordType coordType, int radius) {
+    public static JSONObject reverseGeocoding(double lat, double lng, CoordType coordType, int radius) {
 
         CoordType ct = coordType == null? CoordType.bd09ll : coordType;
         System.out.println(ct.getStirng());
@@ -56,10 +56,7 @@ public class BDmapUtil {
                         .queryParam("location", lat + "," + lng)
                         .build())
                 .retrieve().bodyToMono(String.class).block();
-        JSONObject result = JSONObject.parseObject(res);
 
-        System.out.println(res);
-
-        return res;
+        return JSONObject.parseObject(res);
     }
 }
