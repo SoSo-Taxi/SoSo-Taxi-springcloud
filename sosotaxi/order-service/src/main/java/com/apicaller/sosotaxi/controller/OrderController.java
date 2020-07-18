@@ -19,12 +19,6 @@ public class OrderController {
     @Resource
     private OrderService orderService;
 
-    /**
-     * 通过主键查询单条数据
-     *
-     * @param orderId 主键
-     * @return 单条数据
-     */
     @GetMapping("/getById")
     public Order getById(Long orderId) {
         return orderService.queryById(orderId);
@@ -46,8 +40,8 @@ public class OrderController {
     }
 
     @PutMapping("/updateOrder")
-    public int updateOrder(@RequestBody Order order) {
-        return orderService.update(order);
+    public boolean updateOrder(@RequestBody Order order) {
+        return orderService.update(order) == 1;
     }
 
     @DeleteMapping("deleteOrder")

@@ -54,10 +54,6 @@ public class JwtTokenUtils {
     }
 
 
-    /**
-     * @deprecated 弃用。改为从数据库中获取，保证权限的即时性。
-     */
-    @Deprecated
     public static String getUserRolesByToken(String token) {
 
         String role = (String) getTokenBody(token)

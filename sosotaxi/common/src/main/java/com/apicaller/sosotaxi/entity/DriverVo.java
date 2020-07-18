@@ -16,6 +16,9 @@ public class DriverVo implements Serializable {
     /** 用户id */
     private long userId;
 
+    /** 车品牌 */
+    private String carBrand;
+
     /** 车型 */
     private String carModel;
 
