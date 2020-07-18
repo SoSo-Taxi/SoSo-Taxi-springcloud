@@ -8,16 +8,22 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("/dispatch/passenger/")
-public class PassengerSubmitController {
+@RequestMapping("/dispatch/passenger")
+public class PassengerDispatchController {
+
     @Resource
-    InfoCacheServiceImpl dispatchService;
+    InfoCacheServiceImpl infoCacheService;
 
     @PostMapping(value = "/submit")
-    public ResponseBean submit(@RequestParam(value="passengerId") String userId, @RequestBody UnsettledOrder order){
+    public ResponseBean submit(@RequestBody UnsettledOrder order){
+        if(order == null){
+            ResponseBean response = new ResponseBean(400,"请求参数错误",null);
+            return response;
+        }
+        String userId = order.getPassengerId();
         ResponseBean response = new ResponseBean(500,userId+"的请求未被处理",order);
         try{
-            dispatchService.updateUOrderField(userId, order);
+            infoCacheService.updateUOrderField(userId, order);
             response.setCode(200);
             response.setMsg("请求添加成功");
             response.setData(order.getOrderId());
@@ -28,6 +34,11 @@ public class PassengerSubmitController {
         }
     }
 
+    /**
+     * 暂时不要使用这个
+     * @param orderId
+     * @return
+     */
     @GetMapping(value = "/inquire")
     public ResponseBean inquire(@RequestParam(value="passengerId") String orderId){
         ResponseBean response = new ResponseBean(500,"查询失败",null);
@@ -37,7 +48,7 @@ public class PassengerSubmitController {
             response.setCode(200);
             response.setMsg("查询成功");
             //暂时拿来测试
-            if(dispatchService == null){
+            if(infoCacheService == null){
                 response.setMsg("找不到Bean");
             }
             response.setData(accepted);

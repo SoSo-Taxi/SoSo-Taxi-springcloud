@@ -5,6 +5,7 @@ import com.apicaller.sosotaxi.entity.UnsettledOrder;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface InfoCacheService {
@@ -170,10 +171,9 @@ public interface InfoCacheService {
     /**
      * 尝试接受订单
      * @param orderId
-     * @param driverId
      * @return
      */
-    Boolean acceptOrder(String orderId, String driverId);
+    Map<String, Object> acceptOrder(String orderId);
 
 
     /**
