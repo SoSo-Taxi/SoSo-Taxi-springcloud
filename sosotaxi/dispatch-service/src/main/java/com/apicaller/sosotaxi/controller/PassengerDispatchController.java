@@ -23,7 +23,7 @@ public class PassengerDispatchController {
         String userId = order.getPassengerId();
         ResponseBean response = new ResponseBean(500,userId+"的请求未被处理",order);
         try{
-            infoCacheService.updateUOrderField(userId, order);
+            infoCacheService.updateUOrderField(order.getOrderId(), order);
             response.setCode(200);
             response.setMsg("请求添加成功");
             response.setData(order.getOrderId());
@@ -35,7 +35,7 @@ public class PassengerDispatchController {
     }
 
     /**
-     * 暂时不要使用这个
+     * 暂时不要使用这个，会再写一个管理类，顺带包含查询方法
      * @param orderId
      * @return
      */

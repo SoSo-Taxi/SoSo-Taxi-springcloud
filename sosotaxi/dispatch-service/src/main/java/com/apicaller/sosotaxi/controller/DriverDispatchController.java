@@ -79,19 +79,35 @@ public class DriverDispatchController {
         String userId = msg.getDriverId();
         ResponseBean response = new ResponseBean(500, userId + "的请求未被处理", null);
         try{
+            response.setCode(200);
             String orderId = msg.getOrderId();
             String driverId = msg.getDriverId();
-            MinimizedDriver driver = infoCacheService.getDriver(driverId);
-            Map<String, Object> result = infoCacheService.acceptOrder(orderId);
 
-            Boolean isSuccess = (Boolean) result.get("isSuccess");
-            response.setCode(200);
-            if(isSuccess){
+            //TODO:接单成功后删除该司机
+            MinimizedDriver driver = infoCacheService.getDriver(driverId);
+
+            if(!infoCacheService.hasDriver(driverId)){
+                response.setMsg("登记名单中未找到该司机");
+                return response;
+            }
+            if(!infoCacheService.hasUOrder(orderId)){
+                response.setMsg("订单不存在");
+                return response;
+            }
+
+            Map<String, Object> result = infoCacheService.acceptOrder(orderId);
+            Boolean isSuccess = null;
+            isSuccess = (Boolean) result.get("isSuccess");
+            if(isSuccess == null){
+                response.setCode(500);
+                response.setMsg("内部服务器错误");
+            }
+            else if(isSuccess){
                 UnsettledOrder order = (UnsettledOrder) result.get("order");
                 response.setMsg("接单成功");
                 response.setData(order);
             }
-            else{
+            else if(!isSuccess){
                 response.setMsg("订单已不存在");
                 response.setData(null);
             }

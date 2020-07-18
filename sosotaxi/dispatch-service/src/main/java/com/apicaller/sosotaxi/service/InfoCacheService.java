@@ -24,6 +24,13 @@ public interface InfoCacheService {
     Set<String> getAllDrivers();
 
     /**
+     * 查看某司机是否注册了该服务
+     * @param driverId
+     * @return
+     */
+    Boolean hasDriver(String driverId);
+
+    /**
      * 通过详细信息更新司机hash
      * @param city
      * @param type
@@ -85,6 +92,13 @@ public interface InfoCacheService {
      * @return
      */
     List<UnsettledOrder> getAllUOrder();
+
+    /**
+     * 查看某订单是否存在
+     * @param orderId
+     * @return
+     */
+    Boolean hasUOrder(String orderId);
 
     /**
      * 删除订单

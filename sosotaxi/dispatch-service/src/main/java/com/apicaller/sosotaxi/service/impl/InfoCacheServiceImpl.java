@@ -70,6 +70,17 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     }
 
     /**
+     * 检查某司机是否在线
+     * @param driverId
+     * @return
+     */
+    @Override
+    public Boolean hasDriver(String driverId){
+        HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
+        return sHashOperations.keys(DRIVER_HASH_KEY).contains(driverId);
+    }
+
+    /**
      * 通过详细信息更新司机hash
      * @param city
      * @param type
@@ -182,6 +193,17 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     public List<UnsettledOrder> getAllUOrder(){
         HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
         return operations.values(U_ORDER_HASH_KEY);
+    }
+
+    /**
+     * 查看某订单是否存在
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Boolean hasUOrder(String orderId){
+        HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
+        return operations.keys(U_ORDER_HASH_KEY).contains(orderId);
     }
 
     /**
@@ -343,7 +365,7 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     public Map<String, Object> acceptOrderSessionCallBack(RedisTemplate redisTemplatePara, String orderId){
 
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("isSuccess", false);
+        resultMap.put("isSuccess", null);
         resultMap.put("order", null);
 
         /**
