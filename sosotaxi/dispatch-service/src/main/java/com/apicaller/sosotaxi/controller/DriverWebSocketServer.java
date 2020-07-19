@@ -15,8 +15,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+//应该是弃用了，准备删掉吧
 @Controller
-@ServerEndpoint(value="/dispatch/driver/{driverId}")
+@ServerEndpoint(value="/www/dispatch/driver/{driverId}")
 public class DriverWebSocketServer {
 
     //暂时没加log，后面考虑加上
@@ -85,51 +86,51 @@ public class DriverWebSocketServer {
     @OnMessage
     //TODO:写接受订单时不要忘了鉴定真实性
     public void onMessage(String message) throws Exception {
-        JSONObject msgJson = JSON.parseObject(message);
-        PulseMsg msg = msgJson.toJavaObject(PulseMsg.class);
-        MinimizedDriver driver = msg.getDriver();
-        GeoPoint point = msg.getPoint();
-        String requestType = msg.getRequest();
-        String detail = msg.getDetail();
-
-        ResponseBean response = new ResponseBean(500, "服务器处理出错",msg);
-
-        if(dispatchService == null){
-            response.setMsg("找不到bean");
-        }
-        try{
-            infoCacheService.updateDriverField(driver, point);
-            response.setMsg("更新信息成功");
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        if(PulseMsg.RequestType.getOrders.toString().equals(requestType)){
-            List<UnsettledOrder> orders = infoCacheService.getDispatch(driver.getDriverId());
-            response.setCode(200);
-            response.setMsg("订单列表");
-            response.setData(orders);
-        }
-        else if((PulseMsg.RequestType.acceptOrder.toString().equals(requestType))){
-            Boolean isSuccess = infoCacheService.acceptOrder(detail,driver.getDriverId());
-            response.setCode(200);
-            if(isSuccess){
-                response.setMsg("接单成功");
-                //客户端应该存了一份，或许不需要再发
-                //response.setData();
-            }else{
-                response.setMsg("订单已不存在");
-            }
-        }
-        else{
-            response.setCode(200);
-        }
-        String returnMsg = JSON.toJSONString(response);
-        try{
-            sendInfo(driver.getDriverId(),returnMsg);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new Exception("连接建立时发送信息出错");
-        }
+//        JSONObject msgJson = JSON.parseObject(message);
+//        DriverUpdateMsg msg = msgJson.toJavaObject(DriverUpdateMsg.class);
+//        MinimizedDriver driver = msg.getDriver();
+//        GeoPoint point = msg.getPoint();
+//        String requestType = msg.getRequest();
+//        String detail = msg.getDetail();
+//
+//        ResponseBean response = new ResponseBean(500, "服务器处理出错",msg);
+//
+//        if(dispatchService == null){
+//            response.setMsg("找不到bean");
+//        }
+//        try{
+//            infoCacheService.updateDriverField(driver, point);
+//            response.setMsg("更新信息成功");
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        if(DriverUpdateMsg.RequestType.getOrders.toString().equals(requestType)){
+//            List<UnsettledOrder> orders = infoCacheService.getDispatch(driver.getDriverId());
+//            response.setCode(200);
+//            response.setMsg("订单列表");
+//            response.setData(orders);
+//        }
+//        else if((DriverUpdateMsg.RequestType.acceptOrder.toString().equals(requestType))){
+//            Boolean isSuccess = infoCacheService.acceptOrder(detail,driver.getDriverId());
+//            response.setCode(200);
+//            if(isSuccess){
+//                response.setMsg("接单成功");
+//                //客户端应该存了一份，或许不需要再发
+//                //response.setData();
+//            }else{
+//                response.setMsg("订单已不存在");
+//            }
+//        }
+//        else{
+//            response.setCode(200);
+//        }
+//        String returnMsg = JSON.toJSONString(response);
+//        try{
+//            sendInfo(driver.getDriverId(),returnMsg);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            throw new Exception("连接建立时发送信息出错");
+//        }
     }
 
     @OnClose

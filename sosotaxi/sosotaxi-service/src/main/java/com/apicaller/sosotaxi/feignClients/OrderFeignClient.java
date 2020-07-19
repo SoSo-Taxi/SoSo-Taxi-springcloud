@@ -13,11 +13,20 @@ import java.util.List;
 /**
  * @author: 骆荟州
  * @createTime: 2020/7/16 11:39 上午
- * @updateTime:
+ * @updateTime: 2020/7/18 3:40 下午
  */
 @FeignClient(name = "order-service")
 @Service
 public interface OrderFeignClient {
+
+    /**
+     * 根据Id获取订单。
+     * @param orderId
+     * @return 订单
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/order/getById")
+    Order getOrder(@RequestParam("orderId") long orderId);
+
 
     /**
      * 获取用户所有订单
@@ -36,7 +45,31 @@ public interface OrderFeignClient {
     List<Order> getDriverOrders(@RequestParam("driverId") long userId);
 
 
-    @RequestMapping(method = RequestMethod.POST,value = "/order/addOrder")
-    public Order addOrder(@RequestBody Order order);
+
+
+    /**
+     * 增加订单。
+     * 必须非空的字段为city, departPoint, destPoint, serviceType, createTime
+     * @param order
+     * @return 新增的order，其id字段将变成数据库中的自增主键。
+     */
+    @RequestMapping(method = RequestMethod.POST, value = "/order/addOrder")
+    Order addOrder(@RequestBody Order order);
+
+    /**
+     * 更新订单信息。
+     * @param order
+     * @return 更新是否成功。
+     */
+    @RequestMapping(method = RequestMethod.PUT, value = "/order/updateOrder")
+    boolean updateOrder(@RequestBody Order order);
+
+    /**
+     * 删除订单。
+     * @param orderId
+     * @return 删除是否成功
+     */
+    @RequestMapping(method = RequestMethod.DELETE, value = "/order/deleteOrder")
+    boolean deleteOrder(@RequestParam("orderId") long orderId);
 
 }

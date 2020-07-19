@@ -5,18 +5,14 @@ import com.apicaller.sosotaxi.entity.UnsettledOrder;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.service.InfoCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 //TODO:添加事务管理，防止严重错误的产生
 @Component
@@ -71,6 +67,17 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     public Set<String> getAllDrivers(){
         HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
         return sHashOperations.keys(DRIVER_HASH_KEY);
+    }
+
+    /**
+     * 检查某司机是否在线
+     * @param driverId
+     * @return
+     */
+    @Override
+    public Boolean hasDriver(String driverId){
+        HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
+        return sHashOperations.keys(DRIVER_HASH_KEY).contains(driverId);
     }
 
     /**
@@ -186,6 +193,17 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     public List<UnsettledOrder> getAllUOrder(){
         HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
         return operations.values(U_ORDER_HASH_KEY);
+    }
+
+    /**
+     * 查看某订单是否存在
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Boolean hasUOrder(String orderId){
+        HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
+        return operations.keys(U_ORDER_HASH_KEY).contains(orderId);
     }
 
     /**
@@ -339,21 +357,56 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     }
 
     /**
+     * 执行接单
+     * @param redisTemplatePara
+     * @param orderId
+     * @return
+     */
+    public Map<String, Object> acceptOrderSessionCallBack(RedisTemplate redisTemplatePara, String orderId){
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("isSuccess", null);
+        resultMap.put("order", null);
+
+        /**
+         * 是否成功接单通过订单是否为空判断
+         */
+        UnsettledOrder order = null;
+
+        order = (UnsettledOrder) redisTemplatePara.execute(new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations redisOperations) throws DataAccessException {
+                //该订单未被接受，可以接受
+                if(redisOperations.opsForHash().keys(U_ORDER_HASH_KEY).contains(orderId)){
+                    UnsettledOrder order = (UnsettledOrder) redisOperations.opsForHash().get(U_ORDER_HASH_KEY,orderId);
+                    redisOperations.opsForHash().delete(U_ORDER_HASH_KEY,orderId);
+                    return order;
+                }
+                //订单已不存在，接单失败
+                else{
+                    return null;
+                }
+            }
+        });
+
+        if(order == null){
+            return resultMap;
+        }
+        else{
+            resultMap.replace("isSuccess",true);
+            resultMap.replace("order",order);
+            return resultMap;
+        }
+    }
+
+    /**
      * 尝试接受订单
      * @param orderId
-     * @param driverId
      * @return
      */
     @Override
-    public Boolean acceptOrder(String orderId, String driverId){
-        HashOperations<String, String, UnsettledOrder> operations = redisTemplate.opsForHash();
-        //如果不存在这个订单（已被其他司机接单）
-        if(!operations.keys(U_ORDER_HASH_KEY).contains(orderId)){
-            return false;
-        }else{
-            this.deleteUOrder(orderId);
-            return true;
-        }
+    public Map<String,Object> acceptOrder(String orderId){
+        return acceptOrderSessionCallBack(redisTemplate, orderId);
     }
 
     /**

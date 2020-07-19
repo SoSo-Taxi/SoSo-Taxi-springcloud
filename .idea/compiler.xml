@@ -12,6 +12,7 @@
         <module name="common" />
         <module name="order-service" />
         <module name="user-service" />
+        <module name="driverState-service" />
         <module name="sosotext-service" />
         <module name="sosotaxi-service" />
       </profile>
@@ -19,6 +20,7 @@
     <bytecodeTargetLevel target="12">
       <module name="common" target="1.8" />
       <module name="dispatch-service" target="1.8" />
+      <module name="driverState-service" target="1.8" />
       <module name="eureka-server" target="1.8" />
       <module name="order-service" target="1.8" />
       <module name="sosotaxi" target="1.8" />
