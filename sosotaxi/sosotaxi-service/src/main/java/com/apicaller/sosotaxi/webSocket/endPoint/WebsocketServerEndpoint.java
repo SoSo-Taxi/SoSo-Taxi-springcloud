@@ -6,6 +6,7 @@ import com.apicaller.sosotaxi.webSocket.handler.AuthRequestHandler;
 import com.apicaller.sosotaxi.webSocket.handler.MessageHandler;
 import com.apicaller.sosotaxi.webSocket.message.AuthRequest;
 import com.apicaller.sosotaxi.webSocket.message.Message;
+import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
@@ -69,6 +70,8 @@ public class WebsocketServerEndpoint implements InitializingBean {
     public void onMessage(Session session, String message) {
         logger.info("[onOpen][session({}) 接收到一条消息({})]", session, message);
 
+//        logger.info("[当前司机session map {}]",WebSocketUtil.getLoginDriverSessionMap());
+
         JSONObject jsonMessage = JSON.parseObject(message);
         String messageType = jsonMessage.getString("type");
         // 获得消息处理器
@@ -87,6 +90,7 @@ public class WebsocketServerEndpoint implements InitializingBean {
     @OnClose
     public void onClose(Session session, CloseReason closeReason) {
         logger.info("[onClose][session({}) 连接关闭。关闭原因是({})}]", session, closeReason);
+        WebSocketUtil.removeSession(session);
     }
 
     @OnError

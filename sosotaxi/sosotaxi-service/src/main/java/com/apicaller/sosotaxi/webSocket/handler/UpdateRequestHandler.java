@@ -26,7 +26,9 @@ public class UpdateRequestHandler implements MessageHandler<UpdateRequest> {
 
     @Override
     public void execute(Session session, UpdateRequest message) {
-        LoginDriver loginDriver = WebSocketUtil.findDriverBySession(session);
+        LoginDriver loginDriver = WebSocketUtil.getLoginDriverBySession(session);
+
+        LOGGER.info("[接入session{}]",session);
 
 //        loginDriver.setLat(message.getLat());
 //        loginDriver.setLng(message.getLng());
@@ -38,8 +40,7 @@ public class UpdateRequestHandler implements MessageHandler<UpdateRequest> {
         loginDriver.getGeoPoint().setLng(message.getLng());
         loginDriver.setIsDispatched(message.getIsDispatched());
 
-        LOGGER.info("[司机{}更新状态 ]\"",JwtTokenUtils.getUsernameByToken(loginDriver.getToken()));
-        LOGGER.info("[坐标{}更新状态 ]\"",loginDriver.getGeoPoint());
+        LOGGER.info("[司机{}更新状态 {}]\"",JwtTokenUtils.getUsernameByToken(loginDriver.getToken()),loginDriver);
     }
 
     @Override

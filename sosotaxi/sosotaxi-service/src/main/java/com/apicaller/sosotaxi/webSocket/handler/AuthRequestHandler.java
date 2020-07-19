@@ -50,11 +50,10 @@ public class AuthRequestHandler implements MessageHandler<AuthRequest> {
             loginDriver.setUserName(JwtTokenUtils.getUsernameByToken(token));
             WebSocketUtil.addLoginDriver(session,loginDriver);
         }
-
-
-        WebSocketUtil.addSession(session, message.getAccessToken());
-        WebSocketUtil.send(session, AuthResponse.TYPE, new AuthResponse().setCode(200));
-
+        else {
+            WebSocketUtil.addSession(session, message.getAccessToken());
+            WebSocketUtil.send(session, AuthResponse.TYPE, new AuthResponse().setCode(200));
+        }
 
     }
 

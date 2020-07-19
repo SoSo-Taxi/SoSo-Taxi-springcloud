@@ -44,6 +44,9 @@ public interface OrderFeignClient {
     @RequestMapping(method = RequestMethod.GET, value = "/order/getByDriverId")
     List<Order> getDriverOrders(@RequestParam("driverId") long userId);
 
+
+
+
     /**
      * 增加订单。
      * 必须非空的字段为city, departPoint, destPoint, serviceType, createTime
@@ -68,4 +71,5 @@ public interface OrderFeignClient {
      */
     @RequestMapping(method = RequestMethod.DELETE, value = "/order/deleteOrder")
     boolean deleteOrder(@RequestParam("orderId") long orderId);
+
 }
