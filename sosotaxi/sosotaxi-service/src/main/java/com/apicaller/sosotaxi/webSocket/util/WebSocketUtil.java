@@ -5,15 +5,19 @@ import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
 import com.apicaller.sosotaxi.utils.JwtTokenUtils;
 import com.apicaller.sosotaxi.webSocket.message.Message;
+import com.sun.javafx.collections.MappingChange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 
@@ -45,9 +49,17 @@ public class WebSocketUtil {
 
 
     /**
+     * session和已登录司机的映射
+     */
+
+    private static final Map<Session,LoginDriver> SESSION_LOGIN_DRIVER_MAP = new ConcurrentHashMap<>();
+
+    /**
      * 派单后乘客用户名和司机的映射
      */
     private static final Map<String, LoginDriver> USERNAME_LOGIN_DRIVER_MAP = new ConcurrentHashMap<>();
+
+
 
 
     /**
@@ -56,38 +68,57 @@ public class WebSocketUtil {
      * @param loginDriver
      */
 
-    public static void bondUserNameAndLoginDriver (Session session, LoginDriver loginDriver)
+    public static void bondUserNameAndLoginDriver(Session session, LoginDriver loginDriver)
     {
         String userToken = SESSION_USER_MAP.get(session);
         String usernameByToken = JwtTokenUtils.getUsernameByToken(userToken);
         USERNAME_LOGIN_DRIVER_MAP.put(usernameByToken,loginDriver);
     }
 
+    public static Map<LoginDriver, Session> getLoginDriverSessionMap()
+    {
+        return LOGIN_DRIVER_SESSION_MAP;
+    }
+
     /**
      * 找到所有可用的司机，返回司机引用
      */
-    public static List<LoginDriver> getAllAvailableDrivers()
+    public static Set<LoginDriver> getAllAvailableDrivers()
     {
+
+
+        List<LoginDriver> loginDrivers = new ArrayList<>(LOGIN_DRIVER_SESSION_MAP.keySet());
+
+        LOGGER.info("[所有司机:{}]",loginDrivers);
+
         List<LoginDriver> availableLoginDrivers = LOGIN_DRIVER_SESSION_MAP.keySet().stream()
-                .filter(a -> a.getIsDispatched().equals("no"))
+                .filter(a -> "no".equals(a.getIsDispatched()))
                 .collect(Collectors.toList());
 
-        return availableLoginDrivers;
+        LOGGER.info("[可用司机状况{}]",availableLoginDrivers);
+
+        return LOGIN_DRIVER_SESSION_MAP.keySet().stream()
+                .filter(a -> "no".equals(a.getIsDispatched()))
+                .collect(Collectors.toSet());
     }
 
+
+    public static Session getPassengerSessionByToken(String token)
+    {
+        return USER_SESSION_MAP.get(token);
+    }
 
     /**
      * 找到所有未被派遣的司机，返回坐标
      */
     public static List<GeoPoint> getAllAvailableDriverGeo()
     {
-        String no = "no";
-        List<GeoPoint> geoPointList = LOGIN_DRIVER_SESSION_MAP.keySet().stream()
-                .filter(loginDriver -> loginDriver.getIsDispatched().equals(no))
+        return LOGIN_DRIVER_SESSION_MAP.keySet().stream()
+                .filter(loginDriver -> "no".equals(loginDriver.getIsDispatched()))
                 .map(a ->
-                { return new GeoPoint(a.getGeoPoint().getLat(),a.getGeoPoint().getLng()); })
+                {  return new GeoPoint(a.getGeoPoint().getLat(),a.getGeoPoint().getLng()); })
                 .collect(Collectors.toList());
-        return geoPointList;
+
     }
 
 
@@ -96,32 +127,50 @@ public class WebSocketUtil {
      * @param session
      * @return LoginDriver
      * 根据司机session找到司机
+     * 有错，得好好研究下
      */
 
-    public static LoginDriver findDriverBySession(Session session)
+//    public static LoginDriver findDriverBySession(Session session)
+//    {
+//        LOGGER.info("[session是{}]",session);
+//
+//        for (LoginDriver key:LOGIN_DRIVER_SESSION_MAP.keySet()) {
+//            if(session == LOGIN_DRIVER_SESSION_MAP.get(key))
+//            {
+//                LOGGER.info("在map中找到司机{}",key);
+//                return key;
+//            }
+//        }
+//        return null;
+//    }
+
+    /**
+     *
+     * @param session
+     * @return LoginDriver
+     * 根据session获取登陆司机
+     */
+
+    public static LoginDriver getLoginDriverBySession(Session session)
     {
-        LoginDriver loginDriver = new LoginDriver();
-        for (LoginDriver key:LOGIN_DRIVER_SESSION_MAP.keySet()) {
-            if(session == LOGIN_DRIVER_SESSION_MAP.get(key))
-            {
-                loginDriver = key;
-                break;
-            }
-        }
-        return loginDriver;
+        return SESSION_LOGIN_DRIVER_MAP.get(session);
     }
 
-    public static Session getSessionByLoginDrier(LoginDriver loginDriver)
+    public static Session getSessionByLoginDriver(LoginDriver loginDriver)
     {
+        LOGGER.info("LOGIN_DRIVER_SESSION_MAP.containsKey(loginDriver){}",LOGIN_DRIVER_SESSION_MAP.containsKey(loginDriver));
         return LOGIN_DRIVER_SESSION_MAP.get(loginDriver);
+
     }
     /**
      * 添加登陆司机的状态
+     *
      */
     public static void addLoginDriver(Session session,LoginDriver loginDriver)
     {
         LOGIN_DRIVER_SESSION_MAP.put(loginDriver, session);
 
+        SESSION_LOGIN_DRIVER_MAP.put(session, loginDriver);
     }
 
 

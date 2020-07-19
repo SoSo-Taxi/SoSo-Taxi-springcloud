@@ -6,13 +6,13 @@ import com.apicaller.sosotaxi.webSocket.message.AskForDriverMessage;
 import com.apicaller.sosotaxi.webSocket.message.StartOrderMessage;
 import com.apicaller.sosotaxi.webSocket.message.StartOrderResponse;
 import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.Session;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author 张流潇潇
@@ -21,22 +21,44 @@ import java.util.function.Function;
  */
 @Component
 public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
+
+    Logger logger = LoggerFactory.getLogger(StartOrderHandler.class);
+
     @Override
     public void execute(Session session, StartOrderMessage message) {
 
         GeoPoint departGeoPoint = message.getDepartPoint();
         GeoPoint destGeoPoint = message.getDestPoint();
 
+        Set<LoginDriver> loginDrivers = WebSocketUtil.getAllAvailableDrivers();
+        Iterator<LoginDriver> iterator = loginDrivers.iterator();
 
-        List<LoginDriver> allAvailableDrivers = WebSocketUtil.getAllAvailableDrivers();
-        Optional<LoginDriver> nearestAvailableDriver = allAvailableDrivers.stream().min(Comparator.comparing(x -> calculateDistance(x.getGeoPoint(), departGeoPoint)));
+        List<LoginDriver> loginDriverList = new ArrayList<>();
 
-        LoginDriver loginDriver = new LoginDriver();
-        if (nearestAvailableDriver.isPresent()) {
-            loginDriver = nearestAvailableDriver.get();
+        while (iterator.hasNext())
+        {
+            LoginDriver loginDriver = iterator.next();
+            loginDriverList.add(loginDriver);
+
+            logger.info("loginDriver==loginDriverList.get(0){}",loginDriver==loginDriverList.get(0));
         }
 
-        Session driverSession = WebSocketUtil.getSessionByLoginDrier(loginDriver);
+
+        List<LoginDriver> availableLoginDrivers = loginDriverList.stream()
+                .filter(a -> "no".equals(a.getIsDispatched()))
+                .collect(Collectors.toList());
+
+
+
+        logger.info("所有可用司机{}",availableLoginDrivers);
+
+//        Optional<LoginDriver> nearestAvailableDriver = availableLoginDrivers.stream().min(Comparator.comparing(x -> calculateDistance(x.getGeoPoint(), departGeoPoint)));
+
+        /**
+         * 在这里调用派单算法
+         */
+
+        Session driverSession = WebSocketUtil.getSessionByLoginDriver(loginDriverList.get(0));
 
         AskForDriverMessage askForDriverMessage = new AskForDriverMessage();
         askForDriverMessage.setDepartGeoPoint(departGeoPoint);
@@ -46,7 +68,7 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
 
         WebSocketUtil.send(driverSession,AskForDriverMessage.TYPE,askForDriverMessage);
         StartOrderResponse startOrderResponse = new StartOrderResponse();
-        startOrderResponse.setMsg("派单成功，请等待");
+        startOrderResponse.setMsg("派单成功，请等待司机接单");
         startOrderResponse.setStatusCode(200);
         WebSocketUtil.send(session,StartOrderResponse.TYPE,startOrderResponse);
     }

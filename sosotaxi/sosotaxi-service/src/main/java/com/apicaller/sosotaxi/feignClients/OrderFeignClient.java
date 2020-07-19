@@ -3,6 +3,7 @@ package com.apicaller.sosotaxi.feignClients;
 import com.apicaller.sosotaxi.entity.Order;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,4 +34,9 @@ public interface OrderFeignClient {
      */
     @RequestMapping(method = RequestMethod.GET, value = "/order/getByDriverId")
     List<Order> getDriverOrders(@RequestParam("driverId") long userId);
+
+
+    @RequestMapping(method = RequestMethod.POST,value = "/order/addOrder")
+    public Order addOrder(@RequestBody Order order);
+
 }
