@@ -2,13 +2,15 @@ package com.apicaller.sosotaxi.service;
 
 import com.apicaller.sosotaxi.entity.User;
 
+import java.io.FileInputStream;
 import java.util.List;
 
 /**
  * (User)表服务接口
  *
  * @author makejava
- * @since 2020-07-11 10:09:16
+ * @createTime 2020-07-11 10:09:16
+ * @updateTime 2020-07-20 22:13:10
  */
 public interface UserService {
 
@@ -63,10 +65,21 @@ public interface UserService {
 
 
     /**
-     * 通过手机号和密码注册
-     * @Param phoneNumber Password
-     * @return null
+     * 用户是否存在
      */
-
     boolean ifExistsByUserName(String userName);
+
+    /**
+     * 存储用户头像
+     * @param fileName
+     * @return 是否成功
+     */
+    boolean storageAvatar(FileInputStream file, String fileName);
+
+    /**
+     * 获取用户头像下载Url
+     * @param fileName
+     * @return 是否成功
+     */
+    String getRealAvatarPath(String fileName);
 }

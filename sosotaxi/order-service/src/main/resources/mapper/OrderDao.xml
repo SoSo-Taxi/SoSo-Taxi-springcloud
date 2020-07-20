@@ -18,8 +18,9 @@
         <result property="cost" column="cost" jdbcType="NUMERIC"/>
         <result property="pointDiscount" column="point_discount" jdbcType="NUMERIC"/>
         <result property="couponDiscount" column="coupon_discount" jdbcType="NUMERIC"/>
-        <result property="status" column="status" jdbcType="VARCHAR"/>
-        <result property="driverRate" column="driver_rate" jdbcType="TINYINT"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="driverRate" column="driver_rate" jdbcType="NUMERIC"/>
+        <result property="passengerRate" column="passenger_rate" jdbcType="NUMERIC"/>
         <result property="distance" column="distance" jdbcType="NUMERIC"/>
         <result property="driverId" column="driver_id" jdbcType="INTEGER"/>
         <result property="passengerId" column="passenger_id" jdbcType="INTEGER"/>
@@ -96,9 +97,7 @@
             <if test="destName != null and destName != ''">
                 dest_name = #{destName},
             </if>
-            <if test="serviceType != null">
                 service_type = #{serviceType},
-            </if>
             <if test="cost != null">
                 cost = #{cost},
             </if>
