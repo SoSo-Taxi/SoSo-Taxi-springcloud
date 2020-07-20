@@ -37,8 +37,12 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
 
         order.setPassengerId(message.getPassengerId());
         order.setCreateTime(date);
-
-
+        //设置订单状态，0代表还未开始
+        order.setStatus(0);
+        order.setDepartPoint(departGeoPoint);
+        order.setDestPoint(destGeoPoint);
+        order.setDepartName(message.getDepartName());
+        order.setDestName(message.getDestName());
 
         AskForDriverMessage askForDriverMessage = new AskForDriverMessage();
         askForDriverMessage.setDestPoint(destGeoPoint);
@@ -62,6 +66,7 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
          * 在这里调用派单算法
          */
 
+        WebSocketUtil.addUserTokenOrderMap(message.getUserToken(),order);
         Session driverSession = WebSocketUtil.getSessionByLoginDriver(fitTypeDrivers.get(0));
         WebSocketUtil.send(driverSession,AskForDriverMessage.TYPE,askForDriverMessage);
 
