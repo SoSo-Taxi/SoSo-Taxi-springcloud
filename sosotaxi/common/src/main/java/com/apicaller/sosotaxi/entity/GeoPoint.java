@@ -1,6 +1,8 @@
 package com.apicaller.sosotaxi.entity;
 
 import lombok.Data;
+import sun.reflect.generics.tree.VoidDescriptor;
+
 import java.io.Serializable;
 import java.text.NumberFormat;
 
@@ -27,6 +29,13 @@ public class GeoPoint implements Serializable {
 
     /** 经度 */
     private double lng;
+
+    public GeoPoint reverseCoord() {
+        double temp = this.lat;
+        this.lat = this.lng;
+        this.lng = temp;
+        return this;
+    }
 
     @Override
     public String toString(){

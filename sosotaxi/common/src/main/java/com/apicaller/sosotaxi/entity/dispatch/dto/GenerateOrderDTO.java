@@ -21,7 +21,7 @@ public class GenerateOrderDTO implements Serializable {
 
     private Long passengerId;
 
-    /**考虑到可能有预约订单，这里命名为出发时间。*/
+    /** 考虑到可能有预约订单，这里命名为出发时间。*/
     private Date departTime;
 
     private Short passengerNum;
@@ -29,6 +29,10 @@ public class GenerateOrderDTO implements Serializable {
     private GeoPoint departPoint;
 
     private GeoPoint destPoint;
+
+    private String departName;
+
+    private String destName;
 
     private Short serviceType;
 }
