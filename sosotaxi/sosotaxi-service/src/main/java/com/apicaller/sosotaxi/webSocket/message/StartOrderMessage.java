@@ -16,6 +16,8 @@ public class StartOrderMessage implements Message {
 
     public static final String TYPE = "START_ORDER_MESSAGE";
 
+    private String userToken;
+
     private String city;
 
     private Long passengerId;
@@ -32,6 +34,10 @@ public class StartOrderMessage implements Message {
     private Short serviceType;
 
     private Short passengerNum;
+
+    private String departName;
+
+    private String destName;
 
 
 }

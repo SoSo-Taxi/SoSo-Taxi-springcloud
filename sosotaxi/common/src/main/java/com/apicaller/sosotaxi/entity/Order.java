@@ -59,7 +59,7 @@ public class Order implements Serializable {
     private Double couponDiscount;
 
     /** 订单状态 */
-    private String status;
+    private int status;
 
     /** 订单中，司机获得的评分 */
     private Short driverRate;
