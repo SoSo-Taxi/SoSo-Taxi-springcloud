@@ -33,7 +33,7 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
         GeoPoint destGeoPoint = message.getDestPoint();
         Order order = new Order();
         Date date = new Date();
-        int serverType = message.getServiceType();
+        Short serverType = message.getServiceType();
 
         order.setPassengerId(message.getPassengerId());
         order.setCreateTime(date);
@@ -43,7 +43,9 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
         order.setDestPoint(destGeoPoint);
         order.setDepartName(message.getDepartName());
         order.setDestName(message.getDestName());
+        order.setServiceType(serverType);
 
+        //设置给司机的消息
         AskForDriverMessage askForDriverMessage = new AskForDriverMessage();
         askForDriverMessage.setDestPoint(destGeoPoint);
         askForDriverMessage.setDepartPoint(departGeoPoint);
@@ -67,6 +69,7 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
          */
 
         WebSocketUtil.addUserTokenOrderMap(message.getUserToken(),order);
+        WebSocketUtil.addLoginDriverOrderMap(fitTypeDrivers.get(0),order);
         Session driverSession = WebSocketUtil.getSessionByLoginDriver(fitTypeDrivers.get(0));
         WebSocketUtil.send(driverSession,AskForDriverMessage.TYPE,askForDriverMessage);
 

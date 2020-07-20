@@ -30,9 +30,6 @@ public class LoginDriver {
      */
     private int serverType;
 
-    /** 用户token */
-    private String token;
-
     /** 司机是否已经接单了  */
     private boolean isDispatched;
 
@@ -50,12 +47,11 @@ public class LoginDriver {
         }
         LoginDriver that = (LoginDriver) o;
         return Objects.equals(getGeoPoint(), that.getGeoPoint()) &&
-                Objects.equals(getUserName(), that.getUserName()) &&
-                Objects.equals(getToken(), that.getToken());
+                Objects.equals(getUserName(), that.getUserName()) ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash( getUserName(), getToken());
+        return Objects.hash( getUserName());
     }
 }

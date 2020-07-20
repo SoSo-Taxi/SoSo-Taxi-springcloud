@@ -1,5 +1,6 @@
 package com.apicaller.sosotaxi.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.util.HashMap;
@@ -31,6 +32,8 @@ public class YingYanUtil {
      */
     public static JSONObject getLatestPoint(String username, int denoiseGrade,
                                       boolean mapMatch, CoordType coordType) {
+
+        
 
         Map<String, Object> argMap = new HashMap<String, Object>();
         argMap.put("denoise_grade", denoiseGrade);
