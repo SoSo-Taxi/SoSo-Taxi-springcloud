@@ -1,10 +1,9 @@
 package com.apicaller.sosotaxi.controller;
 
-import com.apicaller.sosotaxi.entity.Driver;
-import com.apicaller.sosotaxi.entity.DriverVo;
-import com.apicaller.sosotaxi.entity.Passenger;
-import com.apicaller.sosotaxi.entity.PassengerVo;
+import com.apicaller.sosotaxi.entity.*;
 import com.apicaller.sosotaxi.service.DriverService;
+import com.apicaller.sosotaxi.utils.BDmapUtil;
+import com.apicaller.sosotaxi.utils.CoordType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

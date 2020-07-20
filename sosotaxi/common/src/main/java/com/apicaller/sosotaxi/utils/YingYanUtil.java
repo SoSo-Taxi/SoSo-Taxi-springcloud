@@ -2,7 +2,15 @@ package com.apicaller.sosotaxi.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +29,7 @@ public class YingYanUtil {
 
     private static final String HOST = "yingyan.baidu.com";
 
-    private static final int SERVICE_ID = 222373;
+    private static final Integer SERVICE_ID = 222373;
 
     /**
      * 获取一个实体最新的位置点。
@@ -143,6 +151,35 @@ public class YingYanUtil {
                 .retrieve().bodyToMono(String.class).block();
 
         return JSONObject.parseObject(res);
+    }
+
+    public static boolean updateDriver(String username, Boolean isDispatched) {
+        if(username == null || isDispatched == null) {
+            return false;
+        }
+        MultiValueMap<String, String> formdata = new LinkedMultiValueMap<String, String>();
+        formdata.add("ak", AK);
+        formdata.add("service_id", SERVICE_ID.toString());
+        formdata.add("entity_name", username);
+        formdata.add("is_dispatched", isDispatched.toString());
+
+        String res = WebClient.create()
+                .post()
+                .uri(uriBuilder -> uriBuilder
+                        .scheme("http")
+                        .host(HOST)
+                        .path("/api/v3/entity/update")
+                        .build())
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromFormData(formdata))
+                .retrieve().bodyToMono(String.class).timeout(Duration.of(10, ChronoUnit.SECONDS))
+                .block();
+
+        JSONObject result = JSONObject.parseObject(res);
+        if (result.getInteger("status") == null) {
+            return false;
+        }
+        return result.getInteger("status") == 0;
     }
 
 
