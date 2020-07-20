@@ -1,6 +1,5 @@
 package com.apicaller.sosotaxi.entity;
 
-import com.apicaller.sosotaxi.entity.GeoPoint;
 import lombok.Data;
 
 import java.util.Date;
@@ -62,10 +61,10 @@ public class Order implements Serializable {
     private int status;
 
     /** 订单中，司机获得的评分 */
-    private Short driverRate;
+    private Double driverRate;
 
     /** 订单中，乘客获得的评分 */
-    private Short passengerRate;
+    private Double passengerRate;
 
     /** 订单路程 */
     private Double distance;
