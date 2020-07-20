@@ -24,11 +24,6 @@ public class DriverController {
 
     @GetMapping("/getById")
     public Driver getDriverById(Long userId) {
-
-        System.out.println("__________________________");
-        double distance = BDmapUtil.calcDistance(new GeoPoint(108.385348,22.819243).reverseCoord(),
-                new GeoPoint(108.398139,22.818943).reverseCoord(), CoordType.bd09ll);
-        System.out.println(distance);
         return this.driverService.queryById(userId);
     }
 
