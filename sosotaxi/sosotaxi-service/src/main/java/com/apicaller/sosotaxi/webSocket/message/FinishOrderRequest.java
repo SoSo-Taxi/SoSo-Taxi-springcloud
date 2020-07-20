@@ -1,5 +1,7 @@
 package com.apicaller.sosotaxi.webSocket.message;
 
+import java.util.Date;
+
 /**
  * @author 张流潇潇
  * @createTime 2020/7/17
@@ -8,6 +10,10 @@ package com.apicaller.sosotaxi.webSocket.message;
  */
 public class FinishOrderRequest implements Message {
     public static final String TYPE = "FINISH_ORDER_REQUEST";
+
+    private Date startTime;
+
+    private Date endTime;
 
 
 

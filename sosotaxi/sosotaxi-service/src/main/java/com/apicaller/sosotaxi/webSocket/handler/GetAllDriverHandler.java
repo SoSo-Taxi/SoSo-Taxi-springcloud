@@ -22,6 +22,8 @@ public class GetAllDriverHandler implements MessageHandler<GetAllDriverMessage> 
 
         List<GeoPoint> geoPoints = WebSocketUtil.getAllAvailableDriverGeo();
         GetAllDriverResponse getAllDriverResponse = new GetAllDriverResponse();
+        getAllDriverResponse.setStatusCode(200);
+        getAllDriverResponse.setMsg("查询位置成功！");
         getAllDriverResponse.setGeoPoints(geoPoints);
 
         WebSocketUtil.send(session,GetAllDriverResponse.TYPE,getAllDriverResponse);

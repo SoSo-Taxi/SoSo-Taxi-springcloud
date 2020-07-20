@@ -6,6 +6,7 @@ import lombok.Data;
  * @author 张流潇潇
  * @createTime 2020/7/15
  * @updateTime
+ * 建立连接回应
  */
 @Data
 public class AuthResponse implements Message {
