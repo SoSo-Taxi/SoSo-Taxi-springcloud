@@ -25,4 +25,6 @@ public class UpdateRequest implements Message {
 
     /**是否开始听单*/
     private boolean startListening;
+
+    private Short serverType;
 }

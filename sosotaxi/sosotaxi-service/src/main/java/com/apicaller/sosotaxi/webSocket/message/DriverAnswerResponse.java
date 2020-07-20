@@ -20,4 +20,7 @@ public class DriverAnswerResponse implements Message{
 
     private double estimateMoney;
 
+    private String msg;
+
+    private int statusCode;
 }

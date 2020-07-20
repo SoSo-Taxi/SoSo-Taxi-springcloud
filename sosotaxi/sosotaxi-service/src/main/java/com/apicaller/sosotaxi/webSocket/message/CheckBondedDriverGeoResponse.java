@@ -1,5 +1,6 @@
 package com.apicaller.sosotaxi.webSocket.message;
 
+import com.apicaller.sosotaxi.entity.GeoPoint;
 import lombok.Data;
 
 import java.awt.*;
@@ -15,7 +16,13 @@ public class CheckBondedDriverGeoResponse implements Message {
 
     public static final String TYPE = "CHECK_BONDED_DRIVER_GEO_RESPONSE";
 
-    private Point point;
+    private GeoPoint geoPoint;
 
     private Short serverType;
+
+    private String msg;
+
+    private double distance;
+
+    private int statusCode;
 }

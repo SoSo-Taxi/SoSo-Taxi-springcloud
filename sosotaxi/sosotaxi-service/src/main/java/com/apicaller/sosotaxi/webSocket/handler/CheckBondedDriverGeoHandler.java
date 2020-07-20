@@ -1,6 +1,12 @@
 package com.apicaller.sosotaxi.webSocket.handler;
 
+import com.apicaller.sosotaxi.entity.Order;
+import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
+import com.apicaller.sosotaxi.utils.BDmapUtil;
+import com.apicaller.sosotaxi.utils.YingYanUtil;
 import com.apicaller.sosotaxi.webSocket.message.CheckBondedDriverGeoRequest;
+import com.apicaller.sosotaxi.webSocket.message.CheckBondedDriverGeoResponse;
+import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.Session;
@@ -15,6 +21,20 @@ import javax.websocket.Session;
 public class CheckBondedDriverGeoHandler implements MessageHandler<CheckBondedDriverGeoRequest> {
     @Override
     public void execute(Session session, CheckBondedDriverGeoRequest message) {
+
+        String tokenByUserSession = WebSocketUtil.getTokenByUserSession(session);
+        Order order = WebSocketUtil.getOrderByUserToken(tokenByUserSession);
+        LoginDriver loginDriverByOrder = WebSocketUtil.getLoginDriverByOrder(order);
+        Double distance = BDmapUtil.calcDistance(message.getGeoPoint(), loginDriverByOrder.getGeoPoint(), null);
+
+        CheckBondedDriverGeoResponse checkBondedDriverGeoResponse = new CheckBondedDriverGeoResponse();
+        checkBondedDriverGeoResponse.setGeoPoint(loginDriverByOrder.getGeoPoint());
+        checkBondedDriverGeoResponse.setServerType(loginDriverByOrder.getServerType());
+        checkBondedDriverGeoResponse.setStatusCode(200);
+        checkBondedDriverGeoResponse.setMsg("查询司机位置成功！");
+        checkBondedDriverGeoResponse.setDistance(distance);
+
+        WebSocketUtil.send(session,CheckBondedDriverGeoResponse.TYPE,checkBondedDriverGeoResponse);
 
     }
 

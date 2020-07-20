@@ -1,8 +1,8 @@
 package com.apicaller.sosotaxi.webSocket.message;
 
 import com.apicaller.sosotaxi.entity.Driver;
+import com.apicaller.sosotaxi.entity.Order;
 import lombok.Data;
-import org.springframework.data.domain.Sort.Order;
 
 /**
  * @author 张流潇潇

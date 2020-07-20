@@ -15,6 +15,11 @@ import java.util.Objects;
 public class LoginDriver {
 
 
+    /**
+     * 司机的token
+     */
+    private String token;
+
     public LoginDriver()
     {
         geoPoint = new GeoPoint();
@@ -28,7 +33,7 @@ public class LoginDriver {
     /**
      * 服务类型，舒适型
      */
-    private int serverType;
+    private Short serverType;
 
     /** 司机是否已经接单了  */
     private boolean isDispatched;
