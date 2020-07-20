@@ -1,10 +1,9 @@
 package com.apicaller.sosotaxi.controller;
 
-import com.apicaller.sosotaxi.entity.Driver;
-import com.apicaller.sosotaxi.entity.DriverVo;
-import com.apicaller.sosotaxi.entity.Passenger;
-import com.apicaller.sosotaxi.entity.PassengerVo;
+import com.apicaller.sosotaxi.entity.*;
 import com.apicaller.sosotaxi.service.DriverService;
+import com.apicaller.sosotaxi.utils.BDmapUtil;
+import com.apicaller.sosotaxi.utils.CoordType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -25,6 +24,11 @@ public class DriverController {
 
     @GetMapping("/getById")
     public Driver getDriverById(Long userId) {
+
+        System.out.println("__________________________");
+        double distance = BDmapUtil.calcDistance(new GeoPoint(108.385348,22.819243).reverseCoord(),
+                new GeoPoint(108.398139,22.818943).reverseCoord(), CoordType.bd09ll);
+        System.out.println(distance);
         return this.driverService.queryById(userId);
     }
 

@@ -11,6 +11,8 @@ import java.util.*;
 
 /**
  * 调用百度地图WebApi的工具类
+ * 此类中的距离，指的都是驾车路线的距离，时间指的都是驾车时间。
+ *
  * 此类中的方法有：
  * 1 逆地理编码
  * 2 批量算路
@@ -71,14 +73,14 @@ public class BDmapUtil {
 
     /**
      * 调用批量算路Api。计算多个点到多个点的距离
-     * 结果顺序是：
+     * 结果顺序是：（假设两个起点两个终点）
      * origin1 -- dest1
      * origin1 -- dest2
      * origin2 -- dest1
      * origin2 -- dest2
      */
     public static <T> List<SimpleDistance<T>> batchCalcDistance(List<SimplePosition<T>> origins,
-                                                                CoordType coordType, List<SimplePosition<T>> dest) {
+                                                                List<SimplePosition<T>> dest, CoordType coordType) {
         if(origins == null || dest == null) {
             return null;
         }
@@ -98,7 +100,7 @@ public class BDmapUtil {
                 .get()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("http")
-                        .host("api.map.baidu.com")
+                        .host(HOST)
                         .path("/routematrix/v2/driving")
                         .queryParam("ak", AK)
                         .queryParam("coord_type", finalCoordType.toString())
@@ -120,9 +122,11 @@ public class BDmapUtil {
         for(int i = 0; i < count; i++) {
             double duration = JSONObject.parseObject(resultArr.get(i).toString())
                                         .getJSONObject("duration").getDouble("value");
+            double distance = JSONObject.parseObject(resultArr.get(i).toString())
+                    .getJSONObject("distance").getDouble("value");
 
-            resultList.add(new SimpleDistance<T>(origins.get(count/originCount).getTag(),
-                    dest.get(count%originCount).getTag(), duration));
+            resultList.add(new SimpleDistance<T>(origins.get(i/originCount).getTag(),
+                    dest.get(i%originCount).getTag(), distance, duration));
         }
         return resultList;
     }
@@ -131,11 +135,26 @@ public class BDmapUtil {
      * 调用批量算路Api。此方法计算一个点到至多50个点的距离。
      */
     public static <T> List<SimpleDistance<T>> batchCalcDistance(SimplePosition<T> origin,
-                                                                CoordType coordType, List<SimplePosition<T>> dest) {
+                                                                List<SimplePosition<T>> dest, CoordType coordType) {
         List<SimplePosition<T>> list = new ArrayList<SimplePosition<T>>();
         list.add(origin);
-        return batchCalcDistance(list, coordType, dest);
+        return batchCalcDistance(list, dest, coordType);
     }
+
+    /**
+     * 计算两点间距离。返回值单位是米。
+     */
+    public static Double calcDistance(GeoPoint point1, GeoPoint point2, CoordType coordType) {
+
+        List<SimplePosition<String>> arglist = new ArrayList<>();
+        arglist.add(new SimplePosition<String>("b", point2));
+        List<SimpleDistance<String>> result = batchCalcDistance(new SimplePosition<String>("a", point1), arglist, coordType);
+        if(result == null) {
+            return null;
+        }
+        return  result.get(0).getDistance();
+    }
+
 
     /** 将一个个的点转为百度地图Api调用时需要的字符串格式
      * 点与点之间用"｜"分隔。

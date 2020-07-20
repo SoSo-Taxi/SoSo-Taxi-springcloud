@@ -18,6 +18,8 @@ public class SimpleDistance<T> implements Comparable {
 
     private double distance;
 
+    private double duration;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
