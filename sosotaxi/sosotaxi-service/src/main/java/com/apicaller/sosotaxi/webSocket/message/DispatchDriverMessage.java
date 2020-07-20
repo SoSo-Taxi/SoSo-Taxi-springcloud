@@ -7,6 +7,7 @@ import lombok.Data;
  * @author 张流潇潇
  * @createTime 2020/7/16
  * @updateTime
+ * 可能用不到
  */
 @Data
 public class DispatchDriverMessage implements Message {

@@ -33,4 +33,5 @@ public class Driver extends User implements Serializable {
 
     /** 行驶证中的车辆识别代码 */
     private String vin;
+
 }

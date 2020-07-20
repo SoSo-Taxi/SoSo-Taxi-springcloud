@@ -25,11 +25,20 @@ public class LoginDriver {
     /** 用户名 */
     private String userName;
 
+    /**
+     * 服务类型，舒适型
+     */
+    private int serverType;
+
     /** 用户token */
     private String token;
 
-    /** 司机是否已经接单了 yes or no */
-    private String isDispatched;
+    /** 司机是否已经接单了  */
+    private boolean isDispatched;
+
+
+    /**司机是否开始听单*/
+    private boolean startListening;
 
     @Override
     public boolean equals(Object o) {
@@ -42,8 +51,7 @@ public class LoginDriver {
         LoginDriver that = (LoginDriver) o;
         return Objects.equals(getGeoPoint(), that.getGeoPoint()) &&
                 Objects.equals(getUserName(), that.getUserName()) &&
-                Objects.equals(getToken(), that.getToken()) &&
-                Objects.equals(getIsDispatched(), that.getIsDispatched());
+                Objects.equals(getToken(), that.getToken());
     }
 
     @Override

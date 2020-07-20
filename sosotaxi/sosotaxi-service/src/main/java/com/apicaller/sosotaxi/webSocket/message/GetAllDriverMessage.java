@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class GetAllDriverMessage implements Message{
 
-    public static final String TYPE = "GETALLDRIVER_MESSAGE";
+    public static final String TYPE = "GET_ALL_DRIVER_MESSAGE";
 
 
 

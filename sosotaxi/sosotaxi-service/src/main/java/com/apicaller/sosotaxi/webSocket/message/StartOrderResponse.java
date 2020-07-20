@@ -7,6 +7,7 @@ import lombok.Data;
  * @author 张流潇潇
  * @createTime 2020/7/17
  * @updateTime
+ * 派单回应，请用户等待
  */
 @Data
 public class StartOrderResponse implements Message {

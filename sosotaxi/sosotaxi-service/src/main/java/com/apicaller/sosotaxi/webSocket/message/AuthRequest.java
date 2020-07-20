@@ -4,6 +4,7 @@ package com.apicaller.sosotaxi.webSocket.message;
  * @author 张流潇潇
  * @createTime 2020/7/15
  * @updateTime
+ * 建立连接请求
  */
 public class AuthRequest implements Message {
 

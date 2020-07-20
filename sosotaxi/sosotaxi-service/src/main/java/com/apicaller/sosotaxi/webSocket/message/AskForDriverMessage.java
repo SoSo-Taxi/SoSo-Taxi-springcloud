@@ -1,7 +1,10 @@
 package com.apicaller.sosotaxi.webSocket.message;
 
 import com.apicaller.sosotaxi.entity.GeoPoint;
+import com.apicaller.sosotaxi.entity.Order;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @author 张流潇潇
@@ -14,10 +17,20 @@ import lombok.Data;
 public class AskForDriverMessage implements Message {
     public static final String TYPE = "ASK_FOR_DRIVER_MESSAGE";
 
-    private String userToken;
 
-    private GeoPoint departGeoPoint;
+    private String city;
 
-    private GeoPoint destGeoPoint;
+    private String passengerName;
+
+    /**考虑到可能有预约订单，这里命名为出发时间。*/
+    private Date departTime;
+
+    private Short passengerNum;
+
+    private GeoPoint departPoint;
+
+    private GeoPoint destPoint;
+
+    private Order order;
 
 }

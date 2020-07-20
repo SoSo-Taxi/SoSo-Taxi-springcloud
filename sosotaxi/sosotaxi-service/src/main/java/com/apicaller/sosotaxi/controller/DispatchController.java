@@ -4,9 +4,7 @@ package com.apicaller.sosotaxi.controller;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.entity.ResponseBean;
 import com.apicaller.sosotaxi.entity.dispatch.dto.GenerateOrderDTO;
-import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
-import com.apicaller.sosotaxi.webSocket.message.DispatchDriverMessage;
-import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

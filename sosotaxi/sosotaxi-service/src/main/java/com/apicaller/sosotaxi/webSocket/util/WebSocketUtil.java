@@ -2,6 +2,7 @@ package com.apicaller.sosotaxi.webSocket.util;
 
 import com.alibaba.fastjson.JSONObject;
 import com.apicaller.sosotaxi.entity.GeoPoint;
+import com.apicaller.sosotaxi.entity.Order;
 import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
 import com.apicaller.sosotaxi.utils.JwtTokenUtils;
 import com.apicaller.sosotaxi.webSocket.message.Message;
@@ -36,6 +37,8 @@ public class WebSocketUtil {
      * Session 与用户token的映射
      */
     private static final Map<Session, String> SESSION_USER_MAP = new ConcurrentHashMap<>();
+
+
     /**
      * 用户token与 Session 的映射
      */
@@ -51,16 +54,41 @@ public class WebSocketUtil {
     /**
      * session和已登录司机的映射
      */
-
     private static final Map<Session,LoginDriver> SESSION_LOGIN_DRIVER_MAP = new ConcurrentHashMap<>();
 
+
     /**
-     * 派单后乘客用户名和司机的映射
+     * 派单后乘客token和司机的映射
      */
-    private static final Map<String, LoginDriver> USERNAME_LOGIN_DRIVER_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, LoginDriver> TOKEN_LOGIN_DRIVER_MAP = new ConcurrentHashMap<>();
 
 
+    /**
+     * 派单后用户与生成订单的映射
+     */
+    private static final Map<String, Order> USER_TOKEN_ORDER_MAP = new ConcurrentHashMap<>();
 
+
+    /**
+     * 订单生成时，添加用户和订单的映射
+     * @param userToken
+     * @param order
+     */
+    public static void addUserTokenOrderMap(String userToken,Order order)
+    {
+        USER_TOKEN_ORDER_MAP.put(userToken,order);
+    }
+
+
+    /**
+     *
+     * @param userToken
+     * @return order对应的订单
+     */
+    public static Order getOrderByUserToken(String userToken)
+    {
+        return USER_TOKEN_ORDER_MAP.get(userToken);
+    }
 
     /**
      * 订单开始时，添加司机和用户的映射
@@ -71,19 +99,26 @@ public class WebSocketUtil {
     public static void bondUserNameAndLoginDriver(Session session, LoginDriver loginDriver)
     {
         String userToken = SESSION_USER_MAP.get(session);
-        String usernameByToken = JwtTokenUtils.getUsernameByToken(userToken);
-        USERNAME_LOGIN_DRIVER_MAP.put(usernameByToken,loginDriver);
+        TOKEN_LOGIN_DRIVER_MAP.put(userToken,loginDriver);
     }
 
-    public static Map<LoginDriver, Session> getLoginDriverSessionMap()
+    /**
+     * 通过用户token返回对应的LoginDriver
+     * @param userToken
+     * @return LoginDriver
+     */
+    public static LoginDriver getLoginDriverByUserToken (String userToken)
     {
-        return LOGIN_DRIVER_SESSION_MAP;
+        return TOKEN_LOGIN_DRIVER_MAP.get(userToken);
     }
+
+
+
 
     /**
      * 找到所有可用的司机，返回司机引用
      */
-    public static Set<LoginDriver> getAllAvailableDrivers()
+    public static List<LoginDriver> getAllAvailableDrivers()
     {
 
 
@@ -91,15 +126,16 @@ public class WebSocketUtil {
 
         LOGGER.info("[所有司机:{}]",loginDrivers);
 
+
         List<LoginDriver> availableLoginDrivers = LOGIN_DRIVER_SESSION_MAP.keySet().stream()
-                .filter(a -> "no".equals(a.getIsDispatched()))
+                .filter(a -> "no".equals(a.isDispatched()))
                 .collect(Collectors.toList());
 
         LOGGER.info("[可用司机状况{}]",availableLoginDrivers);
 
         return LOGIN_DRIVER_SESSION_MAP.keySet().stream()
-                .filter(a -> "no".equals(a.getIsDispatched()))
-                .collect(Collectors.toSet());
+                .filter(a -> (!a.isDispatched()&&a.isStartListening()))
+                .collect(Collectors.toList());
     }
 
 
@@ -114,7 +150,7 @@ public class WebSocketUtil {
     public static List<GeoPoint> getAllAvailableDriverGeo()
     {
         return LOGIN_DRIVER_SESSION_MAP.keySet().stream()
-                .filter(loginDriver -> "no".equals(loginDriver.getIsDispatched()))
+                .filter(loginDriver -> (!loginDriver.isDispatched()&&loginDriver.isStartListening()))
                 .map(a ->
                 {  return new GeoPoint(a.getGeoPoint().getLat(),a.getGeoPoint().getLng()); })
                 .collect(Collectors.toList());

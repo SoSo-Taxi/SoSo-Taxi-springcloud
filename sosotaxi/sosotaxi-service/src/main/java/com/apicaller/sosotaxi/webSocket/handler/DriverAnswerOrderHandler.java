@@ -24,6 +24,7 @@ import java.util.Date;
  */
 @Component
 public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrderMessage>{
+
     @Resource
     OrderFeignClient orderFeignClient;
 
@@ -52,7 +53,13 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
             order.setDriverId(driverInfo.getUserId());
             order.setPassengerId(passengerInfo.getUserId());
 
+
+
             orderFeignClient.addOrder(order);
+
+            //添加用户token和order的映射
+            WebSocketUtil.addUserTokenOrderMap(token,order);
+
 
             driverAnswerResponse.setDriver(message.getDriver());
 

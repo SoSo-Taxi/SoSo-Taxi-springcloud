@@ -5,6 +5,7 @@ import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
 import com.apicaller.sosotaxi.utils.JwtTokenUtils;
 import com.apicaller.sosotaxi.webSocket.message.Message;
 import com.apicaller.sosotaxi.webSocket.message.UpdateRequest;
+import com.apicaller.sosotaxi.webSocket.message.UpdateResponse;
 import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,18 +30,23 @@ public class UpdateRequestHandler implements MessageHandler<UpdateRequest> {
         LoginDriver loginDriver = WebSocketUtil.getLoginDriverBySession(session);
 
         LOGGER.info("[接入session{}]",session);
-
-//        loginDriver.setLat(message.getLat());
-//        loginDriver.setLng(message.getLng());
-
         LOGGER.info("[司机{} ]\"",loginDriver);
 
 
         loginDriver.getGeoPoint().setLat(message.getLat());
         loginDriver.getGeoPoint().setLng(message.getLng());
-        loginDriver.setIsDispatched(message.getIsDispatched());
+        loginDriver.setDispatched(message.isDispatched());
+        loginDriver.setStartListening(message.isStartListening());
 
         LOGGER.info("[司机{}更新状态 {}]\"",JwtTokenUtils.getUsernameByToken(loginDriver.getToken()),loginDriver);
+        UpdateResponse updateResponse = new UpdateResponse();
+
+        updateResponse.setMessageId(message.getMessageId());
+        updateResponse.setStatusCode(200);
+        updateResponse.setMsg("更新位置和状态成功");
+        WebSocketUtil.send(session,UpdateResponse.TYPE,updateResponse);
+
+
     }
 
     @Override

@@ -12,6 +12,8 @@ import lombok.Data;
 public class UpdateRequest implements Message {
     public static final String TYPE = "UPDATE_REQUEST";
 
+    private int messageId;
+
     /** 纬度 */
     private double lat;
 
@@ -19,5 +21,8 @@ public class UpdateRequest implements Message {
     private double lng;
 
     /** 是否接单 yes or no*/
-    private String isDispatched;
+    private boolean isDispatched;
+
+    /**是否开始听单*/
+    private boolean startListening;
 }
