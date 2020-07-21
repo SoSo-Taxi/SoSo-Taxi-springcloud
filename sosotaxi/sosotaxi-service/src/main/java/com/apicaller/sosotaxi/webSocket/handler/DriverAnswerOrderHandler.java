@@ -2,11 +2,9 @@ package com.apicaller.sosotaxi.webSocket.handler;
 
 import com.apicaller.sosotaxi.entity.Driver;
 import com.apicaller.sosotaxi.entity.Order;
-import com.apicaller.sosotaxi.entity.User;
 import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
 import com.apicaller.sosotaxi.feignClients.OrderFeignClient;
 import com.apicaller.sosotaxi.feignClients.UserServiceFeignClient;
-import com.apicaller.sosotaxi.utils.JwtTokenUtils;
 import com.apicaller.sosotaxi.webSocket.message.DriverAnswerOrderMessage;
 import com.apicaller.sosotaxi.webSocket.message.DriverAnswerResponse;
 import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.websocket.Session;
-import java.util.Date;
 
 /**
  * @author 张流潇潇
@@ -36,9 +33,9 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
     public void execute(Session session, DriverAnswerOrderMessage message) {
         LoginDriver loginDriver = WebSocketUtil.getLoginDriverBySession(session);
 
+        Order order = message.getOrder();
         if(message.getTakeOrder())
         {
-            Order order = message.getOrder();
             Driver driver = message.getDriver();
             DriverAnswerResponse driverAnswerResponse = new DriverAnswerResponse();
             order.setDriverId(driver.getUserId());
@@ -57,7 +54,6 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
         }
         else
         {
-            Order order = message.getOrder();
             String userTokenByOrder = WebSocketUtil.getUserTokenByOrder(order);
             Session passengerSessionByToken = WebSocketUtil.getPassengerSessionByToken(userTokenByOrder);
 
