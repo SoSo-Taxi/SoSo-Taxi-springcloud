@@ -48,3 +48,12 @@ mybatis:
   configuration:
     jdbc-type-for-null: null
   type-handlers-package: com.apicaller.sosotaxi.handler
+
+qiniu:
+  accessKey: G92q2x0MKHA4ToDsvajxPRgUOvJWn3US7v2Vcn-J
+  secretKey: hB8w5x_7IxDVJUiZB6o-6cT_R-YpVpYL9NSHjdni
+  bucket: sosotaxi
+  #上传文件要从这里传
+  path: sosotaxi.s3-cn-south-1.qiniucs.com
+  #下载文件要从这里下载
+  cdn: qdribond4.bkt.clouddn.com

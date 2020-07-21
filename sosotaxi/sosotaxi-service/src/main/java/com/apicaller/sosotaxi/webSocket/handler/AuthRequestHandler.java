@@ -47,6 +47,8 @@ public class AuthRequestHandler implements MessageHandler<AuthRequest> {
         {
             LoginDriver loginDriver = new LoginDriver();
             loginDriver.setToken(token);
+            loginDriver.setStartListening(true);
+            loginDriver.setDispatched(false);
             loginDriver.setUserName(JwtTokenUtils.getUsernameByToken(token));
             WebSocketUtil.addLoginDriver(session,loginDriver);
         }

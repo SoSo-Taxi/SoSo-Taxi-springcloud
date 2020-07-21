@@ -1,11 +1,10 @@
 package com.apicaller.sosotaxi.webSocket.handler;
 
+import com.apicaller.sosotaxi.entity.Driver;
 import com.apicaller.sosotaxi.entity.Order;
-import com.apicaller.sosotaxi.entity.User;
 import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
 import com.apicaller.sosotaxi.feignClients.OrderFeignClient;
 import com.apicaller.sosotaxi.feignClients.UserServiceFeignClient;
-import com.apicaller.sosotaxi.utils.JwtTokenUtils;
 import com.apicaller.sosotaxi.webSocket.message.DriverAnswerOrderMessage;
 import com.apicaller.sosotaxi.webSocket.message.DriverAnswerResponse;
 import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.websocket.Session;
-import java.util.Date;
 
 /**
  * @author 张流潇潇
@@ -35,36 +33,40 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
     public void execute(Session session, DriverAnswerOrderMessage message) {
         LoginDriver loginDriver = WebSocketUtil.getLoginDriverBySession(session);
 
+        Order order = message.getOrder();
         if(message.getTakeOrder())
         {
-            String token = message.getToken();
-            String userName = JwtTokenUtils.getUsernameByToken(token);
-            String driverName = loginDriver.getUserName();
-
-            Order order = new Order();
-            order.setCreateTime(new Date());
-            Session userSession = WebSocketUtil.getPassengerSessionByToken(token);
-
+            Driver driver = message.getDriver();
             DriverAnswerResponse driverAnswerResponse = new DriverAnswerResponse();
-            driverAnswerResponse.setDriver(message.getDriver());
-            User passengerInfo = userServiceFeignClient.getUserByUserName(userName);
-            User driverInfo = userServiceFeignClient.getUserByUserName(driverName);
-
-            order.setDriverId(driverInfo.getUserId());
-            order.setPassengerId(passengerInfo.getUserId());
+            order.setDriverId(driver.getUserId());
+            //司机已接单
+            order.setStatus(1);
 
 
+            driverAnswerResponse.setDriver(driver);
+            driverAnswerResponse.setStatusCode(200);
+            driverAnswerResponse.setMsg("司机已接单");
 
-            orderFeignClient.addOrder(order);
+            String userTokenByOrder = WebSocketUtil.getUserTokenByOrder(order);
+            Session passengerSessionByToken = WebSocketUtil.getPassengerSessionByToken(userTokenByOrder);
+            WebSocketUtil.send(passengerSessionByToken,DriverAnswerResponse.TYPE,driverAnswerResponse);
 
-            //添加用户token和order的映射
-            WebSocketUtil.addUserTokenOrderMap(token,order);
+        }
+        else
+        {
+            String userTokenByOrder = WebSocketUtil.getUserTokenByOrder(order);
+            Session passengerSessionByToken = WebSocketUtil.getPassengerSessionByToken(userTokenByOrder);
 
+            WebSocketUtil.removeOrderUserTokenMap(order,userTokenByOrder);
+            WebSocketUtil.removeUserTokenOrderMap(userTokenByOrder,order);
+            WebSocketUtil.removeOrderLoginDriverMap(order,loginDriver);
+            WebSocketUtil.removeLoginDriverOrderMap(loginDriver,order);
+            DriverAnswerResponse driverAnswerResponse = new DriverAnswerResponse();
+            driverAnswerResponse.setMsg("司机拒单");
+            driverAnswerResponse.setStatusCode(200);
+            driverAnswerResponse.setDriver(null);
+            WebSocketUtil.send(passengerSessionByToken,DriverAnswerResponse.TYPE,driverAnswerResponse);
 
-            driverAnswerResponse.setDriver(message.getDriver());
-
-
-            WebSocketUtil.send(userSession,DriverAnswerResponse.TYPE,driverAnswerResponse);
         }
 
     }

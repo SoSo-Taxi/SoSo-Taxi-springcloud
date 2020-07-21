@@ -15,6 +15,11 @@ import java.util.Objects;
 public class LoginDriver {
 
 
+    /**
+     * 司机的token
+     */
+    private String token;
+
     public LoginDriver()
     {
         geoPoint = new GeoPoint();
@@ -28,10 +33,7 @@ public class LoginDriver {
     /**
      * 服务类型，舒适型
      */
-    private int serverType;
-
-    /** 用户token */
-    private String token;
+    private Short serverType;
 
     /** 司机是否已经接单了  */
     private boolean isDispatched;
@@ -50,12 +52,11 @@ public class LoginDriver {
         }
         LoginDriver that = (LoginDriver) o;
         return Objects.equals(getGeoPoint(), that.getGeoPoint()) &&
-                Objects.equals(getUserName(), that.getUserName()) &&
-                Objects.equals(getToken(), that.getToken());
+                Objects.equals(getUserName(), that.getUserName()) ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash( getUserName(), getToken());
+        return Objects.hash( getUserName());
     }
 }

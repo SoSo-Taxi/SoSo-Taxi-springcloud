@@ -58,16 +58,33 @@ public class WebSocketUtil {
 
 
     /**
-     * 派单后乘客token和司机的映射
+     * 司机和订单的映射
      */
-    private static final Map<String, LoginDriver> TOKEN_LOGIN_DRIVER_MAP = new ConcurrentHashMap<>();
+    private static final Map<LoginDriver,Order> LOGIN_DRIVER_ORDER_MAP = new ConcurrentHashMap<>();
 
+    /**
+     * 订单和司机的映射
+     */
+    private static final Map<Order,LoginDriver> ORDER_LOGIN_DRIVER_MAP = new ConcurrentHashMap<>();
+
+
+    /**
+     * 订单和用户的映射
+     */
+    private static final Map<Order,String> ORDER_USER_TOKEN_MAP = new ConcurrentHashMap<>();
 
     /**
      * 派单后用户与生成订单的映射
      */
     private static final Map<String, Order> USER_TOKEN_ORDER_MAP = new ConcurrentHashMap<>();
 
+
+    public static void addOrderUserTokenMap(Order order,String userToken) { ORDER_USER_TOKEN_MAP.put(order,userToken); }
+    public static void removeOrderUserTokenMap(Order order,String userToken){ORDER_USER_TOKEN_MAP.remove(order,userToken);}
+    public static String getUserTokenByOrder(Order order){return ORDER_USER_TOKEN_MAP.get(order);}
+    public static void addOrderLoginDriverMap(Order order,LoginDriver loginDriver){ORDER_LOGIN_DRIVER_MAP.put(order, loginDriver);}
+    public static void removeOrderLoginDriverMap(Order order,LoginDriver loginDriver){ORDER_LOGIN_DRIVER_MAP.remove(order, loginDriver);}
+    public static LoginDriver getLoginDriverByOrder(Order order){return ORDER_LOGIN_DRIVER_MAP.get(order);}
 
     /**
      * 订单生成时，添加用户和订单的映射
@@ -78,7 +95,21 @@ public class WebSocketUtil {
     {
         USER_TOKEN_ORDER_MAP.put(userToken,order);
     }
+    public static void removeUserTokenOrderMap(String userToken,Order order) { USER_TOKEN_ORDER_MAP.remove(userToken,order); }
 
+    /**
+     * 订单生成时，添加司机和订单的映射
+     * @param loginDriver
+     * @param order
+     */
+    public static void addLoginDriverOrderMap(LoginDriver loginDriver,Order order) { LOGIN_DRIVER_ORDER_MAP.put(loginDriver, order); }
+    public static void removeLoginDriverOrderMap(LoginDriver loginDriver,Order order) { LOGIN_DRIVER_ORDER_MAP.remove(loginDriver, order); }
+
+
+    public static Order getOrderByLoginDriver(LoginDriver driver)
+    {
+        return LOGIN_DRIVER_ORDER_MAP.get(driver);
+    }
 
     /**
      *
@@ -89,29 +120,6 @@ public class WebSocketUtil {
     {
         return USER_TOKEN_ORDER_MAP.get(userToken);
     }
-
-    /**
-     * 订单开始时，添加司机和用户的映射
-     * @param session
-     * @param loginDriver
-     */
-
-    public static void bondUserNameAndLoginDriver(Session session, LoginDriver loginDriver)
-    {
-        String userToken = SESSION_USER_MAP.get(session);
-        TOKEN_LOGIN_DRIVER_MAP.put(userToken,loginDriver);
-    }
-
-    /**
-     * 通过用户token返回对应的LoginDriver
-     * @param userToken
-     * @return LoginDriver
-     */
-    public static LoginDriver getLoginDriverByUserToken (String userToken)
-    {
-        return TOKEN_LOGIN_DRIVER_MAP.get(userToken);
-    }
-
 
 
 
@@ -128,7 +136,7 @@ public class WebSocketUtil {
 
 
         List<LoginDriver> availableLoginDrivers = LOGIN_DRIVER_SESSION_MAP.keySet().stream()
-                .filter(a -> "no".equals(a.isDispatched()))
+                .filter(a -> (!a.isDispatched() && a.isStartListening()))
                 .collect(Collectors.toList());
 
         LOGGER.info("[可用司机状况{}]",availableLoginDrivers);
@@ -221,6 +229,11 @@ public class WebSocketUtil {
         USER_SESSION_MAP.put(userToken, session);
         // 更新 SESSION_USER_MAP
         SESSION_USER_MAP.put(session, userToken);
+    }
+
+    public static String  getTokenByUserSession(Session session)
+    {
+        return SESSION_USER_MAP.get(session);
     }
 
     /**

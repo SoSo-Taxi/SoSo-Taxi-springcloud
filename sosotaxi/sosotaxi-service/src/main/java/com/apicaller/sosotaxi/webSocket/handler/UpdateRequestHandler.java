@@ -36,6 +36,7 @@ public class UpdateRequestHandler implements MessageHandler<UpdateRequest> {
         loginDriver.getGeoPoint().setLat(message.getLat());
         loginDriver.getGeoPoint().setLng(message.getLng());
         loginDriver.setDispatched(message.isDispatched());
+        loginDriver.setServerType(message.getServerType());
         loginDriver.setStartListening(message.isStartListening());
 
         LOGGER.info("[司机{}更新状态 {}]\"",JwtTokenUtils.getUsernameByToken(loginDriver.getToken()),loginDriver);
@@ -43,7 +44,7 @@ public class UpdateRequestHandler implements MessageHandler<UpdateRequest> {
 
         updateResponse.setMessageId(message.getMessageId());
         updateResponse.setStatusCode(200);
-        updateResponse.setMsg("更新位置和状态成功");
+        updateResponse.setMsg("更新位置和接单状态成功");
         WebSocketUtil.send(session,UpdateResponse.TYPE,updateResponse);
 
 

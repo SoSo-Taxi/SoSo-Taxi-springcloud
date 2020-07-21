@@ -75,5 +75,51 @@ public class Order implements Serializable {
     /** 乘客Id */
     private Long passengerId;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Order)) {
+            return false;
+        }
 
+        Order order = (Order) o;
+
+        if (getCity() != null ? !getCity().equals(order.getCity()) : order.getCity() != null) {
+            return false;
+        }
+        if (getDepartPoint() != null ? !getDepartPoint().equals(order.getDepartPoint()) : order.getDepartPoint() != null) {
+            return false;
+        }
+        if (getDestPoint() != null ? !getDestPoint().equals(order.getDestPoint()) : order.getDestPoint() != null) {
+            return false;
+        }
+        if (getCreateTime() != null ? !getCreateTime().equals(order.getCreateTime()) : order.getCreateTime() != null) {
+            return false;
+        }
+        if (getDepartName() != null ? !getDepartName().equals(order.getDepartName()) : order.getDepartName() != null) {
+            return false;
+        }
+        if (getDestName() != null ? !getDestName().equals(order.getDestName()) : order.getDestName() != null) {
+            return false;
+        }
+        if (getServiceType() != null ? !getServiceType().equals(order.getServiceType()) : order.getServiceType() != null) {
+            return false;
+        }
+        return getPassengerId() != null ? getPassengerId().equals(order.getPassengerId()) : order.getPassengerId() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getCity() != null ? getCity().hashCode() : 0;
+        result = 31 * result + (getDepartPoint() != null ? getDepartPoint().hashCode() : 0);
+        result = 31 * result + (getDestPoint() != null ? getDestPoint().hashCode() : 0);
+        result = 31 * result + (getCreateTime() != null ? getCreateTime().hashCode() : 0);
+        result = 31 * result + (getDepartName() != null ? getDepartName().hashCode() : 0);
+        result = 31 * result + (getDestName() != null ? getDestName().hashCode() : 0);
+        result = 31 * result + (getServiceType() != null ? getServiceType().hashCode() : 0);
+        result = 31 * result + (getPassengerId() != null ? getPassengerId().hashCode() : 0);
+        return result;
+    }
 }

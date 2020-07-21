@@ -20,10 +20,7 @@ import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author 张流潇潇
@@ -68,7 +65,8 @@ public class WebsocketServerEndpoint implements InitializingBean {
 
     @OnMessage
     public void onMessage(Session session, String message) {
-        logger.info("[onOpen][session({}) 接收到一条消息({})]", session, message);
+        logger.info("[onOpen][当前时间{} session({}) 接收到一条消息({})]", new Date(),session, message);
+
 
 //        logger.info("[当前司机session map {}]",WebSocketUtil.getLoginDriverSessionMap());
 
