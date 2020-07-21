@@ -15,7 +15,7 @@ public interface InfoCacheService {
      * @param driverId
      * @return
      */
-    MinimizedDriver getDriver(String driverId);
+    MinimizedDriver getDriver(String driverId) throws Exception;
 
     /**
      * 获取在线司机名单
@@ -55,7 +55,7 @@ public interface InfoCacheService {
      * @param driverId
      * @return
      */
-    GeoPoint getDriverPosition(String driverId);
+    GeoPoint getDriverPosition(String driverId) throws Exception;
 
     /**
      * 通过司机id删除hash中的field
@@ -147,7 +147,7 @@ public interface InfoCacheService {
      * @param orderId
      * @return
      */
-    Boolean deleteDispatch(String driverId, String orderId);
+    Boolean deleteDispatch(String driverId, String orderId) throws Exception;
 
     /**
      * 更新时间排序集合
@@ -180,7 +180,7 @@ public interface InfoCacheService {
      * @param orderId
      * @return
      */
-    Set<String> getDriverIdByRank(String orderId);
+    Set<String> getDriverIdByRank(String orderId, int assignCount);
 
     /**
      * 尝试接受订单
@@ -202,4 +202,14 @@ public interface InfoCacheService {
      * @param testKey
      */
     void deleteTestMsgKey(String testKey);
+
+    /**
+     * 清空所有数据
+     */
+    Boolean deleteAll();
+
+    /**
+     * 清空所有测试数据
+     */
+    Boolean deleteTestData();
 }

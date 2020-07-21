@@ -4,12 +4,12 @@
     <file url="file://$PROJECT_DIR$/sosotaxi/common/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sosotaxi/dispatch-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sosotaxi/dispatch-service/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/sosotaxi/driverState-service/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/sosotaxi/driverState-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sosotaxi/eureka-server/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sosotaxi/eureka-server/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sosotaxi/order-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sosotaxi/order-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sosotaxi/payment-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sosotaxi/payment-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sosotaxi/sosotaxi-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sosotaxi/sosotaxi-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sosotaxi/user-service/src/main/java" charset="UTF-8" />

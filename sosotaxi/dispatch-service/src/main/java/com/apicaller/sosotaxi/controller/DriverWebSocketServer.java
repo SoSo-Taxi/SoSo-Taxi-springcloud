@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-//应该是弃用了，准备删掉吧
+//
 @Controller
 @ServerEndpoint(value="/www/dispatch/driver/{driverId}")
 public class DriverWebSocketServer {
