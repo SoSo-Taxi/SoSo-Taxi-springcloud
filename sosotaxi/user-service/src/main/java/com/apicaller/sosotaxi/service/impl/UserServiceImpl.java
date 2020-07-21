@@ -3,9 +3,12 @@ package com.apicaller.sosotaxi.service.impl;
 import com.apicaller.sosotaxi.dao.UserDao;
 import com.apicaller.sosotaxi.entity.User;
 import com.apicaller.sosotaxi.service.UserService;
+import com.apicaller.sosotaxi.utils.QiNiuUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.awt.image.Kernel;
+import java.io.FileInputStream;
 import java.util.List;
 
 /**
@@ -16,9 +19,14 @@ import java.util.List;
  */
 @Service("userService")
 public class UserServiceImpl implements UserService {
+
+    private static final String AVATAR_PATH = "avatar";
+
     @Resource
     private UserDao userDao;
 
+    @Resource
+    private QiNiuUtil qiNiuUtil;
     /**
      * 通过ID查询单条数据
      *
@@ -89,6 +97,18 @@ public class UserServiceImpl implements UserService {
         } else {
             return true;
         }
+    }
+
+    @Override
+    public boolean storageAvatar(FileInputStream file, String fileName) {
+        String filePath = AVATAR_PATH + "-" + fileName;
+        return qiNiuUtil.uploadImg(file, filePath) != null;
+    }
+
+    @Override
+    public String getRealAvatarPath(String fileName) {
+        String filePath = AVATAR_PATH + "-" + fileName;
+        return qiNiuUtil.getDownloadUrl(filePath);
     }
 
 
