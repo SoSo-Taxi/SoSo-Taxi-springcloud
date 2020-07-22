@@ -128,12 +128,13 @@ public class WebSocketUtil {
         Set<Order> orderSet = ORDER_USER_TOKEN_MAP.keySet();
         Order targetOrder = null;
 
-        for(Order key : orderSet) {
-            if(key.hashCode() == order.hashCode()) {
+        for (Order key : orderSet) {
+            if (key.hashCode() == order.hashCode()) {
                 targetOrder = key;
             }
         }
         return targetOrder;
+    }
 
     public static void removeOrder(Session session)
     {
