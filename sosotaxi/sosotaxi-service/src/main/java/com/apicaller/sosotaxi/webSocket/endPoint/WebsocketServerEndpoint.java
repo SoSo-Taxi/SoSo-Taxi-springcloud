@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.apicaller.sosotaxi.webSocket.handler.AuthRequestHandler;
 import com.apicaller.sosotaxi.webSocket.handler.MessageHandler;
 import com.apicaller.sosotaxi.webSocket.message.AuthRequest;
+import com.apicaller.sosotaxi.webSocket.message.ErrorResponse;
 import com.apicaller.sosotaxi.webSocket.message.Message;
 import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
 import org.slf4j.Logger;
@@ -88,12 +89,23 @@ public class WebsocketServerEndpoint implements InitializingBean {
     @OnClose
     public void onClose(Session session, CloseReason closeReason) {
         logger.info("[onClose][session({}) 连接关闭。关闭原因是({})}]", session, closeReason);
+//        ErrorResponse errorResponse = new ErrorResponse();
+//        errorResponse.setMsg("你已关闭连接");
+//        errorResponse.setStatusCode(201);
+//        WebSocketUtil.send(session,ErrorResponse.TYPE,errorResponse);
+//        WebSocketUtil.removeOrder(session);
         WebSocketUtil.removeSession(session);
     }
 
     @OnError
     public void onError(Session session, Throwable throwable) {
         logger.info("[onClose][session({}) 发生异常]", session, throwable);
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMsg("发生异常，请重头再来");
+        errorResponse.setStatusCode(201);
+        WebSocketUtil.send(session,ErrorResponse.TYPE,errorResponse);
+        WebSocketUtil.removeOrder(session);
+
     }
 
 
