@@ -151,16 +151,22 @@ public class DispatchServiceImpl implements DispatchService {
     /**
      * 立即获取相应订单最合适的司机
      * @param order
-     * @return 分配的司机号
+     * @return 分配的司机
      * 如果为空代表当前无合适司机，请等待一段时间后重试
      * @throws Exception
      */
     @Override
-    public String dispatch(UnsettledOrder order) throws Exception {
+    public MinimizedDriver dispatch(UnsettledOrder order) throws Exception {
+        if(order == null){
+            throw new Exception("order不存在，传入了错误的参数");
+        }
         String city = order.getCity();
         int type = order.getType();
         Set<String> drivers = infoCacheService.getHashByPattern(city, type);
-        SortedMap<String, Integer> driversMap = new TreeMap<>();
+        if(drivers == null){
+            return null;
+        }
+        HashMap<String, Integer> driversMap = new HashMap<>();
 //        String optimalDriver = null;
 //        Integer minTime = Integer.MAX_VALUE;
         for(String driverId:drivers){
@@ -201,21 +207,32 @@ public class DispatchServiceImpl implements DispatchService {
             return null;
         }
         else{
-            Set<String> driversId = driversMap.keySet();
-            String targetDriver = null;
+            //排序
+            List<Map.Entry<String, Integer>> list = new ArrayList<Map.Entry<String, Integer>>(driversMap.entrySet());
+            Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+                @Override
+                public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+            });
+
+            MinimizedDriver targetDriver = null;
 
             String orderId = order.getOrderId();
-            for(String driverId:driversId){
+
+            //遍历排序过的集合
+            for(Map.Entry<String, Integer> entry:list){
+                String driverId = entry.getKey();
                 //已经尝试过分配给该司机，不应该再次尝试
-                if(infoCacheService.getDispatchedSet(orderId).contains(driverId)){
+                if(infoCacheService.getDispatchedSet(orderId) != null && infoCacheService.getDispatchedSet(orderId).contains(driverId)){
                     continue;
                 }
                 //分配成功
-                //会自动注销该司机
+                //dispatchDriver方法会自动注销该司机，所以先拿出来
+                targetDriver = infoCacheService.getDriver(driverId);
                 if(infoCacheService.dispatchDriver(driverId)){
-                    targetDriver = driverId;
                     //记录该司机已经尝试过接单
-                    infoCacheService.addDriverToDispatchedSet(orderId,targetDriver);
+                    infoCacheService.addDriverToDispatchedSet(orderId,driverId);
                     break;
                 }
             }

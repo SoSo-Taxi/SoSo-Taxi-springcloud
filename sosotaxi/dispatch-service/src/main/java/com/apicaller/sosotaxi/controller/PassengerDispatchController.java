@@ -20,6 +20,12 @@ public class PassengerDispatchController {
     @Resource
     DispatchServiceImpl dispatchService;
 
+    /**
+     * 提交订单
+     * @param order
+     * @return
+     * @throws Exception
+     */
     @PostMapping(value = "/submit")
     public ResponseBean submit(@RequestBody UnsettledOrder order) throws Exception {
         //通用的response
@@ -32,18 +38,17 @@ public class PassengerDispatchController {
         //单人分配策略
         if("singleDispatch".equals(dispatchService.getDispatchedMethod())){
             response.setCode(200);
-            String driverId = null;
+            MinimizedDriver driver = null;
             try{
                 //登记该订单以作备用，在被接单时删除，在被再次接单时被调用
                 infoCacheService.updateUOrderField(order.getOrderId(),order);
-                driverId = dispatchService.dispatch(order);
+                driver = dispatchService.dispatch(order);
             }catch (Exception e){
                 e.printStackTrace();
                 throw new Exception("在乘客接口中分配司机时出错");
             }
-            if(driverId != null){
-                MinimizedDriver targetDriver = infoCacheService.getDriver(driverId);
-                response.setData(targetDriver);
+            if(driver != null){
+                response.setData(driver);
                 response.setMsg("成功分配到司机");
                 return response;
             }

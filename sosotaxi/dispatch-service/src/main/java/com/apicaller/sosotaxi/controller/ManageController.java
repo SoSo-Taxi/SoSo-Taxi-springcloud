@@ -47,6 +47,7 @@ public class ManageController {
 
     /**
      * 查询分配到的订单
+     * 仅当抢单模式时有效
      * @param driverId
      * @return
      */
@@ -71,6 +72,7 @@ public class ManageController {
 
     /**
      * 添加测试数据，仅供测试，正式业务中禁止使用
+     * 抢单模式测试数据
      * @param password
      * @return
      */
@@ -139,6 +141,11 @@ public class ManageController {
         }
     }
 
+    /**
+     * flushall
+     * @param password
+     * @return
+     */
     @GetMapping(value = "/deleteAll")
     public ResponseBean flushAllCaches(@RequestParam(value="password") String password){
         ResponseBean response = new ResponseBean(200, "别用这个！！！", null);
@@ -166,6 +173,7 @@ public class ManageController {
 
     /**
      * 获取某订单的可接受司机
+     * 仅当抢单模式时有效
      * @param orderId
      * @return
      */

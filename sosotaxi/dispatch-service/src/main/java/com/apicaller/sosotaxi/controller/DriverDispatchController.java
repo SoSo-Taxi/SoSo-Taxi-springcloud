@@ -88,7 +88,7 @@ public class DriverDispatchController {
         }
         String userId = msg.getDriverId();
         ResponseBean response = new ResponseBean(500, userId + "的请求未被处理", null);
-        if("singleDispatch".equals(dispatchService.getDispatchedMethod())){
+        if("groupDispatch".equals(dispatchService.getDispatchedMethod())){
             try{
                 response.setCode(200);
                 String orderId = msg.getOrderId();
@@ -128,7 +128,7 @@ public class DriverDispatchController {
             }
             return response;
         }
-        else if("groupDispatch".equals(dispatchService.getDispatchedMethod())){
+        else if("singleDispatch".equals(dispatchService.getDispatchedMethod())){
             //删除该订单的已分配过的司机的记录信息
             UnsettledOrder order = infoCacheService.getUOrder(msg.getOrderId());
             infoCacheService.deleteDispatchedSet(msg.getOrderId());
@@ -144,7 +144,12 @@ public class DriverDispatchController {
         }
     }
 
-    @GetMapping(value = "/refuse")
+    /**
+     * 拒绝订单
+     * @param msg
+     * @return
+     */
+    @PostMapping(value = "/refuse")
     public ResponseBean refuseOrder(@RequestBody OpsForOrderMsg msg){
         if(msg == null){
             ResponseBean response = new ResponseBean(400, "参数错误", null);

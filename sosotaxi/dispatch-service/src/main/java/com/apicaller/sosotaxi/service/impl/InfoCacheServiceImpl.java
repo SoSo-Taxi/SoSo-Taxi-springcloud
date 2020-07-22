@@ -366,7 +366,7 @@ public class InfoCacheServiceImpl implements InfoCacheService {
         try{
             ZSetOperations<String, String> operations = sRedisTemplate.opsForZSet();
             String Key = "duration_"+ orderId;
-            return operations.range(Key, 0, assignCount);
+            return operations.range(Key, 0, assignCount-1);
         }catch (Exception e){
             e.printStackTrace();
             return null;
