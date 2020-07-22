@@ -3,6 +3,7 @@ package com.apicaller.sosotaxi.webSocket.handler;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.entity.Order;
 import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
+import com.apicaller.sosotaxi.feignClients.OrderFeignClient;
 import com.apicaller.sosotaxi.webSocket.message.AskForDriverMessage;
 import com.apicaller.sosotaxi.webSocket.message.StartOrderMessage;
 import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.websocket.Session;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,6 +25,9 @@ import java.util.stream.Collectors;
 @Component
 public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
 
+    @Resource
+    OrderFeignClient orderFeignClient;
+
     Logger logger = LoggerFactory.getLogger(StartOrderHandler.class);
 
     @Override
@@ -30,24 +35,28 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
 
         GeoPoint departGeoPoint = message.getDepartPoint();
         GeoPoint destGeoPoint = message.getDestPoint();
-        Order order = new Order();
-        Date date = new Date();
-        Short serverType = message.getServiceType();
+        Short serviceType = message.getServiceType();
 
+        //新建订单
+        Order order = new Order();
         order.setPassengerId(message.getPassengerId());
-        order.setCreateTime(date);
+        order.setCreateTime(new Date());
         //设置订单状态，0代表还未开始
         order.setStatus(0);
+        order.setCity(message.getCity());
         order.setDepartPoint(departGeoPoint);
         order.setDestPoint(destGeoPoint);
         order.setDepartName(message.getDepartName());
         order.setDestName(message.getDestName());
-        order.setServiceType(serverType);
+        order.setServiceType(serviceType);
+
+        //先将订单订单插入数据库，以获取订单id
+        orderFeignClient.addOrder(order);
 
         //设置给司机的消息
         AskForDriverMessage askForDriverMessage = new AskForDriverMessage();
-        askForDriverMessage.setCity(message.getCity());
-        askForDriverMessage.setPassengerName(message.getUserName());
+        askForDriverMessage.getOrder().setCity(message.getCity());
+        askForDriverMessage.setPassengerPhoneNumber(message.getPhoneNumber());
         askForDriverMessage.setOrder(order);
 
         List<LoginDriver> availableDrivers = WebSocketUtil.getAllAvailableDrivers();
@@ -56,7 +65,7 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
 
 
         List<LoginDriver> fitTypeDrivers = availableDrivers.stream()
-                .filter(a -> a.getServerType()==(message.getServiceType()))
+                .filter(a -> a.getServiceType()==(message.getServiceType()))
                 .collect(Collectors.toList());
 
 
@@ -67,7 +76,6 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
          */
 
 
-
         //添加到map中
         WebSocketUtil.addUserTokenOrderMap(message.getUserToken(),order);
         WebSocketUtil.addOrderUserTokenMap(order,message.getUserToken());
@@ -75,7 +83,6 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
         WebSocketUtil.addOrderLoginDriverMap(order,fitTypeDrivers.get(0));
         Session driverSession = WebSocketUtil.getSessionByLoginDriver(fitTypeDrivers.get(0));
         WebSocketUtil.send(driverSession,AskForDriverMessage.TYPE,askForDriverMessage);
-
 
     }
 

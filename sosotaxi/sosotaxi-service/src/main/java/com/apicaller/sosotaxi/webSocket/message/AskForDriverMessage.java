@@ -17,10 +17,7 @@ import java.util.Date;
 public class AskForDriverMessage implements Message {
     public static final String TYPE = "ASK_FOR_DRIVER_MESSAGE";
 
-
-    private String city;
-
-    private String passengerName;
+    private String passengerPhoneNumber;
 
     private Order order;
 

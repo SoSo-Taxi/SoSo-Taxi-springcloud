@@ -1,6 +1,7 @@
 package com.apicaller.sosotaxi.webSocket.handler;
 
 import com.apicaller.sosotaxi.entity.Driver;
+import com.apicaller.sosotaxi.entity.DriverVo;
 import com.apicaller.sosotaxi.entity.Order;
 import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
 import com.apicaller.sosotaxi.feignClients.OrderFeignClient;
@@ -36,7 +37,7 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
         Order order = message.getOrder();
         if(message.getTakeOrder())
         {
-            Driver driver = message.getDriver();
+            DriverVo driver = message.getDriver();
             DriverAnswerResponse driverAnswerResponse = new DriverAnswerResponse();
             order.setDriverId(driver.getUserId());
             //司机已接单
@@ -50,8 +51,17 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
             String userTokenByOrder = WebSocketUtil.getUserTokenByOrder(order);
             Session passengerSessionByToken = WebSocketUtil.getPassengerSessionByToken(userTokenByOrder);
             WebSocketUtil.send(passengerSessionByToken,DriverAnswerResponse.TYPE,driverAnswerResponse);
-
+            /**
+             *
+             * 这里还需要做一些事：
+             * 1 告知诗烨那边一个司机已经接单，即不可分配了。
+             * 2 修改鹰眼上该司机的状态
+             * 3 如果LoginDriver中的状态还有用，还要更新LoginDriver中的状态位
+             */
         }
+        /**
+         * 这里应该要改一下，司机拒单则系统自动寻找下一个司机（可能由诗烨那边来做)
+         */
         else
         {
             String userTokenByOrder = WebSocketUtil.getUserTokenByOrder(order);

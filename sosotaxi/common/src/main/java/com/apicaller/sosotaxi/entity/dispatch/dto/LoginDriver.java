@@ -33,7 +33,7 @@ public class LoginDriver {
     /**
      * 服务类型，舒适型
      */
-    private Short serverType;
+    private Short serviceType;
 
     /** 司机是否已经接单了  */
     private boolean isDispatched;

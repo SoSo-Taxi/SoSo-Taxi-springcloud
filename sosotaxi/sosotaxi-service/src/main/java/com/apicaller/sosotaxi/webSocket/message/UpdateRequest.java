@@ -20,11 +20,11 @@ public class UpdateRequest implements Message {
     /** 经度 */
     private double lng;
 
-    /** 是否接单 yes or no*/
+    /** 是否接单 */
     private boolean isDispatched;
 
     /**是否开始听单*/
     private boolean startListening;
 
-    private Short serverType;
+    private Short serviceType;
 }

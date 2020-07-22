@@ -13,12 +13,8 @@ import lombok.Data;
 public class StartOrderResponse implements Message {
     public static final String TYPE = "START_ORDER_RESPONSE";
 
-//    private LoginDriver loginDriver;
-
     private String msg;
 
     private Integer statusCode;
-
-
 
 }
