@@ -189,6 +189,14 @@ public interface InfoCacheService {
      */
     Map<String, Object> acceptOrder(String orderId);
 
+    /**
+     * 立即返回分配的司机号
+     * 仅在立即分配订单策略中有效
+     * @param order
+     * @return
+     */
+//    String assignImmediately(UnsettledOrder order);
+
 
     /**
      * 测试用，添加

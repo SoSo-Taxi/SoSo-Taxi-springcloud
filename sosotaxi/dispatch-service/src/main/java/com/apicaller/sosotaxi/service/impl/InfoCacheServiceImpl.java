@@ -426,6 +426,11 @@ public class InfoCacheServiceImpl implements InfoCacheService {
         return acceptOrderSessionCallBack(redisTemplate, orderId);
     }
 
+//    @Override
+//    public String assignImmediately(UnsettledOrder order){
+//
+//    }
+
     /**
      * 测试用，添加
      * @param testKey

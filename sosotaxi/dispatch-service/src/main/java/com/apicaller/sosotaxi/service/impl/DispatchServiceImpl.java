@@ -1,6 +1,7 @@
 package com.apicaller.sosotaxi.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.apicaller.sosotaxi.entity.MinimizedDriver;
 import com.apicaller.sosotaxi.entity.UnsettledOrder;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.service.DispatchService;
@@ -9,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -127,6 +129,64 @@ public class DispatchServiceImpl implements DispatchService {
             for(String driverId:driversToDispatch){
                 infoCacheService.updateDispatch(driverId, order);
             }
+        }
+    }
+
+    /**
+     * 立即获取相应订单最合适的司机
+     * @param order
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public MinimizedDriver dispatch(UnsettledOrder order) throws Exception {
+        String city = order.getCity();
+        int type = order.getType();
+        Set<String> drivers = infoCacheService.getHashByPattern(city, type);
+        String optimalDriver = null;
+        Integer minTime = Integer.MAX_VALUE;
+        for(String driverId:drivers){
+            GeoPoint point = null;
+            try{
+                point = infoCacheService.getDriverPosition(driverId);
+            }catch (Exception e){
+                e.printStackTrace();
+                throw new Exception("缓存中不存在该类型司机信息");
+            }
+            String result = null;
+            try{
+                if(point != null){
+                    result = mapUtils.getDirection(point, order.getOriginPoint());
+                }
+                else{
+                    continue;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                throw new Exception("在分配算法中调用地图api时出错");
+            }
+            Integer durection = null;
+            try{
+                if(result != null){
+                    durection = MapUtils.getDistance(result);
+                }
+                else{
+                    continue;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                throw new Exception("在分配算法中解析api返回结果时出错");
+            }
+            if(durection < minTime){
+                minTime = durection;
+                optimalDriver = driverId;
+            }
+        }
+        if(optimalDriver != null){
+            return infoCacheService.getDriver(optimalDriver);
+        }
+        else{
+            return null;
         }
     }
 }
