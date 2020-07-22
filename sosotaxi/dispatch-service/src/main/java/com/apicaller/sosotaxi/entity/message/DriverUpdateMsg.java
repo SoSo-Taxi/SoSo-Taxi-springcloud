@@ -1,5 +1,6 @@
-package com.apicaller.sosotaxi.entity;
+package com.apicaller.sosotaxi.entity.message;
 
+import com.apicaller.sosotaxi.entity.GeoPoint;
 import lombok.Data;
 
 import java.io.Serializable;

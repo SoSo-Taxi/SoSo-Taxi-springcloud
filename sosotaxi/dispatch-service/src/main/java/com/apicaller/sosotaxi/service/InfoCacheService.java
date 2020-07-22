@@ -196,13 +196,44 @@ public interface InfoCacheService {
      */
     Boolean dispatchDriver(String driverId);
 
+//    /**
+//     * 立即返回分配的司机号
+//     * 仅在立即分配订单策略中有效
+//     * @param order
+//     * @return
+//     */
+//    String assignImmediately(UnsettledOrder order);
+
+
     /**
-     * 立即返回分配的司机号
-     * 仅在立即分配订单策略中有效
-     * @param order
+     * 添加司机到订单的已分配集合
+     * 用于防止重复分配
+     * @param orderId
+     * @param driverId
      * @return
      */
-//    String assignImmediately(UnsettledOrder order);
+    Boolean addDriverToDispatchedSet(String orderId, String driverId);
+
+    /**
+     * 删除订单的已分配集合
+     * @param orderId
+     * @return
+     */
+    Boolean deleteDispatchedSet(String orderId);
+
+    /**
+     * 获取订单的已分配集合
+     * @param orderId
+     * @return
+     */
+    Set<String> getDispatchedSet(String orderId);
+
+    /**
+     * 某个订单是否被分配过
+     * @param orderId
+     * @return
+     */
+    Boolean hasDispatchedSet(String orderId);
 
 
     /**
@@ -227,4 +258,5 @@ public interface InfoCacheService {
      * 清空所有测试数据
      */
     Boolean deleteTestData();
+
 }

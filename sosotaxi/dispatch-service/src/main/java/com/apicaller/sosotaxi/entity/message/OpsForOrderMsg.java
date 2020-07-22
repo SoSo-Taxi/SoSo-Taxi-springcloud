@@ -1,9 +1,10 @@
-package com.apicaller.sosotaxi.entity;
+package com.apicaller.sosotaxi.entity.message;
 
+import com.apicaller.sosotaxi.entity.GeoPoint;
 import lombok.Data;
 
 @Data
-public class DriverAcceptMsg {
+public class OpsForOrderMsg {
 
     /**
      * 位置信息

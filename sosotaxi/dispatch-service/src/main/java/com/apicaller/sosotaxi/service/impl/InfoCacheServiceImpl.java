@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.*;
 
-//TODO:添加事务管理，防止严重错误的产生
+
 @Component
 public class InfoCacheServiceImpl implements InfoCacheService {
 
@@ -444,6 +444,7 @@ public class InfoCacheServiceImpl implements InfoCacheService {
                     HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
                     String key = sHashOperations.get(DRIVER_HASH_KEY,driverId);
                     try{
+                        //注销司机
                         deleteDriverField(driverId);
                         return true;
                     }catch (Exception e){
@@ -475,6 +476,90 @@ public class InfoCacheServiceImpl implements InfoCacheService {
         isSuccess = dispatchDriverSessionCallBack(sRedisTemplate, driverId);
         return isSuccess;
     }
+
+    /**
+     * 添加司机到订单的已分配集合
+     * 用于防止重复分配
+     *
+     * @param orderId
+     * @param driverId
+     * @return
+     */
+    @Override
+    public Boolean addDriverToDispatchedSet(String orderId, String driverId) {
+        SetOperations<String, String> sOperations = sRedisTemplate.opsForSet();
+        //防止空指针异常
+        Boolean isMember = sOperations.isMember("dispatched_"+orderId,driverId);
+        if(isMember == null){
+            return null;
+        }
+        else if(!isMember){
+            sOperations.add("dispatched_"+orderId,driverId);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+     * 删除订单的已分配集合
+     *
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Boolean deleteDispatchedSet(String orderId) {
+        SetOperations<String, String> sOperations = sRedisTemplate.opsForSet();
+        Boolean hasKey = sRedisTemplate.hasKey("dispatched_"+orderId);
+        if(hasKey == null){
+            return null;
+        }
+        else if(hasKey){
+            Set<String> drivers = getDispatchedSet(orderId);
+            for(String driverId:drivers){
+                sOperations.remove("dispatched_"+orderId, driverId);
+            }
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    /**
+     * 获取订单的已分配集合
+     *
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Set<String> getDispatchedSet(String orderId) {
+        SetOperations<String, String> sOperations = sRedisTemplate.opsForSet();
+        Boolean hasKey = sRedisTemplate.hasKey("dispatched_"+orderId);
+        if(hasKey == null){
+            return null;
+        }
+        else if(hasKey){
+            return sOperations.members("dispatched_"+orderId);
+        }
+        else{
+            return null;
+        }
+    }
+
+    /**
+     * 某个订单是否被分配过
+     *
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Boolean hasDispatchedSet(String orderId) {
+        SetOperations<String, String> sOperations = sRedisTemplate.opsForSet();
+        return sRedisTemplate.hasKey("dispatched_"+orderId);
+    }
+
 
 //    @Override
 //    public String assignImmediately(UnsettledOrder order){

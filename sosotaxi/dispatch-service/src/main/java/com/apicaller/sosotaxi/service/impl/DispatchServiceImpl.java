@@ -32,7 +32,7 @@ public class DispatchServiceImpl implements DispatchService {
     /**
      * 当前策略
      */
-    private dispatchMethod currentMethod = dispatchMethod.GROUPDISPATCH;
+    private dispatchMethod currentMethod = dispatchMethod.AUTOARRANGE;
 
     /**
      * 更改策略
@@ -50,6 +50,23 @@ public class DispatchServiceImpl implements DispatchService {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 以字符串的形式返回当前策略
+     * 后期分配策略的部分稳定后可以换成返回枚举，因为目前还要调整所以暂时用字符串减少依赖
+     * @return
+     */
+    public String getDispatchedMethod(){
+        if(currentMethod == dispatchMethod.AUTOARRANGE){
+            return "singleDispatch";
+        }
+        else if(currentMethod == dispatchMethod.GROUPDISPATCH){
+            return "groupDispatch";
+        }
+        else{
+            return "still developing ...";
+        }
     }
 
     /**
@@ -130,6 +147,7 @@ public class DispatchServiceImpl implements DispatchService {
         }
     }
 
+
     /**
      * 立即获取相应订单最合适的司机
      * @param order
@@ -177,25 +195,27 @@ public class DispatchServiceImpl implements DispatchService {
                 e.printStackTrace();
                 throw new Exception("在分配算法中解析api返回结果时出错");
             }
-//            if(durection < minTime){
-//                minTime = durection;
-//                optimalDriver = driverId;
-//            }
             driversMap.put(driverId, durection);
         }
-//        if(optimalDriver != null){
-//            return infoCacheService.getDriver(optimalDriver);
-//        }
         if(driversMap.isEmpty()){
             return null;
         }
         else{
             Set<String> driversId = driversMap.keySet();
             String targetDriver = null;
+
+            String orderId = order.getOrderId();
             for(String driverId:driversId){
+                //已经尝试过分配给该司机，不应该再次尝试
+                if(infoCacheService.getDispatchedSet(orderId).contains(driverId)){
+                    continue;
+                }
                 //分配成功
+                //会自动注销该司机
                 if(infoCacheService.dispatchDriver(driverId)){
                     targetDriver = driverId;
+                    //记录该司机已经尝试过接单
+                    infoCacheService.addDriverToDispatchedSet(orderId,targetDriver);
                     break;
                 }
             }
