@@ -87,6 +87,7 @@ public class WebSocketUtil {
     public static LoginDriver getLoginDriverByOrder(Order order){return ORDER_LOGIN_DRIVER_MAP.get(order);}
 
 
+
     /**
      * 为一个订单更新起始时间和结束时间
      * @param order
@@ -133,6 +134,35 @@ public class WebSocketUtil {
             }
         }
         return targetOrder;
+
+    public static void removeOrder(Session session)
+    {
+        String tokenByUserSession = WebSocketUtil.getTokenByUserSession(session);
+        LoginDriver loginDriverBySession = WebSocketUtil.getLoginDriverBySession(session);
+
+        if (tokenByUserSession!=null)
+        {
+            Order orderByUserToken = WebSocketUtil.getOrderByUserToken(tokenByUserSession);
+            LoginDriver loginDriver = ORDER_LOGIN_DRIVER_MAP.get(orderByUserToken);
+
+
+            ORDER_LOGIN_DRIVER_MAP.remove(orderByUserToken,loginDriver);
+            LOGIN_DRIVER_ORDER_MAP.remove(loginDriver,orderByUserToken);
+            ORDER_USER_TOKEN_MAP.remove(orderByUserToken,tokenByUserSession);
+            USER_TOKEN_ORDER_MAP.remove(tokenByUserSession);
+        }
+
+        if (loginDriverBySession!=null)
+        {
+            Order order = LOGIN_DRIVER_ORDER_MAP.get(loginDriverBySession);
+            String passengerToken = ORDER_USER_TOKEN_MAP.get(order);
+
+            ORDER_USER_TOKEN_MAP.remove(order,passengerToken);
+            USER_TOKEN_ORDER_MAP.remove(passengerToken,order);
+            LOGIN_DRIVER_ORDER_MAP.remove(loginDriverBySession,order);
+            ORDER_LOGIN_DRIVER_MAP.remove(order,loginDriverBySession);
+        }
+
     }
 
     /**
@@ -214,28 +244,6 @@ public class WebSocketUtil {
 
     }
 
-
-    /**
-     *
-     * @param session
-     * @return LoginDriver
-     * 根据司机session找到司机
-     * 有错，得好好研究下
-     */
-
-//    public static LoginDriver findDriverBySession(Session session)
-//    {
-//        LOGGER.info("[session是{}]",session);
-//
-//        for (LoginDriver key:LOGIN_DRIVER_SESSION_MAP.keySet()) {
-//            if(session == LOGIN_DRIVER_SESSION_MAP.get(key))
-//            {
-//                LOGGER.info("在map中找到司机{}",key);
-//                return key;
-//            }
-//        }
-//        return null;
-//    }
 
     /**
      *

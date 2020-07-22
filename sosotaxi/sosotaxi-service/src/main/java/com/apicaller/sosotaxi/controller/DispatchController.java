@@ -6,8 +6,10 @@ import com.apicaller.sosotaxi.entity.ResponseBean;
 import com.apicaller.sosotaxi.entity.bdmap.AroundSearchDriverResponse;
 import com.apicaller.sosotaxi.entity.dispatch.dto.GenerateOrderDTO;
 
+
 import com.apicaller.sosotaxi.utils.CoordType;
 import com.apicaller.sosotaxi.utils.YingYanUtil;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +32,7 @@ import javax.websocket.Session;
 @RestController
 @RequestMapping("/dispatch")
 public class DispatchController {
+
 
     /**
      * 获取给定地点附近的司机。
