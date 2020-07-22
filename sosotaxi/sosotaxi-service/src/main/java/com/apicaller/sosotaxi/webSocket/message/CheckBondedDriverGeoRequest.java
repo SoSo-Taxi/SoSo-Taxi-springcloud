@@ -15,5 +15,5 @@ public class CheckBondedDriverGeoRequest implements Message {
 
     private String userToken;
 
-    private GeoPoint geoPoint;
+    private GeoPoint point;
 }

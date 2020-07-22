@@ -39,4 +39,19 @@ public class DriverVo implements Serializable {
 
     /** 行驶证中的车辆识别代码 */
     private String vin;
+
+    public static DriverVo fromDriver(Driver driver) {
+        DriverVo driverVo = new DriverVo();
+        driverVo.setUserId(driver.getUserId());
+        driverVo.setCity(driver.getCity());
+        driverVo.setCarBrand(driver.getCarBrand());
+        driverVo.setCarModel(driver.getCarModel());
+        driverVo.setCarColor(driver.getCarColor());
+        driverVo.setLicensePlate(driver.getLicensePlate());
+        driverVo.setServiceType(driver.getServiceType());
+        driverVo.setDriverLicenseNumber(driver.getDriverLicenseNumber());
+        driverVo.setVin(driver.getVin());
+
+        return driverVo;
+    }
 }
