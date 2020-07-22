@@ -190,6 +190,13 @@ public interface InfoCacheService {
     Map<String, Object> acceptOrder(String orderId);
 
     /**
+     * 线程安全地分配司机
+     * @param driverId
+     * @return
+     */
+    Boolean dispatchDriver(String driverId);
+
+    /**
      * 立即返回分配的司机号
      * 仅在立即分配订单策略中有效
      * @param order

@@ -426,6 +426,56 @@ public class InfoCacheServiceImpl implements InfoCacheService {
         return acceptOrderSessionCallBack(redisTemplate, orderId);
     }
 
+    /**
+     * 执行立即分配方法
+     * @param redisTemplatePara
+     * @param driverId
+     * @return 成功为真，失败为假，错误为null
+     */
+    public Boolean dispatchDriverSessionCallBack(RedisTemplate redisTemplatePara, String driverId){
+
+        Boolean isSuccess = null;
+
+        isSuccess = (Boolean) redisTemplatePara.execute(new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations redisOperations) throws DataAccessException {
+                //司机还在，可以分配
+                if(redisOperations.opsForHash().keys(DRIVER_HASH_KEY).contains(driverId)){
+                    HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
+                    String key = sHashOperations.get(DRIVER_HASH_KEY,driverId);
+                    try{
+                        deleteDriverField(driverId);
+                        return true;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        return null;
+                    }
+                }
+                //司机不在了，无法分配
+                else{
+                    return false;
+                }
+            }
+        });
+
+        return isSuccess;
+    }
+
+    /**
+     * 尝试立即分配方法
+     * 分配成功后司机会被自动注销，拒绝后会自动重新注册
+     * @param driverId
+     * @return
+     */
+    @Override
+    public Boolean dispatchDriver(String driverId){
+        Boolean isSuccess = false;
+        //调用线程安全方法
+        //因为主要关注的是在索引表中存不存在，所以用操作String类型的sRedisTemplate来执行线程安全的操作
+        isSuccess = dispatchDriverSessionCallBack(sRedisTemplate, driverId);
+        return isSuccess;
+    }
+
 //    @Override
 //    public String assignImmediately(UnsettledOrder order){
 //

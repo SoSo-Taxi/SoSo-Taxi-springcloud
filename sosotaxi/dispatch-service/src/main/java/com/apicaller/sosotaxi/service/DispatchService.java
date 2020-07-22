@@ -15,5 +15,5 @@ public interface DispatchService {
      * @param order
      * @return
      */
-    MinimizedDriver dispatch(UnsettledOrder order) throws Exception;
+    String dispatch(UnsettledOrder order) throws Exception;
 }

@@ -10,9 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class DispatchServiceImpl implements DispatchService {
@@ -135,16 +133,18 @@ public class DispatchServiceImpl implements DispatchService {
     /**
      * 立即获取相应订单最合适的司机
      * @param order
-     * @return
+     * @return 分配的司机号
+     * 如果为空代表当前无合适司机，请等待一段时间后重试
      * @throws Exception
      */
     @Override
-    public MinimizedDriver dispatch(UnsettledOrder order) throws Exception {
+    public String dispatch(UnsettledOrder order) throws Exception {
         String city = order.getCity();
         int type = order.getType();
         Set<String> drivers = infoCacheService.getHashByPattern(city, type);
-        String optimalDriver = null;
-        Integer minTime = Integer.MAX_VALUE;
+        SortedMap<String, Integer> driversMap = new TreeMap<>();
+//        String optimalDriver = null;
+//        Integer minTime = Integer.MAX_VALUE;
         for(String driverId:drivers){
             GeoPoint point = null;
             try{
@@ -177,16 +177,29 @@ public class DispatchServiceImpl implements DispatchService {
                 e.printStackTrace();
                 throw new Exception("在分配算法中解析api返回结果时出错");
             }
-            if(durection < minTime){
-                minTime = durection;
-                optimalDriver = driverId;
-            }
+//            if(durection < minTime){
+//                minTime = durection;
+//                optimalDriver = driverId;
+//            }
+            driversMap.put(driverId, durection);
         }
-        if(optimalDriver != null){
-            return infoCacheService.getDriver(optimalDriver);
+//        if(optimalDriver != null){
+//            return infoCacheService.getDriver(optimalDriver);
+//        }
+        if(driversMap.isEmpty()){
+            return null;
         }
         else{
-            return null;
+            Set<String> driversId = driversMap.keySet();
+            String targetDriver = null;
+            for(String driverId:driversId){
+                //分配成功
+                if(infoCacheService.dispatchDriver(driverId)){
+                    targetDriver = driverId;
+                    break;
+                }
+            }
+            return targetDriver;
         }
     }
 }
