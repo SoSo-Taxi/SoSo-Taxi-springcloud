@@ -3,8 +3,11 @@ package com.apicaller.sosotaxi.controller;
 
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.entity.ResponseBean;
+import com.apicaller.sosotaxi.entity.bdmap.AroundSearchDriverResponse;
 import com.apicaller.sosotaxi.entity.dispatch.dto.GenerateOrderDTO;
 
+import com.apicaller.sosotaxi.utils.CoordType;
+import com.apicaller.sosotaxi.utils.YingYanUtil;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,11 +39,18 @@ public class DispatchController {
      */
     @GetMapping("/getNearbyDrivers")
     public ResponseBean getNearbyDrivers(double lat, double lng) {
+        List<AroundSearchDriverResponse> res = YingYanUtil
+                .aroundSearchDriver(lat, lng, CoordType.bd09ll, 5000, false, null);
+
+        if(res == null || res.isEmpty()) {
+            return new ResponseBean(404, "未在周围找到任何司机", null);
+        }
         List<GeoPoint> result = new ArrayList<GeoPoint>();
-        result.add(new GeoPoint(40.058922, 116.312615));
-        result.add(new GeoPoint(40.058939, 116.312675));
-        result.add(new GeoPoint(40.058522, 116.382615));
-        return new ResponseBean(200, null, result);
+        for (AroundSearchDriverResponse driver : res) {
+            result.add(driver.getPoint());
+        }
+
+        return new ResponseBean(200, "在周围找到司机", result);
     }
 
     /**
@@ -61,6 +71,7 @@ public class DispatchController {
     public ResponseBean getPricingMethod(double lat, double lng, Date date, Short serviceType) {
         List<AvailableServiceCalResponse> result = new ArrayList<AvailableServiceCalResponse>();
         result.add(new AvailableServiceCalResponse(0, 1.2, 0.2, "CNY", 0.2, 6.5));
+        result.add(new AvailableServiceCalResponse(1, 1.4, 0.3, "CNY", 0.3, 8));
         return new ResponseBean(200, null, result);
     }
 
