@@ -1,6 +1,7 @@
 package com.apicaller.sosotaxi.webSocket.endPoint;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.apicaller.sosotaxi.webSocket.handler.AuthRequestHandler;
 import com.apicaller.sosotaxi.webSocket.handler.MessageHandler;
@@ -68,22 +69,24 @@ public class WebsocketServerEndpoint implements InitializingBean {
     public void onMessage(Session session, String message) {
         logger.info("[onOpen][当前时间{} session({}) 接收到一条消息({})]", new Date(),session, message);
 
-
-//        logger.info("[当前司机session map {}]",WebSocketUtil.getLoginDriverSessionMap());
-
-        JSONObject jsonMessage = JSON.parseObject(message);
-        String messageType = jsonMessage.getString("type");
-        // 获得消息处理器
-        MessageHandler messageHandler = HANDLERS.get(messageType);
-        if (messageHandler == null) {
-            logger.error("[onMessage][消息类型({}) 不存在消息处理器]", messageType);
-            return;
+        try {
+            JSONObject jsonMessage = JSON.parseObject(message);
+            String messageType = jsonMessage.getString("type");
+            // 获得消息处理器
+            MessageHandler messageHandler = HANDLERS.get(messageType);
+            if (messageHandler == null) {
+                logger.error("[onMessage][消息类型({}) 不存在消息处理器]", messageType);
+                return;
+            }
+            // 解析消息
+            Class<? extends Message> messageClass = this.getMessageClass(messageHandler);
+            // 处理消息
+            Message messageObj = JSON.parseObject(jsonMessage.getString("body"), messageClass);
+            messageHandler.execute(session, messageObj);
         }
-        // 解析消息
-        Class<? extends Message> messageClass = this.getMessageClass(messageHandler);
-        // 处理消息
-        Message messageObj = JSON.parseObject(jsonMessage.getString("body"), messageClass);
-        messageHandler.execute(session, messageObj);
+        catch (Exception e) {
+
+        }
     }
 
     @OnClose
