@@ -7,6 +7,7 @@ import com.apicaller.sosotaxi.utils.YingYanUtil;
 import com.apicaller.sosotaxi.webSocket.message.CheckBondedDriverGeoRequest;
 import com.apicaller.sosotaxi.webSocket.message.CheckBondedDriverGeoResponse;
 import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
+import org.junit.Test;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.Session;
@@ -42,4 +43,7 @@ public class CheckBondedDriverGeoHandler implements MessageHandler<CheckBondedDr
     public String getMessageType() {
         return CheckBondedDriverGeoRequest.TYPE;
     }
+
 }
+
+

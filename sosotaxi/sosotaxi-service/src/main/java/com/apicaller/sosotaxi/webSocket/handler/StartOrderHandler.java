@@ -5,7 +5,6 @@ import com.apicaller.sosotaxi.entity.Order;
 import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
 import com.apicaller.sosotaxi.webSocket.message.AskForDriverMessage;
 import com.apicaller.sosotaxi.webSocket.message.StartOrderMessage;
-import com.apicaller.sosotaxi.webSocket.message.StartOrderResponse;
 import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,12 +46,8 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
 
         //设置给司机的消息
         AskForDriverMessage askForDriverMessage = new AskForDriverMessage();
-        askForDriverMessage.setDestPoint(destGeoPoint);
-        askForDriverMessage.setDepartPoint(departGeoPoint);
         askForDriverMessage.setCity(message.getCity());
-        askForDriverMessage.setDepartTime(date);
         askForDriverMessage.setPassengerName(message.getUserName());
-        askForDriverMessage.setPassengerNum(message.getPassengerNum());
         askForDriverMessage.setOrder(order);
 
         List<LoginDriver> availableDrivers = WebSocketUtil.getAllAvailableDrivers();
@@ -75,7 +70,9 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
 
         //添加到map中
         WebSocketUtil.addUserTokenOrderMap(message.getUserToken(),order);
+        WebSocketUtil.addOrderUserTokenMap(order,message.getUserToken());
         WebSocketUtil.addLoginDriverOrderMap(fitTypeDrivers.get(0),order);
+        WebSocketUtil.addOrderLoginDriverMap(order,fitTypeDrivers.get(0));
         Session driverSession = WebSocketUtil.getSessionByLoginDriver(fitTypeDrivers.get(0));
         WebSocketUtil.send(driverSession,AskForDriverMessage.TYPE,askForDriverMessage);
 
