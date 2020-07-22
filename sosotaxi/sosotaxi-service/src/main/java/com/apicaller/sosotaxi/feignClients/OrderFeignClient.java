@@ -45,8 +45,6 @@ public interface OrderFeignClient {
     List<Order> getDriverOrders(@RequestParam("driverId") long userId);
 
 
-
-
     /**
      * 增加订单。
      * 必须非空的字段为city, departPoint, destPoint, serviceType, createTime
@@ -67,9 +65,27 @@ public interface OrderFeignClient {
     /**
      * 删除订单。
      * @param orderId
-     * @return 删除是否成功
+     * @return 删除是否成功。
      */
     @RequestMapping(method = RequestMethod.DELETE, value = "/order/deleteOrder")
     boolean deleteOrder(@RequestParam("orderId") long orderId);
+
+    /**
+     * 为司机评分。
+     * @param orderId
+     * @param rate
+     * @return 评分是否成功。
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/order/rateForDriver")
+    boolean rateForDriver(@RequestParam("orderId") long orderId, @RequestParam("rate") double rate);
+
+    /**
+     * 为乘客评分。
+     * @param orderId
+     * @param rate
+     * @return 评分是否成功。
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/order/rateForPassenger")
+    boolean rateForPassenger(@RequestParam("orderId") long orderId, @RequestParam("rate") double rate);
 
 }
