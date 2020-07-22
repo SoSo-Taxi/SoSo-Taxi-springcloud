@@ -31,4 +31,13 @@ public interface CouponFeignClient {
      */
     @RequestMapping(method = RequestMethod.POST, value = "/coupon/addCoupon")
     public UserCoupon addCoupon(@RequestBody UserCoupon userCoupon);
+
+    /**
+     * 删除优惠券
+     * @param id
+     * @return 删除是否成功。
+     */
+    @RequestMapping(method = RequestMethod.DELETE, value = "/coupon/deleteCoupon")
+    public boolean deleteCoupon(@RequestParam("id") long id);
+
 }

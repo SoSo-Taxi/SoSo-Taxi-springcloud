@@ -24,10 +24,6 @@ public class StartOrderMessage implements Message {
 
     private String city;
 
-
-    /**考虑到可能有预约订单，这里命名为出发时间。*/
-    private Date departTime;
-
     private String userName;
 
     private GeoPoint departPoint;

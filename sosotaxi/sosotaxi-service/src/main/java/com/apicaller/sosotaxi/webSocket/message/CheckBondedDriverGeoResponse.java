@@ -16,13 +16,14 @@ public class CheckBondedDriverGeoResponse implements Message {
 
     public static final String TYPE = "CHECK_BONDED_DRIVER_GEO_RESPONSE";
 
-    private GeoPoint geoPoint;
 
-    private Short serverType;
+    private int statusCode;
 
     private String msg;
 
+    private GeoPoint point;
+
     private double distance;
 
-    private int statusCode;
+
 }

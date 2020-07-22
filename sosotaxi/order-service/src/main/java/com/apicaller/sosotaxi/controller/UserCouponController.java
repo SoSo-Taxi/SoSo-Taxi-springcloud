@@ -33,4 +33,9 @@ public class UserCouponController {
     public UserCoupon addCoupon(@RequestBody UserCoupon userCoupon) {
         return userCouponService.insert(userCoupon);
     }
+
+    @DeleteMapping("/deleteCoupon")
+    public boolean deleteCoupon(long id) {
+        return userCouponService.deleteById(id);
+    }
 }

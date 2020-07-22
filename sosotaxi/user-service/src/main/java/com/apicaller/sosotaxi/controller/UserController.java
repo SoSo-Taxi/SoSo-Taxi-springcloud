@@ -1,8 +1,10 @@
 package com.apicaller.sosotaxi.controller;
 
 
+import com.apicaller.sosotaxi.entity.PassengerVo;
 import com.apicaller.sosotaxi.entity.User;
 import com.apicaller.sosotaxi.entity.UserVo;
+import com.apicaller.sosotaxi.service.PassengerService;
 import com.apicaller.sosotaxi.service.UserService;
 
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,9 @@ public class UserController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    PassengerService passengerService;
 
     /**
      * 通过主键查询单条数据
@@ -64,7 +69,15 @@ public class UserController {
         user.setPassword(password);
         user.setUserName(userName);
         user.setRole(role);
-        return userService.insert(user);
+
+        user = userService.insert(user);
+        //如果角色是passenger，在passenger表中建立一条记录，方便之后读出数据。
+        if("passenger".equals(user.getRole())) {
+            PassengerVo passengerVo = new PassengerVo();
+            passengerVo.setUserId(user.getUserId());
+            passengerService.insert(passengerVo);
+        }
+        return user;
     }
 
     @PostMapping("/isExistUserName")

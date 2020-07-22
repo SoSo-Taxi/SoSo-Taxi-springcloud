@@ -24,11 +24,10 @@ public class CheckBondedDriverGeoHandler implements MessageHandler<CheckBondedDr
         String tokenByUserSession = WebSocketUtil.getTokenByUserSession(session);
         Order order = WebSocketUtil.getOrderByUserToken(tokenByUserSession);
         LoginDriver loginDriverByOrder = WebSocketUtil.getLoginDriverByOrder(order);
-        Double distance = BDmapUtil.calcDistance(message.getGeoPoint(), loginDriverByOrder.getGeoPoint(), null);
+        Double distance = BDmapUtil.calcDistance(message.getPoint(), loginDriverByOrder.getGeoPoint(), null);
 
         CheckBondedDriverGeoResponse checkBondedDriverGeoResponse = new CheckBondedDriverGeoResponse();
-        checkBondedDriverGeoResponse.setGeoPoint(loginDriverByOrder.getGeoPoint());
-        checkBondedDriverGeoResponse.setServerType(loginDriverByOrder.getServiceType());
+        checkBondedDriverGeoResponse.setPoint(loginDriverByOrder.getGeoPoint());
         checkBondedDriverGeoResponse.setStatusCode(200);
         checkBondedDriverGeoResponse.setMsg("查询司机位置成功！");
         checkBondedDriverGeoResponse.setDistance(distance);
