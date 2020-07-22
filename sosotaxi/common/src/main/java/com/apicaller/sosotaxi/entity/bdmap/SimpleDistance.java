@@ -32,7 +32,10 @@ public class SimpleDistance<T> implements Comparable {
         //强制类型转换
         SimpleDistance simpleDistance = (SimpleDistance) o;
         //比较属性值
-        return distance - simpleDistance.distance < 0.000001;
+        return Double.compare(distance, simpleDistance.distance) == 0
+                && Double.compare(duration, simpleDistance.duration) == 0
+                && (pointA != null && simpleDistance.pointA != null && pointA.equals(simpleDistance.pointA))
+                && (pointB != null && simpleDistance.pointB != null && pointB.equals(simpleDistance.pointB));
     }
 
     @Override
@@ -49,12 +52,6 @@ public class SimpleDistance<T> implements Comparable {
         }
 
         SimpleDistance simpleDistance = (SimpleDistance)o;
-        if(distance - simpleDistance.distance <= -0.000001) {
-            return -1;
-        }
-        if(distance - simpleDistance.distance < 0.000001 || distance - simpleDistance.distance > -0.000001) {
-            return 0;
-        }
-        return 1;
+        return Double.compare(distance, simpleDistance.distance);
     }
 }

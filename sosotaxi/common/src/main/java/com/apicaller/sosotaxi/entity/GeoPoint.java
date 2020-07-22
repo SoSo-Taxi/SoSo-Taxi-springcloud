@@ -1,10 +1,12 @@
 package com.apicaller.sosotaxi.entity;
 
+import com.sun.org.apache.xpath.internal.operations.Equals;
 import lombok.Data;
 import sun.reflect.generics.tree.VoidDescriptor;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
+import java.util.Objects;
 
 /**
  * 表示一个地理上的点。
@@ -60,5 +62,24 @@ public class GeoPoint implements Serializable {
         nf.setMaximumFractionDigits(20);
         nf.setGroupingUsed(false);
         return nf.format(d);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        GeoPoint geoPoint = (GeoPoint) o;
+        return Double.compare(geoPoint.lat, lat) == 0 &&
+                Double.compare(geoPoint.lng, lng) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(lat, lng);
     }
 }
