@@ -5,11 +5,12 @@
     <resultMap id="BaseResultMap" type="com.apicaller.sosotaxi.entity.Driver">
         <!--@Table driver-->
         <result property="userId" column="driver_id" jdbcType="BIGINT"/>
+        <result property="city" column="city" jdbcType="VARCHAR"/>
         <result property="carBrand" column="car_brand" jdbcType="VARCHAR"/>
         <result property="carModel" column="car_model" jdbcType="VARCHAR"/>
         <result property="carColor" column="car_color" jdbcType="VARCHAR"/>
         <result property="licensePlate" column="license_plate" jdbcType="VARCHAR"/>
-        <result property="carLevel" column="car_level" jdbcType="VARCHAR"/>
+        <result property="serviceType" column="service_type" jdbcType="TINYINT"/>
         <result property="driverLicenseNumber" column="driver_license_number" jdbcType="VARCHAR"/>
         <result property="vin" column="vin" jdbcType="VARCHAR"/>
     </resultMap>
@@ -26,29 +27,30 @@
         <result property="avatarPath" column="avatar_path" jdbcType="VARCHAR"/>
         <result property="realName" column="real_name" jdbcType="VARCHAR"/>
         <result property="idCardNumber" column="idcard_number" jdbcType="VARCHAR"/>
+        <result property="city" column="city" jdbcType="VARCHAR"/>
         <result property="carBrand" column="car_brand" jdbcType="VARCHAR"/>
         <result property="carModel" column="car_model" jdbcType="VARCHAR"/>
         <result property="carColor" column="car_color" jdbcType="VARCHAR"/>
         <result property="licensePlate" column="license_plate" jdbcType="VARCHAR"/>
-        <result property="carLevel" column="car_level" jdbcType="VARCHAR"/>
+        <result property="serviceType" column="service_type" jdbcType="TINYINT"/>
         <result property="driverLicenseNumber" column="driver_license_number" jdbcType="VARCHAR"/>
         <result property="vin" column="vin" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <!--查询单个-->
+    <!--id查询单个-->
     <select id="queryById" resultMap="ResultFullMap">
         select
           user_name, password, phone_number, role, gender, birth_year, avatar_path, real_name, idcard_number,
-          driver_id, car_brand, car_model, car_color, license_plate, car_level, driver_license_number, vin
+          driver_id, city, car_brand, car_model, car_color, license_plate, service_type, driver_license_number, vin
         from db01.user, db01.driver
         where db01.user.user_id = #{driverId} and db01.user.user_id = db01.driver.driver_id
     </select>
 
-    <!--查询单个-->
+    <!--用户名查询单个-->
     <select id="queryByUsername" resultMap="ResultFullMap">
         select
           user_name, password, phone_number, role, gender, birth_year, avatar_path, real_name, idcard_number,
-          driver_id, car_brand, car_model, car_color, license_plate, car_level, driver_license_number, vin
+          driver_id, city, car_brand, car_model, car_color, license_plate, service_type, driver_license_number, vin
         from db01.user, db01.driver
         where db01.user.user_name = #{username} and db01.user.user_id = db01.driver.driver_id
     </select>
@@ -56,7 +58,7 @@
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="BaseResultMap">
         select
-          driver_id, car_brand, car_model, car_color, license_plate, car_level, driver_license_number, vin
+          driver_id, city, car_brand, car_model, car_color, license_plate, service_type, driver_license_number, vin
         from db01.driver
         limit #{offset}, #{limit}
     </select>
@@ -65,14 +67,17 @@
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="driverId" useGeneratedKeys="true">
-        insert into db01.driver(driver_id, car_brand, car_model, car_color, license_plate, car_level, driver_license_number, vin)
-        values (#{userId}, #{carBrand}, #{carModel}, #{carColor}, #{licensePlate}, #{carLevel}, #{driverLicenseNumber}, #{vin})
+        insert into db01.driver(driver_id, city, car_brand, car_model, car_color, license_plate, service_type, driver_license_number, vin)
+        values (#{userId}, #{city}, #{carBrand}, #{carModel}, #{carColor}, #{licensePlate}, #{serviceType}, #{driverLicenseNumber}, #{vin})
     </insert>
 
     <!--通过主键修改数据-->
     <update id="update">
         update db01.driver
         <set>
+            <if test="city != null and city != ''">
+                city = #{city},
+            </if>
             <if test="carBrand != null and carBrand != ''">
                 car_brand = #{carBrand},
             </if>
@@ -85,8 +90,8 @@
             <if test="licensePlate != null and licensePlate != ''">
                 license_plate = #{licensePlate},
             </if>
-            <if test="carLevel != null and carLevel != ''">
-                car_level = #{carLevel},
+            <if test="serviceType != null and serviceType != ''">
+                service_type = #{serviceType},
             </if>
             <if test="driverLicenseNumber != null and driverLicenseNumber != ''">
                 driver_license_number = #{driverLicenseNumber},
