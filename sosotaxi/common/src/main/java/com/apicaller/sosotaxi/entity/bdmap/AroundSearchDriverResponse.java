@@ -17,4 +17,6 @@ public class AroundSearchDriverResponse {
     private Double speed;
 
     private Integer direction;
+
+    private Short serviceType;
 }

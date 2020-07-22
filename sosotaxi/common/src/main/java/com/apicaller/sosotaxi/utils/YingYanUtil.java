@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.entity.bdmap.AroundSearchDriverResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -30,6 +32,8 @@ import java.util.Map;
  * @updateTime:
  */
 public class YingYanUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(YingYanUtil.class);
 
     private static final String AK = "isBsWKfegvkIbVNwnufKzTsibPln3DIV";
 
@@ -66,7 +70,7 @@ public class YingYanUtil {
                         .queryParam("ak", AK)
                         .queryParam("service_id", SERVICE_ID)
                         .queryParam("entity_name", username)
-                        .queryParam("process_option", buildProcessOption(argMap, "="))
+                        .queryParam("process_option", buildProcessOption(argMap, "=", ","))
                         .queryParam("coord_type_output", finalCoordType.getStirng())
                         .build())
                 .retrieve().bodyToMono(String.class).block();
@@ -112,12 +116,13 @@ public class YingYanUtil {
                         .queryParam("is_processed", "1")
                         //默认以驾车方式补偿里程。
                         .queryParam("supplement_mode", "driving")
-                        .queryParam("process_option", buildProcessOption(argMap, "="))
+                        .queryParam("process_option", buildProcessOption(argMap, "=", ","))
                         .build())
                 .retrieve().bodyToMono(String.class).block();
 
         JSONObject resultObj = JSONObject.parseObject(res);
         if (resultObj.getInteger("status") == null || resultObj.getInteger("status") != 0) {
+            LOGGER.warn("[鹰眼服务]" + resultObj.getString("message"));
             return null;
         }
 
@@ -163,7 +168,7 @@ public class YingYanUtil {
                         .queryParam("service_id", SERVICE_ID)
                         .queryParam("center", centerLat + "," + centerLng)
                         .queryParam("radius", radius)
-                        .queryParam("filter", buildProcessOption(argMap, ":"))
+                        .queryParam("filter", buildProcessOption(argMap, ":", "|"))
                         .queryParam("coord_type_input", finalCoordType.getStirng())
 
                         .build())
@@ -171,6 +176,7 @@ public class YingYanUtil {
 
         JSONObject resultObj = JSONObject.parseObject(res);
         if (resultObj.getInteger("status") == null || resultObj.getInteger("status") != 0) {
+            LOGGER.warn("[鹰眼服务]" + resultObj.getString("message"));
             return null;
         }
         JSONArray resultArr = resultObj.getJSONArray("entities");
@@ -187,6 +193,7 @@ public class YingYanUtil {
             result.setDriverName(aResult.getString("entity_name"));
             result.setDirection(loc.getInteger("direction"));
             result.setSpeed(loc.getDouble("speed"));
+            result.setServiceType(aResult.getShort("service_type"));
             result.setPoint(new GeoPoint(loc.getDouble("latitude"), loc.getDouble("longitude")));
             resultList.add(result);
         });
@@ -221,6 +228,7 @@ public class YingYanUtil {
 
         JSONObject result = JSONObject.parseObject(res);
         if (result.getInteger("status") == null) {
+            LOGGER.warn("[鹰眼服务]" + result.getString("message"));
             return false;
         }
         return result.getInteger("status") == 0;
@@ -229,19 +237,21 @@ public class YingYanUtil {
 
     /**
      * 鹰眼api中有"process_option"或"filter"复合参数，用此方法构建。
+     * 百度的api有点蛋疼，分隔符可能是不同的，需要注意
      * @param argMap 参数map
-     * @param separator key与value之间的分隔符
+     * @param connector key与value之间的连接符
+     * @param separator 多个参数间的分隔符
      * @return
      */
-    private static String buildProcessOption(Map<String, Object> argMap, String separator) {
+    private static String buildProcessOption(Map<String, Object> argMap, String connector, String separator) {
         StringBuilder sb = new StringBuilder("");
         argMap.forEach((k,v) -> {
             sb.append(k);
-            sb.append(separator);
+            sb.append(connector);
             sb.append(v.toString());
-            sb.append(",");
+            sb.append(separator);
         });
-        //去除最后一个逗号
+        //去除最后一个分隔符号
         sb.delete(sb.length() - 1, sb.length());
         return sb.toString();
     }

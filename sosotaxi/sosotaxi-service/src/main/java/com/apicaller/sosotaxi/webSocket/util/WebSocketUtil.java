@@ -1,24 +1,18 @@
 package com.apicaller.sosotaxi.webSocket.util;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.entity.Order;
 import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
-import com.apicaller.sosotaxi.utils.JwtTokenUtils;
 import com.apicaller.sosotaxi.webSocket.message.Message;
-import com.sun.javafx.collections.MappingChange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 
@@ -345,10 +339,11 @@ public class WebSocketUtil {
      * @return 消息
      */
     private static <T extends Message> String buildTextMessage(String type, T message) {
-        JSONObject messageObject = new JSONObject();
+
+        Map<String, Object> messageObject = new HashMap<>();
         messageObject.put("type", type);
         messageObject.put("body", message);
-        return messageObject.toString();
+        return JSON.toJSONString(messageObject, SerializerFeature.UseISO8601DateFormat);
     }
 
     /**

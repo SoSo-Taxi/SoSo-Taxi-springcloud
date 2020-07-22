@@ -44,8 +44,34 @@ public class OrderController {
         return orderService.update(order) == 1;
     }
 
-    @DeleteMapping("deleteOrder")
+    @DeleteMapping("/deleteOrder")
     public boolean deleteOrder(long orderId) {
         return orderService.deleteById(orderId);
+    }
+
+    @GetMapping("/rateForDriver")
+    public boolean rateForDriver(long orderId, double rate) {
+        Order order = orderService.queryById(orderId);
+        if(order == null) {
+            return false;
+        }
+        order.setDriverRate(rate);
+        if(orderService.update(order) != 1) {
+            return false;
+        }
+        return true;
+    }
+
+    @GetMapping("/rateForPassenger")
+    public boolean rateForPassenger(long orderId, double rate) {
+        Order order = orderService.queryById(orderId);
+        if(order == null) {
+            return false;
+        }
+        order.setPassengerRate(rate);
+        if(orderService.update(order) != 1) {
+            return false;
+        }
+        return true;
     }
 }

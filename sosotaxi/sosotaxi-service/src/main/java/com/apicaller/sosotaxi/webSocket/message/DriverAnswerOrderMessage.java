@@ -1,6 +1,7 @@
 package com.apicaller.sosotaxi.webSocket.message;
 
 import com.apicaller.sosotaxi.entity.Driver;
+import com.apicaller.sosotaxi.entity.DriverVo;
 import com.apicaller.sosotaxi.entity.Order;
 import lombok.Data;
 
@@ -20,7 +21,6 @@ public class DriverAnswerOrderMessage implements Message {
      */
     private Boolean takeOrder;
 
-
     /**
      * 对应的订单
      */
@@ -29,6 +29,6 @@ public class DriverAnswerOrderMessage implements Message {
     /**
      * 返回的司机
      */
-    private Driver driver;
+    private DriverVo driver;
 
 }

@@ -1,6 +1,7 @@
 package com.apicaller.sosotaxi.webSocket.message;
 
 import com.apicaller.sosotaxi.entity.Driver;
+import com.apicaller.sosotaxi.entity.DriverVo;
 import lombok.Data;
 
 /**
@@ -14,11 +15,7 @@ public class DriverAnswerResponse implements Message{
     public static final String TYPE = "ORDER_RESULT_MESSAGE";
 
 
-    private Driver driver;
-
-    private int estimateTime;
-
-    private double estimateMoney;
+    private DriverVo driver;
 
     private String msg;
 

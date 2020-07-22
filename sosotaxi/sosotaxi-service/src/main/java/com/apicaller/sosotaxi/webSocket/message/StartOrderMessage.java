@@ -16,11 +16,14 @@ public class StartOrderMessage implements Message {
 
     public static final String TYPE = "START_ORDER_MESSAGE";
 
+    private Long passengerId;
+
+    private String phoneNumber;
+
     private String userToken;
 
     private String city;
 
-    private Long passengerId;
 
     /**考虑到可能有预约订单，这里命名为出发时间。*/
     private Date departTime;
@@ -38,6 +41,5 @@ public class StartOrderMessage implements Message {
     private String departName;
 
     private String destName;
-
 
 }
