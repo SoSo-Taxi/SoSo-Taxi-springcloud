@@ -5,6 +5,7 @@ import com.apicaller.sosotaxi.entity.ResponseBean;
 import com.apicaller.sosotaxi.entity.User;
 import com.apicaller.sosotaxi.entity.UserVo;
 import com.apicaller.sosotaxi.feignClients.UserServiceFeignClient;
+import com.apicaller.sosotaxi.feignClients.WalletFeignClient;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,9 @@ public class UserController {
 
     @Resource
     UserServiceFeignClient userServiceFeignClient;
+
+    @Resource
+    WalletFeignClient walletFeignClient;
 
     @GetMapping(value ="/get")
     public String  getString() {
@@ -65,6 +69,8 @@ public class UserController {
         String password = userVo.getPassword();
         userVo.setPassword(bCryptPasswordEncoder.encode(password));
         User user = userServiceFeignClient.insertUser(userVo);
+        //建立一个用户时，就建立其钱包账户。
+        walletFeignClient.setupAccount(user.getUserId());
         return new ResponseBean(200,"创建成功",user);
     }
 

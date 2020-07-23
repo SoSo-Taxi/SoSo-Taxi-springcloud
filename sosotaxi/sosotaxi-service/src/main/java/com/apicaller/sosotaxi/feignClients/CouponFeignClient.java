@@ -16,13 +16,22 @@ import java.util.List;
 @FeignClient(name = "order-service")
 @Service
 public interface CouponFeignClient {
+
+    /**
+     * 根据id获取优惠券
+     * @param couponId
+     * @return 优惠券
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/coupon/getById")
+    UserCoupon getById(@RequestParam("id") long couponId);
+
     /**
      * 根据用户Id获取用户所有的优惠券
      * @param userId
      * @return 用户优惠券列表
      */
     @RequestMapping(method = RequestMethod.GET, value = "/coupon/getByUserId")
-    public List<UserCoupon> getByUserId(@RequestParam("userId") long userId);
+    List<UserCoupon> getByUserId(@RequestParam("userId") long userId);
 
     /**
      * 为用户发放优惠券
@@ -30,7 +39,7 @@ public interface CouponFeignClient {
      * @return 优惠券信息
      */
     @RequestMapping(method = RequestMethod.POST, value = "/coupon/addCoupon")
-    public UserCoupon addCoupon(@RequestBody UserCoupon userCoupon);
+    UserCoupon addCoupon(@RequestBody UserCoupon userCoupon);
 
     /**
      * 删除优惠券
@@ -38,6 +47,6 @@ public interface CouponFeignClient {
      * @return 删除是否成功。
      */
     @RequestMapping(method = RequestMethod.DELETE, value = "/coupon/deleteCoupon")
-    public boolean deleteCoupon(@RequestParam("id") long id);
+    boolean deleteCoupon(@RequestParam("id") long id);
 
 }
