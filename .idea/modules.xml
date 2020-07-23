@@ -5,9 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/SoSo-Taxi-springcloud.iml" filepath="$PROJECT_DIR$/.idea/SoSo-Taxi-springcloud.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/common/common.iml" filepath="$PROJECT_DIR$/sosotaxi/common/common.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/dispatch-service/dispatch-service.iml" filepath="$PROJECT_DIR$/sosotaxi/dispatch-service/dispatch-service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sosotaxi/driverState-service/driverState-service.iml" filepath="$PROJECT_DIR$/sosotaxi/driverState-service/driverState-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/eureka-server/eureka-server.iml" filepath="$PROJECT_DIR$/sosotaxi/eureka-server/eureka-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/order-service/order-service.iml" filepath="$PROJECT_DIR$/sosotaxi/order-service/order-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sosotaxi/payment-service/payment-service.iml" filepath="$PROJECT_DIR$/sosotaxi/payment-service/payment-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/sosotaxi.iml" filepath="$PROJECT_DIR$/sosotaxi/sosotaxi.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/sosotaxi-service/sosotaxi-service.iml" filepath="$PROJECT_DIR$/sosotaxi/sosotaxi-service/sosotaxi-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/sosotaxi/sosotaxi-service/sosotext-service.iml" filepath="$PROJECT_DIR$/sosotaxi/sosotaxi-service/sosotext-service.iml" />

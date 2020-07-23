@@ -9,12 +9,13 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.*;
 
-//TODO:添加事务管理，防止严重错误的产生
+
 @Component
 public class InfoCacheServiceImpl implements InfoCacheService {
 
@@ -40,20 +41,21 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     private static final String DRIVER_HASH_KEY = "driversIndexHash";
 
     /**
-     * 每个订单分配给的司机数
-     */
-    private static final long ORDER_ASSIGN_COUNT = 8;
-
-    /**
      * 获取司机信息
      * @param driverId
      * @return
      */
     @Override
-    public MinimizedDriver getDriver(String driverId){
+    public MinimizedDriver getDriver(String driverId) throws Exception {
         HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
         String key = sHashOperations.get(DRIVER_HASH_KEY, driverId);
-        String city = key.substring(key.indexOf("_")+1, key.lastIndexOf("_"));
+        String city = null;
+        if(key == null){
+            throw new Exception("未能成功获取到司机存取表的key");
+        }
+        else{
+            city = key.substring(key.indexOf("_")+1, key.lastIndexOf("_"));
+        }
         String typeStr = key.substring(key.lastIndexOf("_")+1);
         int type = Integer.parseInt(typeStr);
         return new MinimizedDriver(city, type, driverId);
@@ -124,11 +126,18 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return
      */
     @Override
-    public GeoPoint getDriverPosition(String driverId){
+    public GeoPoint getDriverPosition(String driverId) throws Exception {
         HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
         HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
         String key = sHashOperations.get(DRIVER_HASH_KEY, driverId);
-        return gHashOperations.get(key, driverId);
+        GeoPoint point = null;
+        if(key == null){
+            throw new Exception("未能成功获取到司机存取表的key");
+        }
+        else{
+            point = gHashOperations.get(key, driverId);
+        }
+        return point;
     }
 
     /**
@@ -156,11 +165,16 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @param point
      */
     @Override
-    public void updatePoint(String driverId, GeoPoint point){
+    public void updatePoint(String driverId, GeoPoint point) throws Exception {
         HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
         String hashKey = sHashOperations.get(DRIVER_HASH_KEY, driverId);
         HashOperations<String, String, GeoPoint> gHashOperations = redisTemplate.opsForHash();
-        gHashOperations.put(hashKey, driverId, point);
+        if(hashKey == null){
+            throw new Exception("未能成功获取到司机存取表的key");
+        }
+        else{
+            gHashOperations.put(hashKey, driverId, point);
+        }
     }
 
     /**
@@ -285,11 +299,14 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return 订单是否存在
      */
     @Override
-    public Boolean deleteDispatch(String driverId, String orderId){
+    public Boolean deleteDispatch(String driverId, String orderId) throws Exception {
         HashOperations<String, String, List<UnsettledOrder>> operations = redisTemplate.opsForHash();
         List<UnsettledOrder> orders = operations.get(DISPATCH_HASH_KEY, driverId);
+        if(orders == null){
+            throw new Exception("未能成功获取到订单列表");
+        }
         for(UnsettledOrder order:orders){
-            if(order.toString() == orderId){
+            if(order.toString().equals(orderId)){
                 orders.remove(order);
                 return true;
             }
@@ -306,8 +323,8 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     @Override
     public void updateDurationSet(String orderId, String driverId, double duration){
         ZSetOperations<String, String> operations = sRedisTemplate.opsForZSet();
-        String Key = "duration_"+ orderId;
-        operations.add(Key, driverId, duration);
+        String key = "duration_"+ orderId;
+        operations.add(key, driverId, duration);
     }
 
     /**
@@ -317,8 +334,8 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      */
     @Override
     public void clearDurationSet(String orderId, String driverId){
-        String Key = "duration_"+ orderId;
-        redisTemplate.delete(Key);
+        String key = "duration_"+ orderId;
+        redisTemplate.delete(key);
     }
 
     /**
@@ -345,11 +362,11 @@ public class InfoCacheServiceImpl implements InfoCacheService {
      * @return
      */
     @Override
-    public Set<String> getDriverIdByRank(String orderId){
+    public Set<String> getDriverIdByRank(String orderId, int assignCount){
         try{
             ZSetOperations<String, String> operations = sRedisTemplate.opsForZSet();
             String Key = "duration_"+ orderId;
-            return operations.range(Key, 0, ORDER_ASSIGN_COUNT);
+            return operations.range(Key, 0, assignCount-1);
         }catch (Exception e){
             e.printStackTrace();
             return null;
@@ -410,6 +427,146 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     }
 
     /**
+     * 执行立即分配方法
+     * @param redisTemplatePara
+     * @param driverId
+     * @return 成功为真，失败为假，错误为null
+     */
+    public Boolean dispatchDriverSessionCallBack(RedisTemplate redisTemplatePara, String driverId){
+
+        Boolean isSuccess = null;
+
+        isSuccess = (Boolean) redisTemplatePara.execute(new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations redisOperations) throws DataAccessException {
+                //司机还在，可以分配
+                if(redisOperations.opsForHash().keys(DRIVER_HASH_KEY).contains(driverId)){
+                    HashOperations<String, String, String> sHashOperations = sRedisTemplate.opsForHash();
+                    String key = sHashOperations.get(DRIVER_HASH_KEY,driverId);
+                    try{
+                        //注销司机
+                        deleteDriverField(driverId);
+                        return true;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        return null;
+                    }
+                }
+                //司机不在了，无法分配
+                else{
+                    return false;
+                }
+            }
+        });
+
+        return isSuccess;
+    }
+
+    /**
+     * 尝试立即分配方法
+     * 分配成功后司机会被自动注销，拒绝后会自动重新注册
+     * @param driverId
+     * @return
+     */
+    @Override
+    public Boolean dispatchDriver(String driverId){
+        Boolean isSuccess = false;
+        //调用线程安全方法
+        //因为主要关注的是在索引表中存不存在，所以用操作String类型的sRedisTemplate来执行线程安全的操作
+        isSuccess = dispatchDriverSessionCallBack(sRedisTemplate, driverId);
+        return isSuccess;
+    }
+
+    /**
+     * 添加司机到订单的已分配集合
+     * 用于防止重复分配
+     *
+     * @param orderId
+     * @param driverId
+     * @return
+     */
+    @Override
+    public Boolean addDriverToDispatchedSet(String orderId, String driverId) {
+        SetOperations<String, String> sOperations = sRedisTemplate.opsForSet();
+        //防止空指针异常
+        Boolean isMember = sOperations.isMember("dispatched_"+orderId,driverId);
+        if(isMember == null){
+            return null;
+        }
+        else if(!isMember){
+            sOperations.add("dispatched_"+orderId,driverId);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+     * 删除订单的已分配集合
+     *
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Boolean deleteDispatchedSet(String orderId) {
+        SetOperations<String, String> sOperations = sRedisTemplate.opsForSet();
+        Boolean hasKey = sRedisTemplate.hasKey("dispatched_"+orderId);
+        if(hasKey == null){
+            return null;
+        }
+        else if(hasKey){
+            Set<String> drivers = getDispatchedSet(orderId);
+            for(String driverId:drivers){
+                sOperations.remove("dispatched_"+orderId, driverId);
+            }
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    /**
+     * 获取订单的已分配集合
+     *
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Set<String> getDispatchedSet(String orderId) {
+        SetOperations<String, String> sOperations = sRedisTemplate.opsForSet();
+        Boolean hasKey = sRedisTemplate.hasKey("dispatched_"+orderId);
+        if(hasKey == null){
+            return null;
+        }
+        else if(hasKey){
+            return sOperations.members("dispatched_"+orderId);
+        }
+        else{
+            return null;
+        }
+    }
+
+    /**
+     * 某个订单是否被分配过
+     *
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Boolean hasDispatchedSet(String orderId) {
+        SetOperations<String, String> sOperations = sRedisTemplate.opsForSet();
+        return sRedisTemplate.hasKey("dispatched_"+orderId);
+    }
+
+
+//    @Override
+//    public String assignImmediately(UnsettledOrder order){
+//
+//    }
+
+    /**
      * 测试用，添加
      * @param testKey
      * @param value
@@ -428,5 +585,31 @@ public class InfoCacheServiceImpl implements InfoCacheService {
     public void deleteTestMsgKey(String testKey) {
         HashOperations<String, String, String> operations = sRedisTemplate.opsForHash();
         operations.delete(testKey,"testField");
+    }
+
+    /**
+     * 删除所有数据
+     * @return
+     */
+    @Override
+    public Boolean deleteAll(){
+        Set<String> keys = sRedisTemplate.keys("*");
+        if(keys == null){
+            return false;
+        }
+        for (String key : keys) {
+            sRedisTemplate.delete(key);
+        }
+        return true;
+    }
+
+    /**
+     * 删除所有测试集数据
+     * 有点麻烦，先放着
+     * @return
+     */
+    @Override
+    public Boolean deleteTestData(){
+        return false;
     }
 }

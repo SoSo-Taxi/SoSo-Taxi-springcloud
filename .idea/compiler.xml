@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="dispatch-service" />
         <module name="eureka-server" />
+        <module name="payment-service" />
         <module name="common" />
         <module name="order-service" />
         <module name="user-service" />
@@ -23,6 +24,7 @@
       <module name="driverState-service" target="1.8" />
       <module name="eureka-server" target="1.8" />
       <module name="order-service" target="1.8" />
+      <module name="payment-service" target="1.8" />
       <module name="sosotaxi" target="1.8" />
       <module name="sosotaxi-service" target="1.8" />
       <module name="sosotext-service" target="1.8" />
