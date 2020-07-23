@@ -2,12 +2,15 @@ package com.apicaller.sosotaxi.webSocket.handler;
 
 
 import com.apicaller.sosotaxi.entity.Order;
+import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
 import com.apicaller.sosotaxi.feignClients.OrderFeignClient;
+import com.apicaller.sosotaxi.utils.YingYanUtil;
 import com.apicaller.sosotaxi.webSocket.message.ArriveDestPointMessage;
 import com.apicaller.sosotaxi.webSocket.message.ArriveDestPointMessageToPassenger;
 import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.websocket.Session;
@@ -17,6 +20,7 @@ import javax.websocket.Session;
  * @createTime: 2020/7/21 8:07 下午
  * @updateTime:
  */
+@Component
 public class ArriveDestPointMessageHandler implements MessageHandler<ArriveDestPointMessage> {
     @Resource
     private OrderFeignClient orderFeignClient;
@@ -32,6 +36,8 @@ public class ArriveDestPointMessageHandler implements MessageHandler<ArriveDestP
             return;
         }
         Order order = WebSocketUtil.getOrderByUserToken(passengerToken);
+        LoginDriver loginDriver = WebSocketUtil.getLoginDriverByOrder(order);
+        loginDriver.setDispatched(false);
 
         //先更新一下该订单的到达时间
         if(! WebSocketUtil.updateTimeForOrder(message.getOrder())) {
@@ -47,7 +53,12 @@ public class ArriveDestPointMessageHandler implements MessageHandler<ArriveDestP
         order.setCost(totalCost);
         //更新数据库中的订单信息
         orderFeignClient.updateOrder(order);
-
+        /**
+         * 这里要：
+         * 更新鹰眼中的状态；
+         * 更新诗烨那边的状态；
+         */
+        YingYanUtil.updateDriver(loginDriver.getUserName(), true);
         //给乘客发消息
         ArriveDestPointMessageToPassenger msg = new ArriveDestPointMessageToPassenger();
         msg.setOrder(message.getOrder());
@@ -58,6 +69,10 @@ public class ArriveDestPointMessageHandler implements MessageHandler<ArriveDestP
         if(! WebSocketUtil.send(passengerToken, ArriveDestPointMessageToPassenger.TYPE, msg)) {
             LOGGER.info("[为订单{}发送到达目的地消息到对应的乘客失败]", message.getOrder().getOrderId());
         }
+        /**
+         * 这里要：移除内存中相关信息
+         */
+        WebSocketUtil.removeOrder(session);
     }
 
     @Override

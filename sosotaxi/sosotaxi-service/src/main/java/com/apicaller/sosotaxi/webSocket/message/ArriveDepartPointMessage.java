@@ -15,8 +15,4 @@ public class ArriveDepartPointMessage implements Message {
 
     private Order order;
 
-    private String msg;
-
-    private int statusCode;
-
 }

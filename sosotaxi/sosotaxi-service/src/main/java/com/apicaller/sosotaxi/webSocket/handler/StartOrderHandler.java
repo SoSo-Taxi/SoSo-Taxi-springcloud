@@ -25,10 +25,10 @@ import java.util.stream.Collectors;
 @Component
 public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
 
+    Logger logger = LoggerFactory.getLogger(StartOrderHandler.class);
+
     @Resource
     OrderFeignClient orderFeignClient;
-
-    Logger logger = LoggerFactory.getLogger(StartOrderHandler.class);
 
     @Override
     public void execute(Session session, StartOrderMessage message) {
@@ -51,11 +51,10 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
         order.setServiceType(serviceType);
 
         //先将订单订单插入数据库，以获取订单id
-        orderFeignClient.addOrder(order);
+        order = orderFeignClient.addOrder(order);
 
         //设置给司机的消息
         AskForDriverMessage askForDriverMessage = new AskForDriverMessage();
-        askForDriverMessage.getOrder().setCity(message.getCity());
         askForDriverMessage.setPassengerPhoneNumber(message.getPhoneNumber());
         askForDriverMessage.setOrder(order);
 
@@ -65,7 +64,7 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
 
 
         List<LoginDriver> fitTypeDrivers = availableDrivers.stream()
-                .filter(a -> a.getServiceType()==(message.getServiceType()))
+                .filter(a -> a.getServiceType().equals(message.getServiceType()))
                 .collect(Collectors.toList());
 
 

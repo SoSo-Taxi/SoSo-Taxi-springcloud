@@ -2,6 +2,7 @@ package com.apicaller.sosotaxi.webSocket.message;
 
 import com.apicaller.sosotaxi.entity.Driver;
 import com.apicaller.sosotaxi.entity.DriverVo;
+import com.apicaller.sosotaxi.entity.dispatch.response.DriverCarInfoResponse;
 import lombok.Data;
 
 /**
@@ -15,7 +16,7 @@ public class DriverAnswerResponse implements Message{
     public static final String TYPE = "ORDER_RESULT_MESSAGE";
 
 
-    private DriverVo driver;
+    private DriverCarInfoResponse driverCarInfo;
 
     private String msg;
 
