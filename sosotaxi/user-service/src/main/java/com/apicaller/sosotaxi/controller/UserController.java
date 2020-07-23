@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 /**
@@ -69,6 +70,10 @@ public class UserController {
         user.setPassword(password);
         user.setUserName(userName);
         user.setRole(role);
+        //假如用户名全是数字，就把它当成用户
+        if(Pattern.matches("^\\d+$", userVo.getUserName())) {
+            user.setPhoneNumber(userVo.getUserName());
+        }
 
         user = userService.insert(user);
         //如果角色是passenger，在passenger表中建立一条记录，方便之后读出数据。

@@ -81,15 +81,14 @@ public class WebSocketUtil {
     public static LoginDriver getLoginDriverByOrder(Order order){return ORDER_LOGIN_DRIVER_MAP.get(order);}
 
 
-
     /**
      * 为一个订单更新起始时间和结束时间
      * @param order
      * @return
      */
     public static boolean updateTimeForOrder(Order order) {
-
-        Order targetOrder = getOrderInKeySet(order);
+        String userTokenByOrder = WebSocketUtil.getUserTokenByOrder(order);
+        Order targetOrder = WebSocketUtil.getOrderByUserToken(userTokenByOrder);
         if(targetOrder == null) {
             return false;
         }
@@ -98,37 +97,6 @@ public class WebSocketUtil {
         return true;
     }
 
-    /**
-     * 为一个订单更新状态
-     * @param order
-     * @return
-     */
-    public static boolean updateStatusForOrder(Order order, int status) {
-
-        Order targetOrder = getOrderInKeySet(order);
-        if(targetOrder == null) {
-            return false;
-        }
-        targetOrder.setStatus(status);
-        return true;
-    }
-
-    /**
-     * 在所有order中，找出事实上与给定order相同的那份order的引用
-     * @param order
-     * @return
-     */
-    public static Order getOrderInKeySet(Order order) {
-        Set<Order> orderSet = ORDER_USER_TOKEN_MAP.keySet();
-        Order targetOrder = null;
-
-        for (Order key : orderSet) {
-            if (key.hashCode() == order.hashCode()) {
-                targetOrder = key;
-            }
-        }
-        return targetOrder;
-    }
 
     public static void removeOrder(Session session)
     {

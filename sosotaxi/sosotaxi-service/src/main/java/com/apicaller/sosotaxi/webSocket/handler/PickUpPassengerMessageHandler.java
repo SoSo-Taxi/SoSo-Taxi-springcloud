@@ -27,12 +27,12 @@ public class PickUpPassengerMessageHandler implements MessageHandler<PickUpPasse
         Order realOrder = WebSocketUtil.getOrderByUserToken(userTokenByOrder);
         realOrder.setStatus(3);
 
-        PickUpPassengerMessageResponse pickUpPassengerMessageResponse = new PickUpPassengerMessageResponse();
-        pickUpPassengerMessageResponse.setOrder(realOrder);
-        pickUpPassengerMessageResponse.setStatusCode(200);
-        pickUpPassengerMessageResponse.setMsg("您已经成功接到乘客");
-
-        WebSocketUtil.send(session,PickUpPassengerMessageResponse.TYPE,pickUpPassengerMessageResponse);
+//        PickUpPassengerMessageResponse pickUpPassengerMessageResponse = new PickUpPassengerMessageResponse();
+//        pickUpPassengerMessageResponse.setOrder(realOrder);
+//        pickUpPassengerMessageResponse.setStatusCode(200);
+//        pickUpPassengerMessageResponse.setMsg("您已经成功接到乘客");
+//
+//        WebSocketUtil.send(session,PickUpPassengerMessageResponse.TYPE,pickUpPassengerMessageResponse);
 
 
         PickUpPassengerMessageToPassenger pickUpPassengerMessageToPassenger = new PickUpPassengerMessageToPassenger();

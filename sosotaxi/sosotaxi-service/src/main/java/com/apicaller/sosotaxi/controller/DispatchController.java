@@ -106,13 +106,6 @@ public class DispatchController {
         return new ResponseBean(200, null, 1234);
     }
 
-    /**
-     * 获取订单状态。
-     */
-    @GetMapping("/getOrderStatus")
-    public ResponseBean getOrderStatus(long orderId) {
-        return new ResponseBean(200, null, "pending");
-    }
 
     /**
      * 获取司机和车辆信息。

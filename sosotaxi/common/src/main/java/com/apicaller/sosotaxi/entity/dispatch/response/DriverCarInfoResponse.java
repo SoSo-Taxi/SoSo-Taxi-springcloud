@@ -1,5 +1,6 @@
 package com.apicaller.sosotaxi.entity.dispatch.response;
 
+import com.apicaller.sosotaxi.entity.Driver;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,5 +38,28 @@ public class DriverCarInfoResponse implements Serializable {
     private String carColor;
 
     private String licensePlate;
+
+    private Double rate;
+
+    private Integer orderNum;
+
+    public static DriverCarInfoResponse fromDriver(Driver driver) {
+
+        if(driver == null) {
+            return null;
+        }
+        DriverCarInfoResponse driverCarInfoResponse = new DriverCarInfoResponse();
+        driverCarInfoResponse.setDriverId(driver.getUserId());
+        driverCarInfoResponse.setDriverName(driver.getRealName());
+        driverCarInfoResponse.setPhoneNumber(driver.getPhoneNumber());
+        driverCarInfoResponse.setAvatarPath(driver.getAvatarPath());
+        driverCarInfoResponse.setServiceType(driver.getServiceType());
+        driverCarInfoResponse.setCarBrand(driver.getCarBrand());
+        driverCarInfoResponse.setCarModel(driver.getCarModel());
+        driverCarInfoResponse.setCarColor(driver.getCarColor());
+        driverCarInfoResponse.setLicensePlate(driver.getLicensePlate());
+
+        return driverCarInfoResponse;
+    }
 
 }
