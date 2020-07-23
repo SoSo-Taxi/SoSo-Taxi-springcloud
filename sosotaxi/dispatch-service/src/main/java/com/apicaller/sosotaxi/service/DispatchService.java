@@ -16,4 +16,9 @@ public interface DispatchService {
      * @return
      */
     MinimizedDriver dispatch(UnsettledOrder order) throws Exception;
+
+    /**
+     * 自动更新位置信息
+     */
+    void updatePosition() throws Exception;
 }
