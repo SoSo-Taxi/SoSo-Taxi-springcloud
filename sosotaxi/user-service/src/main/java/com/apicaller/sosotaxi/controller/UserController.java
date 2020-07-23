@@ -70,7 +70,7 @@ public class UserController {
         user.setPassword(password);
         user.setUserName(userName);
         user.setRole(role);
-        //假如用户名全是数字，就把它当成用户
+        //假如用户名全是数字，就把它当成用户的手机号码。
         if(Pattern.matches("^\\d+$", userVo.getUserName())) {
             user.setPhoneNumber(userVo.getUserName());
         }

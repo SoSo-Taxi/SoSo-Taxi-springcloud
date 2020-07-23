@@ -67,4 +67,13 @@ public class DriverController {
         }
         return new ResponseBean(200, "找到该司机的订单记录", orders);
     }
+
+    @GetMapping("/rateForPassenger")
+    public ResponseBean rateForPassenger(long orderId, double rate) {
+        boolean result = orderFeignClient.rateForPassenger(orderId, rate);
+        if(result) {
+            return new ResponseBean(200, "评价乘客成功", null);
+        }
+        return new ResponseBean(403, "评价乘客失败", null);
+    }
 }
