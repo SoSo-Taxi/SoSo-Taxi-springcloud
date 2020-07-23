@@ -6,6 +6,7 @@ import com.apicaller.sosotaxi.entity.UnsettledOrder;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.service.DispatchService;
 import com.apicaller.sosotaxi.utils.MapUtils;
+import com.apicaller.sosotaxi.utils.YingYanUtil;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -237,6 +238,30 @@ public class DispatchServiceImpl implements DispatchService {
                 }
             }
             return targetDriver;
+        }
+    }
+
+
+    /**
+     * 自动更新位置信息
+     * @throws Exception
+     */
+    @Override
+    @Scheduled(fixedDelay = 5000)
+    public void updatePosition() throws Exception {
+        Set<String> drivers = infoCacheService.getAllDrivers();
+        if(drivers == null){
+            return;
+        }
+        for(String driverId:drivers){
+            JSONObject jsonObject = YingYanUtil.getLatestPoint( driverId );
+            if(!"成功".equals(jsonObject.getString("message"))){
+                throw new Exception("司机信息错误，id与鹰眼数据库中值不同");
+            }
+            double lat = jsonObject.getJSONObject("latest_point").getDouble("latitude");
+            double lng = jsonObject.getJSONObject("latest_point").getDouble("longitude");
+            GeoPoint point = new GeoPoint(lat,lng);
+            infoCacheService.updatePoint(driverId, point);
         }
     }
 }

@@ -9,7 +9,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="dispatch-service" />
         <module name="eureka-server" />
-        <module name="payment-service" />
         <module name="common" />
         <module name="order-service" />
         <module name="user-service" />
