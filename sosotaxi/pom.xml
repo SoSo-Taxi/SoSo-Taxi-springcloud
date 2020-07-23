@@ -16,8 +16,6 @@
     <module>user-service</module>
     <module>common</module>
     <module>dispatch-service</module>
-    <module>payment-service</module>
-
   </modules>
   
 
