@@ -1,15 +1,12 @@
 package com.apicaller.sosotaxi.service.impl;
 
-import com.apicaller.sosotaxi.entity.MinimizedDriver;
-import com.apicaller.sosotaxi.entity.UnsettledOrder;
+import com.apicaller.sosotaxi.entity.dispatchservice.MinimizedDriver;
+import com.apicaller.sosotaxi.entity.dispatchservice.UnsettledOrder;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.service.InfoCacheService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.annotation.Resource;
 import java.io.Serializable;

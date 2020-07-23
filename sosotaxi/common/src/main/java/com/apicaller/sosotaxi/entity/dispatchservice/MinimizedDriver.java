@@ -1,4 +1,4 @@
-package com.apicaller.sosotaxi.entity;
+package com.apicaller.sosotaxi.entity.dispatchservice;
 
 import lombok.Data;
 

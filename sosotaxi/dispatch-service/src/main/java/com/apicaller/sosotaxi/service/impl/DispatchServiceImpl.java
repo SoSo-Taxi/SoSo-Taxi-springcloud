@@ -1,8 +1,8 @@
 package com.apicaller.sosotaxi.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.apicaller.sosotaxi.entity.MinimizedDriver;
-import com.apicaller.sosotaxi.entity.UnsettledOrder;
+import com.apicaller.sosotaxi.entity.dispatchservice.MinimizedDriver;
+import com.apicaller.sosotaxi.entity.dispatchservice.UnsettledOrder;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.service.DispatchService;
 import com.apicaller.sosotaxi.utils.MapUtils;
@@ -19,7 +19,7 @@ public class DispatchServiceImpl implements DispatchService {
     /**
      * 派单模式
      */
-    public enum dispatchMethod{
+    public enum DispatchMethod {
         /**
          * 抢单模式
          */
@@ -33,7 +33,7 @@ public class DispatchServiceImpl implements DispatchService {
     /**
      * 当前策略
      */
-    private dispatchMethod currentMethod = dispatchMethod.AUTOARRANGE;
+    private DispatchMethod currentMethod = DispatchMethod.AUTOARRANGE;
 
     /**
      * 更改策略
@@ -41,11 +41,11 @@ public class DispatchServiceImpl implements DispatchService {
      * @return
      */
     public Boolean changeDispatchMethod(String method){
-        if(method.equals(dispatchMethod.AUTOARRANGE.toString())){
-            currentMethod = dispatchMethod.AUTOARRANGE;
+        if(method.equals(DispatchMethod.AUTOARRANGE.toString())){
+            currentMethod = DispatchMethod.AUTOARRANGE;
         }
-        else if(method.equals(dispatchMethod.GROUPDISPATCH.toString())){
-            currentMethod = dispatchMethod.GROUPDISPATCH;
+        else if(method.equals(DispatchMethod.GROUPDISPATCH.toString())){
+            currentMethod = DispatchMethod.GROUPDISPATCH;
         }
         else{
             return false;
@@ -58,16 +58,16 @@ public class DispatchServiceImpl implements DispatchService {
      * 后期分配策略的部分稳定后可以换成返回枚举，因为目前还要调整所以暂时用字符串减少依赖
      * @return
      */
-    public String getDispatchedMethod(){
-        if(currentMethod == dispatchMethod.AUTOARRANGE){
-            return "singleDispatch";
-        }
-        else if(currentMethod == dispatchMethod.GROUPDISPATCH){
-            return "groupDispatch";
-        }
-        else{
-            return "still developing ...";
-        }
+    public String getDispatchMethodStr(){
+        return currentMethod.toString();
+    }
+
+    /**
+     * 返回当前策略
+     * @return
+     */
+    public DispatchMethod getDispatchMethod(){
+        return currentMethod;
     }
 
     /**
@@ -103,7 +103,7 @@ public class DispatchServiceImpl implements DispatchService {
     @Scheduled(fixedDelay = 5000)
     public void dispatch() throws Exception {
         //仅当当前策略为抢单模式时才执行定时处理方法
-        if(currentMethod!=dispatchMethod.GROUPDISPATCH){
+        if(currentMethod!= DispatchMethod.GROUPDISPATCH){
             return;
         }
         List<UnsettledOrder> orders = infoCacheService.getAllUOrder();

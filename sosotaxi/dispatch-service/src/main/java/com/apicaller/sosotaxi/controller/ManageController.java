@@ -1,10 +1,9 @@
 package com.apicaller.sosotaxi.controller;
 
 import com.apicaller.sosotaxi.entity.GeoPoint;
-import com.apicaller.sosotaxi.entity.MinimizedDriver;
+import com.apicaller.sosotaxi.entity.dispatchservice.MinimizedDriver;
 import com.apicaller.sosotaxi.entity.ResponseBean;
-import com.apicaller.sosotaxi.entity.UnsettledOrder;
-import com.apicaller.sosotaxi.service.DispatchService;
+import com.apicaller.sosotaxi.entity.dispatchservice.UnsettledOrder;
 import com.apicaller.sosotaxi.service.impl.DispatchServiceImpl;
 import com.apicaller.sosotaxi.service.impl.InfoCacheServiceImpl;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 

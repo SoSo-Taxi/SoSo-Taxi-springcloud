@@ -1,4 +1,4 @@
-package com.apicaller.sosotaxi.entity.message;
+package com.apicaller.sosotaxi.entity.dispatchservice.message;
 
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import lombok.Data;

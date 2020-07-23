@@ -1,7 +1,7 @@
-package com.apicaller.sosotaxi.entity.message;
+package com.apicaller.sosotaxi.entity.dispatchservice.message;
 
 import com.apicaller.sosotaxi.entity.GeoPoint;
-import com.apicaller.sosotaxi.entity.MinimizedDriver;
+import com.apicaller.sosotaxi.entity.dispatchservice.MinimizedDriver;
 import lombok.Data;
 
 @Data
