@@ -1,10 +1,16 @@
 package com.apicaller.sosotaxi.webSocket.handler;
 
+import com.alibaba.fastjson.JSONObject;
 import com.apicaller.sosotaxi.entity.Driver;
 import com.apicaller.sosotaxi.entity.DriverVo;
+import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.entity.Order;
 import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
 import com.apicaller.sosotaxi.entity.dispatch.response.DriverCarInfoResponse;
+import com.apicaller.sosotaxi.entity.dispatchservice.MinimizedDriver;
+import com.apicaller.sosotaxi.entity.dispatchservice.UnsettledOrder;
+import com.apicaller.sosotaxi.entity.dispatchservice.message.OpsForOrderMsg;
+import com.apicaller.sosotaxi.feignClients.DispatchFeignClient;
 import com.apicaller.sosotaxi.feignClients.DriverFeignClient;
 import com.apicaller.sosotaxi.feignClients.OrderFeignClient;
 import com.apicaller.sosotaxi.feignClients.UserServiceFeignClient;
@@ -32,6 +38,9 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
 
     @Resource
     DriverFeignClient driverFeignClient;
+
+    @Resource
+    DispatchFeignClient dispatchFeignClient;
 
     @Override
     public void execute(Session session, DriverAnswerOrderMessage message) {
@@ -71,6 +80,19 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
              * 2 修改鹰眼上该司机的状态
              *
              */
+            ///
+            JSONObject jsonObject = YingYanUtil.getLatestPoint(driver.getUserName());
+            double lat = jsonObject.getJSONObject("latest_point").getDouble("latitude");
+            double lng = jsonObject.getJSONObject("latest_point").getDouble("longitude");
+            GeoPoint point = new GeoPoint(lat,lng);
+            OpsForOrderMsg oMsg = new OpsForOrderMsg(point, driver.getUserName(), order.getOrderId().toString());
+            UnsettledOrder uOrder = dispatchFeignClient.accept(oMsg);
+            if(uOrder!=null){
+                //TODO:接单成功后的动作
+            }else{
+                //TODO:接单失败后的动作
+            }
+            ///
 
             YingYanUtil.updateDriver(driver.getUserName(), false);
         }
@@ -91,6 +113,23 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
             driverAnswerResponse.setDriverCarInfo(null);
             WebSocketUtil.send(passengerSessionByToken,DriverAnswerResponse.TYPE,driverAnswerResponse);
 
+            ///
+            DriverVo driverVo = message.getDriver();
+            Driver driver = driverFeignClient.getDriverById(driverVo.getUserId());
+            JSONObject jsonObject = YingYanUtil.getLatestPoint(driver.getUserName());
+            double lat = jsonObject.getJSONObject("latest_point").getDouble("latitude");
+            double lng = jsonObject.getJSONObject("latest_point").getDouble("longitude");
+            GeoPoint point = new GeoPoint(lat,lng);
+            OpsForOrderMsg oMsg = new OpsForOrderMsg(point, driver.getUserName(), order.getOrderId().toString());
+            MinimizedDriver anotherDriver = dispatchFeignClient.refuseOrder(oMsg);
+            if(anotherDriver == null){
+                //TODO:通知乘客该段时间暂无可用司机
+            }else{
+                //TODO:通知该司机
+            }
+            //无论是否成功接单。都需要司机重新听单
+            YingYanUtil.updateDriver(driver.getUserName(), false);
+            ///
         }
 
     }

@@ -1,8 +1,7 @@
 package com.apicaller.sosotaxi.controller;
 
-import com.apicaller.sosotaxi.entity.GeoPoint;
-import com.apicaller.sosotaxi.entity.MinimizedDriver;
-import com.apicaller.sosotaxi.entity.UnsettledOrder;
+import com.apicaller.sosotaxi.entity.dispatchservice.MinimizedDriver;
+import com.apicaller.sosotaxi.entity.dispatchservice.UnsettledOrder;
 import com.apicaller.sosotaxi.entity.ResponseBean;
 import com.apicaller.sosotaxi.service.impl.DispatchServiceImpl;
 import com.apicaller.sosotaxi.service.impl.InfoCacheServiceImpl;
@@ -22,22 +21,24 @@ public class PassengerDispatchController {
 
     /**
      * 提交订单
+     * 暂时没用result封装信息，无法知道返回失败的原因
+     * 当返回null时，暂时视作该单已被其他司机接受处理
+     * 如果调用方不接受result封装可以考虑map封装，出错的可能性比reslut类封装大
      * @param order
      * @return
      * @throws Exception
      */
     @PostMapping(value = "/submit")
-    public ResponseBean submit(@RequestBody UnsettledOrder order) throws Exception {
-        //通用的response
+    public MinimizedDriver submit(@RequestBody UnsettledOrder order) throws Exception {
+        //先细化排除空指针异常
         if(order == null){
-            ResponseBean response = new ResponseBean(400,"请求参数错误",null);
-            return response;
+            throw new Exception("参数错误");
         }
         String userId = order.getPassengerId();
-        ResponseBean response = new ResponseBean(500,userId+"的请求未被处理",order);
+        MinimizedDriver targetDriver = null;
         //单人分配策略
-        if("singleDispatch".equals(dispatchService.getDispatchedMethod())){
-            response.setCode(200);
+        if(dispatchService.getDispatchMethod() == DispatchServiceImpl.DispatchMethod.AUTOARRANGE){
+
             MinimizedDriver driver = null;
             try{
                 //登记该订单以作备用，在被接单时删除，在被再次接单时被调用
@@ -48,39 +49,44 @@ public class PassengerDispatchController {
                 throw new Exception("在乘客接口中分配司机时出错");
             }
             if(driver != null){
-                response.setData(driver);
-                response.setMsg("成功分配到司机");
-                return response;
+
+                targetDriver = driver;
+                return targetDriver;
             }
             else{
-                response.setMsg("当前时间无可用司机，请稍后再次请求，该订单已被删除");
+                //"当前时间无可用司机，请稍后再次请求，该订单已被删除"
                 //删除订单信息
                 infoCacheService.deleteUOrder(order.getOrderId());
                 //删除分配司机信息
                 infoCacheService.deleteDispatchedSet(order.getOrderId());
-                return response;
+                return null;
             }
         }
         //抢单分配策略
-        else if("groupDispatch".equals(dispatchService.getDispatchedMethod())){
+        //暂时用不上，这个版本就先不做了
+        else if("groupDispatch".equals(dispatchService.getDispatchMethodStr())) {
+//
+//            try{
+//                infoCacheService.updateUOrderField(order.getOrderId(), order);
+//                response.setCode(200);
+//                response.setMsg("请求添加成功");
+//                response.setData(order.getOrderId());
+//                return response;
+//            }catch (Exception e){
+//                e.printStackTrace();
+//                return response;
+//            }
+//        }
+//        //未开发分配策略
+//        else{
+//            response.setCode(500);
+//            response.setMsg("内部服务器配置错误");
+//            return response;
+//        }
+            targetDriver = null;
+        }
 
-            try{
-                infoCacheService.updateUOrderField(order.getOrderId(), order);
-                response.setCode(200);
-                response.setMsg("请求添加成功");
-                response.setData(order.getOrderId());
-                return response;
-            }catch (Exception e){
-                e.printStackTrace();
-                return response;
-            }
-        }
-        //未开发分配策略
-        else{
-            response.setCode(500);
-            response.setMsg("内部服务器配置错误");
-            return response;
-        }
+        return  targetDriver;
     }
 
     /**

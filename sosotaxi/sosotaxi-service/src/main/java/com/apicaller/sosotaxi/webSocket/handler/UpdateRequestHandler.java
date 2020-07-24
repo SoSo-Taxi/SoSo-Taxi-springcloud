@@ -2,6 +2,9 @@ package com.apicaller.sosotaxi.webSocket.handler;
 
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
+import com.apicaller.sosotaxi.entity.dispatchservice.message.DriverLoginMsg;
+import com.apicaller.sosotaxi.entity.dispatchservice.message.DriverLogoutMsg;
+import com.apicaller.sosotaxi.feignClients.DispatchFeignClient;
 import com.apicaller.sosotaxi.utils.BDmapUtil;
 import com.apicaller.sosotaxi.utils.JwtTokenUtils;
 import com.apicaller.sosotaxi.utils.YingYanUtil;
@@ -13,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.websocket.Session;
 
 /**
@@ -25,6 +29,9 @@ import javax.websocket.Session;
 public class UpdateRequestHandler implements MessageHandler<UpdateRequest> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateRequestHandler.class);
+
+    @Resource
+    DispatchFeignClient dispatchFeignClient;
 
 
     @Override
@@ -45,10 +52,19 @@ public class UpdateRequestHandler implements MessageHandler<UpdateRequest> {
          * 1 更新鹰眼服务中的状态
          * 2 更新诗烨那边的状态
          */
+        ///
         if(loginDriver.isStartListening()) {
             YingYanUtil.updateDriver(loginDriver.getUserName(), true);
+            //开始司机的听单状态
+            DriverLoginMsg liMsg = new DriverLoginMsg(loginDriver.getGeoPoint(),"NL",loginDriver.getServiceType(),loginDriver.getUserName());
+            dispatchFeignClient.login(liMsg);
+        }else{
+            YingYanUtil.updateDriver(loginDriver.getUserName(),false);
+            //取消司机的听单状态
+            DriverLogoutMsg loMsg = new DriverLogoutMsg(loginDriver.getUserName());
+            dispatchFeignClient.logout(loMsg);
         }
-
+        ///
         LOGGER.info("[司机{}更新状态 {}]\"",JwtTokenUtils.getUsernameByToken(loginDriver.getToken()),loginDriver);
         LOGGER.info("[当前所有司机状态{}]\"",WebSocketUtil.getAllAvailableDrivers());
 

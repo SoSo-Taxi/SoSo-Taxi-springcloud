@@ -3,6 +3,9 @@ package com.apicaller.sosotaxi.webSocket.handler;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import com.apicaller.sosotaxi.entity.Order;
 import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
+import com.apicaller.sosotaxi.entity.dispatchservice.MinimizedDriver;
+import com.apicaller.sosotaxi.entity.dispatchservice.UnsettledOrder;
+import com.apicaller.sosotaxi.feignClients.DispatchFeignClient;
 import com.apicaller.sosotaxi.feignClients.OrderFeignClient;
 import com.apicaller.sosotaxi.webSocket.message.AskForDriverMessage;
 import com.apicaller.sosotaxi.webSocket.message.StartOrderMessage;
@@ -29,6 +32,9 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
 
     @Resource
     OrderFeignClient orderFeignClient;
+
+    @Resource
+    DispatchFeignClient dispatchFeignClient;
 
     @Override
     public void execute(Session session, StartOrderMessage message) {
@@ -74,6 +80,20 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
          * 在这里调用派单算法
          */
 
+        ///
+        UnsettledOrder uOrder = new UnsettledOrder();
+        uOrder.setOrderId(order.getOrderId().toString());
+        uOrder.setPassengerId(order.getPassengerId().toString());
+        uOrder.setCity(order.getCity());
+        uOrder.setCreatedTime(order.getCreateTime());
+        uOrder.setType(order.getServiceType());
+        uOrder.setOriginPoint(order.getDepartPoint());
+        uOrder.setDestinationPoint(order.getDestPoint());
+
+        MinimizedDriver driver = dispatchFeignClient.submit(uOrder);
+
+        //TODO:通过司机的id通知司机接单
+        ///
 
         //添加到map中
         WebSocketUtil.addUserTokenOrderMap(message.getUserToken(),order);
