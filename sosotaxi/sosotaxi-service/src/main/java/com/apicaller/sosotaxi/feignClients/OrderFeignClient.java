@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author: 骆荟州
  * @createTime: 2020/7/16 11:39 上午
- * @updateTime: 2020/7/18 3:40 下午
+ * @updateTime: 2020/7/23 3:40 下午
  */
 @FeignClient(name = "order-service")
 @Service
@@ -88,4 +88,11 @@ public interface OrderFeignClient {
     @RequestMapping(method = RequestMethod.GET, value = "/order/rateForPassenger")
     boolean rateForPassenger(@RequestParam("orderId") long orderId, @RequestParam("rate") double rate);
 
+    /**
+     * 获取司机平均评分。
+     * @param driverId
+     * @return avgRate
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/order/getDriverAvgRate")
+    Double getDriverAvgRate(@RequestParam("driverId") long driverId);
 }

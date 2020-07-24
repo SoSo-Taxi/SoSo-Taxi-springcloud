@@ -59,4 +59,15 @@ public class OrderServiceImpl implements OrderService {
     public boolean deleteById(Long orderId) {
         return this.orderDao.deleteById(orderId) > 0;
     }
+
+    /**
+     * 获取司机平均评分
+     *
+     * @param driverId
+     * @return
+     */
+    @Override
+    public Double getDriverAvgRate(long driverId) {
+        return orderDao.getDriverAvgRate(driverId);
+    }
 }

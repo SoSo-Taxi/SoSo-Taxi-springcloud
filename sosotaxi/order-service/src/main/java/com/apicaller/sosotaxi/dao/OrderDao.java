@@ -70,4 +70,12 @@ public interface OrderDao {
      */
     int deleteById(Long orderId);
 
+    /**
+     * 获取司机平均评分
+     *
+     * @param driverId
+     * @return
+     */
+    Double getDriverAvgRate(long driverId);
+
 }

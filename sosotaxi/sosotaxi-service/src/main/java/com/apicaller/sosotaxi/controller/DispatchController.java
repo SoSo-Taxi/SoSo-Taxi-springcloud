@@ -71,8 +71,16 @@ public class DispatchController {
     @GetMapping("/getPrice")
     public ResponseBean getPricingMethod(double lat, double lng, Date date, Short serviceType) {
         List<AvailableServiceCalResponse> result = new ArrayList<AvailableServiceCalResponse>();
-        result.add(new AvailableServiceCalResponse(0, 1.2, 0.2, "CNY", 0.2, 6.5));
-        result.add(new AvailableServiceCalResponse(1, 1.4, 0.3, "CNY", 0.3, 8));
+        if(serviceType == null) {
+            result.add(new AvailableServiceCalResponse(0, 1.2, 0.2, "CNY", 0.2, 6.5));
+            result.add(new AvailableServiceCalResponse(1, 1.4, 0.3, "CNY", 0.3, 8));
+        }
+        else if (serviceType.equals((short)0)) {
+            result.add(new AvailableServiceCalResponse(0, 1.2, 0.2, "CNY", 0.2, 6.5));
+        }
+        else if (serviceType.equals((short)1)) {
+            result.add(new AvailableServiceCalResponse(1, 1.4, 0.3, "CNY", 0.3, 8));
+        }
         return new ResponseBean(200, null, result);
     }
 

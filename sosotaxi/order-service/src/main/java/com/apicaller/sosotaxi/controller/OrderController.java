@@ -74,4 +74,13 @@ public class OrderController {
         }
         return true;
     }
+
+    /**
+     * 获取司机平均评分
+     * @param driverId
+     */
+    @GetMapping("/getDriverAvgRate")
+    public Double getDriverAvgRate(long driverId) {
+        return orderService.getDriverAvgRate(driverId);
+    }
 }
