@@ -17,4 +17,17 @@ public class DriverLoginMsg {
      */
     private MinimizedDriver driver;
 
+    public DriverLoginMsg(){
+
+    };
+
+    public DriverLoginMsg(GeoPoint point, String city, int type, String id){
+        MinimizedDriver driver = new MinimizedDriver();
+        driver.setCity(city);
+        driver.setDriverId(id);
+        driver.setType(type);
+        this.setDriver(driver);
+        this.setPoint(point);
+    }
+
 }

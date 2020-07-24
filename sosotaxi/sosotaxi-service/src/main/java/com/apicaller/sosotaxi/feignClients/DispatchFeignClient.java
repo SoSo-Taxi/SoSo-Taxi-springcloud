@@ -26,7 +26,7 @@ public interface DispatchFeignClient {
     Boolean login(@RequestBody DriverLoginMsg msg);
 
     @RequestMapping(method = RequestMethod.POST, value = "/dispatch/driver/update")
-    Boolean accept(@RequestBody DriverUpdateMsg msg);
+    Boolean update(@RequestBody DriverUpdateMsg msg);
 
     @RequestMapping(method = RequestMethod.POST, value = "/dispatch/driver/accept")
     UnsettledOrder accept(@RequestBody OpsForOrderMsg msg);
