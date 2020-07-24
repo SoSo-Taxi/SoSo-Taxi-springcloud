@@ -67,7 +67,7 @@ public class WebsocketServerEndpoint implements InitializingBean {
 
     @OnMessage
     public void onMessage(Session session, String message) {
-        logger.info("[onOpen][当前时间{} session({}) 接收到一条消息({})]", new Date(),session, message);
+        logger.info("[onMessage][当前时间{} session({}) 接收到一条消息({})]", new Date(),session, message);
 
         try {
             JSONObject jsonMessage = JSON.parseObject(message);

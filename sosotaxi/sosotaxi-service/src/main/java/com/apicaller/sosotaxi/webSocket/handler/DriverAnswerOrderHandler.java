@@ -39,7 +39,9 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
         LoginDriver loginDriver = WebSocketUtil.getLoginDriverBySession(session);
         Order order = message.getOrder();
         String userTokenByOrder = WebSocketUtil.getUserTokenByOrder(order);
-
+        if(userTokenByOrder == null) {
+            return;
+        }
         //获取真正的订单
         Order realOrder = WebSocketUtil.getOrderByUserToken(userTokenByOrder);
         logger.info(message.getTakeOrder().toString());
@@ -48,7 +50,6 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
             loginDriver.setDispatched(true);
             DriverVo driverVo = message.getDriver();
             DriverAnswerResponse driverAnswerResponse = new DriverAnswerResponse();
-            realOrder.setDriverId(driverVo.getUserId());
             //司机已接单
             realOrder.setStatus(1);
             Driver driver = driverFeignClient.getDriverById(driverVo.getUserId());
@@ -56,6 +57,7 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
                 logger.error("未在数据库中找到司机" + driverVo.getUserId());
                 return;
             }
+            realOrder.setDriverId(driverVo.getUserId());
             DriverCarInfoResponse driverCarInfoResponse = DriverCarInfoResponse.fromDriver(driver);
             driverAnswerResponse.setDriverCarInfo(driverCarInfoResponse);
             driverAnswerResponse.setStatusCode(200);

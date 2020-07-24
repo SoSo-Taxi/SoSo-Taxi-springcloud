@@ -8,6 +8,8 @@ import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
 import com.apicaller.sosotaxi.webSocket.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
+
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 import java.io.IOException;
@@ -237,6 +239,29 @@ public class WebSocketUtil {
         SESSION_LOGIN_DRIVER_MAP.put(session, loginDriver);
     }
 
+    /**
+     * 根据用户名查找登录的司机
+     */
+    public static LoginDriver findLoginDriver(String username) {
+        for(LoginDriver d : LOGIN_DRIVER_SESSION_MAP.keySet()) {
+            if(d.getUserName().equals(username)) {
+                return d;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据订单Id查找订单
+     */
+    public static Order findOrderById(long orderId) {
+        for(Order order : ORDER_LOGIN_DRIVER_MAP.keySet()) {
+            if (order.getOrderId().equals(orderId)) {
+                return order;
+            }
+        }
+        return null;
+    }
 
     /**
      * 添加 Session 。在这个方法中，会添加用户和 Session 之间的映射
