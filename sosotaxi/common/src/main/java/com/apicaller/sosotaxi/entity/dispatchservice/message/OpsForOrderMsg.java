@@ -1,4 +1,4 @@
-package com.apicaller.sosotaxi.entity.message;
+package com.apicaller.sosotaxi.entity.dispatchservice.message;
 
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import lombok.Data;
@@ -20,4 +20,14 @@ public class OpsForOrderMsg {
      * 订单id
      */
     private String orderId;
+
+    public OpsForOrderMsg(){
+
+    }
+
+    public OpsForOrderMsg(GeoPoint point, String driverId, String orderId){
+        this.point = point;
+        this.driverId = driverId;
+        this.orderId = orderId;
+    }
 }
