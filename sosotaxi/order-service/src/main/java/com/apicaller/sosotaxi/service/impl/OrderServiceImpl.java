@@ -70,4 +70,15 @@ public class OrderServiceImpl implements OrderService {
     public Double getDriverAvgRate(long driverId) {
         return orderDao.getDriverAvgRate(driverId);
     }
+
+    /**
+     * 获取司机订单数量
+     *
+     * @param driverId
+     * @return
+     */
+    @Override
+    public int getDriverOrderNum(long driverId) {
+        return orderDao.getDriverOrderNum(driverId);
+    }
 }

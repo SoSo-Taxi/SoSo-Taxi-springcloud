@@ -64,6 +64,13 @@
         where driver_id = #{driverId}
     </select>
 
+    <select id="getDriverOrderNum" resultType="int">
+        select
+          COUNT(all driver_id)
+        from db01.order
+        where driver_id = #{driverId}
+    </select>
+
     <!--新增所有列-->
     <insert id="insert" keyProperty="orderId" useGeneratedKeys="true">
         insert into db01.order(city, depart_point, dest_point, create_time, appointed_time, depart_time, arrive_time, depart_name,

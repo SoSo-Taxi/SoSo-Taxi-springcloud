@@ -74,4 +74,12 @@ public interface OrderService {
      */
     Double getDriverAvgRate(long driverId);
 
+    /**
+     * 获取司机订单数量
+     *
+     * @param driverId
+     * @return
+     */
+    int getDriverOrderNum(long driverId);
+
 }

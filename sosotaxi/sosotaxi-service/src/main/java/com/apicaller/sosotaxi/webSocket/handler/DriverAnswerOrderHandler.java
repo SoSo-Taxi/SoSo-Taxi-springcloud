@@ -40,6 +40,9 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
     DriverFeignClient driverFeignClient;
 
     @Resource
+    OrderFeignClient orderFeignClient;
+
+    @Resource
     DispatchFeignClient dispatchFeignClient;
 
     @Override
@@ -69,6 +72,8 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
             }
             realOrder.setDriverId(driverVo.getUserId());
             DriverCarInfoResponse driverCarInfoResponse = DriverCarInfoResponse.fromDriver(driver);
+            driverCarInfoResponse.setRate(orderFeignClient.getDriverAvgRate(driverVo.getUserId()));
+            driverCarInfoResponse.setOrderNum(orderFeignClient.getDriverOrderNum(driverVo.getUserId()));
             driverAnswerResponse.setDriverCarInfo(driverCarInfoResponse);
             driverAnswerResponse.setStatusCode(200);
             driverAnswerResponse.setMsg("司机已接单");

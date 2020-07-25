@@ -83,4 +83,13 @@ public class OrderController {
     public Double getDriverAvgRate(long driverId) {
         return orderService.getDriverAvgRate(driverId);
     }
+
+    /**
+     * 获取司机订单数量
+     * @param driverId
+     */
+    @GetMapping("/getDriverOrderNum")
+    public int getDriverOrderNum(long driverId) {
+        return orderService.getDriverOrderNum(driverId);
+    }
 }

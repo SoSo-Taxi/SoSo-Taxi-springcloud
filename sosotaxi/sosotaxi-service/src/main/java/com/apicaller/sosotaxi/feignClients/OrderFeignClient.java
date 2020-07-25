@@ -95,4 +95,12 @@ public interface OrderFeignClient {
      */
     @RequestMapping(method = RequestMethod.GET, value = "/order/getDriverAvgRate")
     Double getDriverAvgRate(@RequestParam("driverId") long driverId);
+
+    /**
+     * 获取司机订单总数
+     * @param driverId
+     * @return avgRate
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/order/getDriverOrderNum")
+    int getDriverOrderNum(@RequestParam("driverId") long driverId);
 }
