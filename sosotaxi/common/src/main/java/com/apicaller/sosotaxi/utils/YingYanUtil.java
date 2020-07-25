@@ -86,7 +86,21 @@ public class YingYanUtil {
      * @param username
      */
     public static JSONObject getLatestPoint(String username) {
-        return getLatestPoint(username, 4, true, CoordType.bd09ll);
+        return getLatestPoint(username, 3, true, CoordType.bd09ll);
+    }
+
+    /**
+     * 获取一个实体最新的位置点。
+     * 适用于获取司机的位置。
+     * @param username
+     */
+    public static GeoPoint getLatestPointVer2(String username) {
+        JSONObject result =  getLatestPoint(username, 3, true, CoordType.bd09ll);
+        if(result.getInteger("status") != 0) {
+            return null;
+        }
+        JSONObject latestPoint = result.getJSONObject("latest_point");
+        return new GeoPoint(latestPoint.getDouble("latitude"), latestPoint.getDouble("longitude"));
     }
 
     /**
