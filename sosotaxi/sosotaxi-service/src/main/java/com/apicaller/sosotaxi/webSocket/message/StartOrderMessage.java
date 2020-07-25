@@ -3,7 +3,6 @@ package com.apicaller.sosotaxi.webSocket.message;
 import com.apicaller.sosotaxi.entity.GeoPoint;
 import lombok.Data;
 
-import java.util.Date;
 
 /**
  * @author 张流潇潇

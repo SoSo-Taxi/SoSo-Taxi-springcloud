@@ -9,6 +9,7 @@ import com.apicaller.sosotaxi.feignClients.DispatchFeignClient;
 import com.apicaller.sosotaxi.feignClients.OrderFeignClient;
 import com.apicaller.sosotaxi.webSocket.message.AskForDriverMessage;
 import com.apicaller.sosotaxi.webSocket.message.StartOrderMessage;
+import com.apicaller.sosotaxi.webSocket.message.StartOrderResponse;
 import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
 
     @Override
     public void execute(Session session, StartOrderMessage message) {
-
+        logger.info("处理订单请求");
         GeoPoint departGeoPoint = message.getDepartPoint();
         GeoPoint destGeoPoint = message.getDestPoint();
         Short serviceType = message.getServiceType();
@@ -59,6 +60,10 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
         //先将订单订单插入数据库，以获取订单id
         order = orderFeignClient.addOrder(order);
 
+        //设置发给乘客的消息
+        StartOrderResponse startOrderResponse = new StartOrderResponse(200, "下单成功", order.getOrderId());
+        WebSocketUtil.send(session, StartOrderResponse.TYPE, startOrderResponse);
+
         //设置给司机的消息
         AskForDriverMessage askForDriverMessage = new AskForDriverMessage();
         askForDriverMessage.setPassengerPhoneNumber(message.getPhoneNumber());
@@ -68,17 +73,20 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
 
         logger.info("未筛选所有可用司机{}",availableDrivers);
 
-
         List<LoginDriver> fitTypeDrivers = availableDrivers.stream()
                 .filter(a -> a.getServiceType().equals(message.getServiceType()))
                 .collect(Collectors.toList());
-
 
         logger.info("筛选后所有可用司机{}",fitTypeDrivers);
 
         /**
          * 在这里调用派单算法
          */
+
+
+        if(fitTypeDrivers.isEmpty()) {
+            return;
+        }
 
         ///
         UnsettledOrder uOrder = new UnsettledOrder();
@@ -94,6 +102,7 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
 
         //TODO:通过司机的id通知司机接单
         ///
+
 
         //添加到map中
         WebSocketUtil.addUserTokenOrderMap(message.getUserToken(),order);

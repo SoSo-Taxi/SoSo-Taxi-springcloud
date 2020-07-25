@@ -3,7 +3,7 @@
 <mapper namespace="com.apicaller.sosotaxi.dao.PassengerDao">
 
     <resultMap type="com.apicaller.sosotaxi.entity.Passenger" id="PassengerMap">
-        <result property="userId" column="passenger_id" jdbcType="INTEGER"/>
+        <result property="userId" column="passenger_id" jdbcType="BIGINT"/>
         <result property="nickname" column="nickName" jdbcType="VARCHAR"/>
         <result property="industry" column="industry" jdbcType="TINYINT"/>
         <result property="company" column="company" jdbcType="VARCHAR"/>
@@ -103,6 +103,9 @@
     <update id="update">
         update db01.passenger
         <set>
+            <if test="userId != null and userId != ''">
+                passenger_id = #{userId},
+            </if>
             <if test="nickname != null and nickname != ''">
                 nickName = #{nickname},
             </if>
@@ -127,6 +130,7 @@
         </set>
         where passenger_id = #{userId}
     </update>
+
 
     <!--通过主键删除-->
     <delete id="deleteById">

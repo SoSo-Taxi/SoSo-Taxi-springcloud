@@ -56,6 +56,13 @@
         limit #{offset}, #{limit}
     </select>
 
+    <!--查询某司机的平均得分-->
+    <select id="getDriverAvgRate" resultType="Double">
+        select
+          AVG(driver_rate)
+        from db01.order
+        where driver_id = #{driverId}
+    </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="orderId" useGeneratedKeys="true">

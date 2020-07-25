@@ -1,6 +1,7 @@
 package com.apicaller.sosotaxi.entity;
 
 import lombok.Data;
+import java.util.Date;
 
 
 /**
@@ -13,11 +14,15 @@ import lombok.Data;
 @Data
 public class DriverStatistics {
 
-    private Double serviceScore;
+    private long driverId;
+
+    private Date recordDate;
+
+    private Integer serviceScore;
 
     private Double accountFlow;
 
-    private Integer workMinutes;
+    private Integer workSeconds;
 
     private Integer orderNum;
 }

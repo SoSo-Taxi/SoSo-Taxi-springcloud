@@ -67,26 +67,37 @@ public class WebsocketServerEndpoint implements InitializingBean {
 
     @OnMessage
     public void onMessage(Session session, String message) {
-        logger.info("[onOpen][当前时间{} session({}) 接收到一条消息({})]", new Date(),session, message);
+        logger.info("[onMessage][当前时间{} session({}) 接收到一条消息({})]", new Date(),session, message);
 
+        JSONObject jsonMessage = null;
         try {
-            JSONObject jsonMessage = JSON.parseObject(message);
-            String messageType = jsonMessage.getString("type");
-            // 获得消息处理器
-            MessageHandler messageHandler = HANDLERS.get(messageType);
-            if (messageHandler == null) {
-                logger.error("[onMessage][消息类型({}) 不存在消息处理器]", messageType);
-                return;
-            }
-            // 解析消息
-            Class<? extends Message> messageClass = this.getMessageClass(messageHandler);
-            // 处理消息
-            Message messageObj = JSON.parseObject(jsonMessage.getString("body"), messageClass);
-            messageHandler.execute(session, messageObj);
+            jsonMessage = JSON.parseObject(message);
         }
         catch (Exception e) {
-
+            logger.info("parse message错误，请检查json");
+            return;
         }
+
+        String messageType = jsonMessage.getString("type");
+        // 获得消息处理器
+        MessageHandler messageHandler = HANDLERS.get(messageType);
+        if (messageHandler == null) {
+            logger.error("[onMessage][消息类型({}) 不存在消息处理器]", messageType);
+            return;
+        }
+        // 解析消息
+        Class<? extends Message> messageClass = this.getMessageClass(messageHandler);
+        // 处理消息
+
+        Message messageObj;
+        try {
+            messageObj = JSON.parseObject(jsonMessage.getString("body"), messageClass);
+        }
+        catch (Exception e) {
+            logger.info("parse body错误，请检查json");
+            return;
+        }
+        messageHandler.execute(session, messageObj);
     }
 
     @OnClose
@@ -97,6 +108,7 @@ public class WebsocketServerEndpoint implements InitializingBean {
 //        errorResponse.setStatusCode(201);
 //        WebSocketUtil.send(session,ErrorResponse.TYPE,errorResponse);
 //        WebSocketUtil.removeOrder(session);
+        WebSocketUtil.removeOrder(session);
         WebSocketUtil.removeSession(session);
     }
 

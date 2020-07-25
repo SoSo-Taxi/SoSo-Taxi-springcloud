@@ -51,8 +51,7 @@ public class LoginDriver {
             return false;
         }
         LoginDriver that = (LoginDriver) o;
-        return Objects.equals(getGeoPoint(), that.getGeoPoint()) &&
-                Objects.equals(getUserName(), that.getUserName()) ;
+        return Objects.equals(getUserName(), that.getUserName()) ;
     }
 
     @Override

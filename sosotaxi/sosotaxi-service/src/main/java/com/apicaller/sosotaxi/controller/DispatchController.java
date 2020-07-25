@@ -2,16 +2,19 @@ package com.apicaller.sosotaxi.controller;
 
 
 import com.apicaller.sosotaxi.entity.GeoPoint;
+import com.apicaller.sosotaxi.entity.Order;
 import com.apicaller.sosotaxi.entity.ResponseBean;
 import com.apicaller.sosotaxi.entity.bdmap.AroundSearchDriverResponse;
 import com.apicaller.sosotaxi.entity.dispatch.dto.GenerateOrderDTO;
 
 
+import com.apicaller.sosotaxi.entity.dispatch.dto.LoginDriver;
 import com.apicaller.sosotaxi.service.DispatchServiceImpl;
 import com.apicaller.sosotaxi.utils.BDmapUtil;
 import com.apicaller.sosotaxi.utils.CoordType;
 import com.apicaller.sosotaxi.utils.YingYanUtil;
 
+import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,8 +74,16 @@ public class DispatchController {
     @GetMapping("/getPrice")
     public ResponseBean getPricingMethod(double lat, double lng, Date date, Short serviceType) {
         List<AvailableServiceCalResponse> result = new ArrayList<AvailableServiceCalResponse>();
-        result.add(new AvailableServiceCalResponse(0, 1.2, 0.2, "CNY", 0.2, 6.5));
-        result.add(new AvailableServiceCalResponse(1, 1.4, 0.3, "CNY", 0.3, 8));
+        if(serviceType == null) {
+            result.add(new AvailableServiceCalResponse(0, 1.2, 0.2, "CNY", 0.2, 6.5));
+            result.add(new AvailableServiceCalResponse(1, 1.4, 0.3, "CNY", 0.3, 8));
+        }
+        else if (serviceType.equals((short)0)) {
+            result.add(new AvailableServiceCalResponse(0, 1.2, 0.2, "CNY", 0.2, 6.5));
+        }
+        else if (serviceType.equals((short)1)) {
+            result.add(new AvailableServiceCalResponse(1, 1.4, 0.3, "CNY", 0.3, 8));
+        }
         return new ResponseBean(200, null, result);
     }
 
@@ -106,32 +117,42 @@ public class DispatchController {
         return new ResponseBean(200, null, 1234);
     }
 
-
-    /**
-     * 获取司机和车辆信息。
-     * 仅在司机接单到到达终点这段时间内可以查询。
-     */
-    @GetMapping("/getDriverCarInfo")
-    public ResponseBean getDriverCarInfo(long orderId) {
-        DriverCarInfoResponse result = new DriverCarInfoResponse();
-        result.setServiceType((short) 0);
-        result.setCarBrand("大众");
-        result.setCarModel("迈腾");
-        result.setCarColor("黑色");
-        result.setDriverId(1);
-        result.setDriverName("骆荟州");
-        result.setPhoneNumber("13996996996");
-        result.setLicensePlate("XXXXXXX");
-        return new ResponseBean(200, null, result);
-    }
-
     /**
      * 获取司机当前位置。
      */
     @GetMapping("/getDriverPosition")
     public ResponseBean getDriverPosition(long orderId) {
-        return new ResponseBean(200, null, new GeoPoint(100, 100));
+        Order order = WebSocketUtil.findOrderById(orderId);
+        if(order == null) {
+            return new ResponseBean(403, "未找到该订单", null);
+        }
+        LoginDriver loginDriver = WebSocketUtil.getLoginDriverByOrder(order);
+        if(loginDriver == null) {
+            return new ResponseBean(403, "未找到该订单", null);
+        }
+        return new ResponseBean(403, "未找到该订单", loginDriver.getGeoPoint());
     }
 
+    /**
+     * 获取当前行程距离
+     */
+    @GetMapping("/getCurrentDistance")
+    public ResponseBean getCurrentDistance(long orderId) {
+        Order order = WebSocketUtil.findOrderById(orderId);
+        if(order == null) {
+            return new ResponseBean(403, "未找到该订单", null);
+        }
+        LoginDriver loginDriver = WebSocketUtil.getLoginDriverByOrder(order);
+        if(loginDriver == null) {
+            return new ResponseBean(403, "未找到该订单", null);
+        }
+        Double distance = YingYanUtil.getDistance(loginDriver.getUserName(),
+                (int)(order.getDepartTime().getTime()/1000), (int)(System.currentTimeMillis()/1000));
+
+        if(distance == null) {
+            return new ResponseBean(403, "未找到距离", null);
+        }
+        return new ResponseBean(200, "查询距离成功", distance);
+    }
 
 }

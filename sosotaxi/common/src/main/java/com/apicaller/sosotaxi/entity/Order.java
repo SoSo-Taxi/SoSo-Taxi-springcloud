@@ -1,5 +1,6 @@
 package com.apicaller.sosotaxi.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -30,17 +31,23 @@ public class Order implements Serializable {
     private GeoPoint destPoint;
 
     /** 订单创建时间 */
-    //    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    //@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS"
+    //@JSONField(name = "createTime", format = "yyyy-MM-dd HH:mm:ss.SSS")
     private Date createTime;
 
     /** 用户预约的时间 */
+    //@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    //@JSONField(name = "appointedTime", format = "yyyy-MM-dd HH:mm:ss.SSS")
     private Date appointedTime;
 
     /** 出发时间 */
+    //@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    //@JSONField(name = "departTime", format = "yyyy-MM-dd HH:mm:ss.SSS")
     private Date departTime;
 
     /** 到达时间 */
+    //@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    //@JSONField(name = "arriveTime", format = "yyyy-MM-dd HH:mm:ss.SSS")
     private Date arriveTime;
 
     /** 起点名称 */
@@ -93,37 +100,17 @@ public class Order implements Serializable {
         if (getCity() != null ? !getCity().equals(order.getCity()) : order.getCity() != null) {
             return false;
         }
-        if (getDepartPoint() != null ? !getDepartPoint().equals(order.getDepartPoint()) : order.getDepartPoint() != null) {
+        if (getPassengerId() != null ? !getPassengerId().equals(order.getPassengerId()) : order.getPassengerId() != null) {
             return false;
         }
-        if (getDestPoint() != null ? !getDestPoint().equals(order.getDestPoint()) : order.getDestPoint() != null) {
-            return false;
-        }
-        if (getCreateTime() != null ? !getCreateTime().equals(order.getCreateTime()) : order.getCreateTime() != null) {
-            return false;
-        }
-        if (getDepartName() != null ? !getDepartName().equals(order.getDepartName()) : order.getDepartName() != null) {
-            return false;
-        }
-        if (getDestName() != null ? !getDestName().equals(order.getDestName()) : order.getDestName() != null) {
-            return false;
-        }
-        if (getServiceType() != null ? !getServiceType().equals(order.getServiceType()) : order.getServiceType() != null) {
-            return false;
-        }
-        return getPassengerId() != null ? getPassengerId().equals(order.getPassengerId()) : order.getPassengerId() == null;
+        return getOrderId() != null ? getOrderId().equals(order.getOrderId()) : order.getOrderId() == null;
     }
 
     @Override
     public int hashCode() {
         int result = getCity() != null ? getCity().hashCode() : 0;
-        result = 31 * result + (getDepartPoint() != null ? getDepartPoint().hashCode() : 0);
-        result = 31 * result + (getDestPoint() != null ? getDestPoint().hashCode() : 0);
-        result = 31 * result + (getCreateTime() != null ? getCreateTime().hashCode() : 0);
-        result = 31 * result + (getDepartName() != null ? getDepartName().hashCode() : 0);
-        result = 31 * result + (getDestName() != null ? getDestName().hashCode() : 0);
-        result = 31 * result + (getServiceType() != null ? getServiceType().hashCode() : 0);
         result = 31 * result + (getPassengerId() != null ? getPassengerId().hashCode() : 0);
+        result = 31 * result + (getOrderId() != null ? getOrderId().hashCode() : 0);
         return result;
     }
 }

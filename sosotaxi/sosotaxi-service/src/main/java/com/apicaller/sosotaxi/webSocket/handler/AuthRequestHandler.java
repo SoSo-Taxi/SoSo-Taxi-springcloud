@@ -39,17 +39,27 @@ public class AuthRequestHandler implements MessageHandler<AuthRequest> {
          * 登陆模块没加
          */
         String userRole = JwtTokenUtils.getUserRolesByToken(token);
-        LOGGER.info("[session({}) 接入成功,用户名是({})]\"", session,JwtTokenUtils.getUsernameByToken(token));
+        String userName = JwtTokenUtils.getUsernameByToken(token);
+        if(userName == null || userName.isEmpty()) {
+            LOGGER.error("用户名为空");
+        }
+        LOGGER.info("[session({}) 接入成功,用户名是({})]\"",session, userName);
         LOGGER.info("[session({}) 用户身份是({})]\"", session,userRole);
 
         String driverRole = "driver";
         if (driverRole.equals(userRole))
         {
-            LoginDriver loginDriver = new LoginDriver();
+            //考虑到司机断线重连的情况，这里先在已有map中找一下
+            LoginDriver loginDriver = WebSocketUtil.findLoginDriver(userName);
+            if(loginDriver == null) {
+                loginDriver = new LoginDriver();
+                loginDriver.setStartListening(false);
+                loginDriver.setDispatched(false);
+                loginDriver.setUserName(userName);
+            }
+            else {
+            }
             loginDriver.setToken(token);
-            loginDriver.setStartListening(true);
-            loginDriver.setDispatched(false);
-            loginDriver.setUserName(JwtTokenUtils.getUsernameByToken(token));
             WebSocketUtil.addLoginDriver(session,loginDriver);
         }
         else {
