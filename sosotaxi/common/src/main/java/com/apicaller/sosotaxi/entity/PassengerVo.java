@@ -38,4 +38,20 @@ public class PassengerVo implements Serializable {
     /** 乘车偏好 */
     private JSONArray preference;
 
+    public static PassengerVo fromPassenger(Passenger passenger) {
+        if(passenger == null) {
+            return null;
+        }
+        PassengerVo passengerVo  = new PassengerVo();
+        passengerVo.setUserId(passenger.getUserId());
+        passengerVo.setNickname(passenger.getNickname());
+        passengerVo.setIndustry(passenger.getIndustry());
+        passengerVo.setCompany(passenger.getCompany());
+        passengerVo.setOccupation(passenger.getOccupation());
+        passengerVo.setUrgentContact(passenger.getUrgentContact());
+        passengerVo.setCommonAddress(passenger.getCommonAddress());
+        passengerVo.setPreference(passenger.getPreference());
+        return passengerVo;
+    }
+
 }

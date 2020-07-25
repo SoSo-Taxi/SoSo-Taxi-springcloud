@@ -31,7 +31,7 @@ public class DriverStatisticsService {
             newStat.setDriverId(driverId);
             newStat.setOrderNum(0);
             newStat.setRecordDate(new Date());
-            newStat.setWorkMinutes(0);
+            newStat.setWorkSeconds(0);
             newStat.setServiceScore(calcServiceScore(rate));
             return statistics;
         }
@@ -40,13 +40,19 @@ public class DriverStatisticsService {
         return statistics;
     }
 
-    private DriverStatistics setStatistics(DriverStatistics statistics) {
+    public DriverStatistics setStatistics(DriverStatistics statistics) {
         if(statistics == null) {
             return null;
         }
 
         Double rate = orderFeignClient.getDriverAvgRate(statistics.getDriverId());
+        //测试用
+
+        statistics.setRecordDate(new Date());
         statistics.setServiceScore(calcServiceScore(rate));
+        if(rate == null) {
+            statistics.setServiceScore(94);
+        }
         driverStatisticsMap.put(statistics.getDriverId(), statistics);
         return statistics;
     }

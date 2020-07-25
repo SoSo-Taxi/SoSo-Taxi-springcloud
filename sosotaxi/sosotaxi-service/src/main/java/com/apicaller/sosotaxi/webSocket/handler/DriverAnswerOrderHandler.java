@@ -28,7 +28,7 @@ import javax.websocket.Session;
  */
 @Component
 public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrderMessage> {
-    Logger logger = LoggerFactory.getLogger(StartOrderHandler.class);
+    Logger logger = LoggerFactory.getLogger(DriverAnswerOrderHandler.class);
 
     @Resource
     DriverFeignClient driverFeignClient;
@@ -40,6 +40,7 @@ public class DriverAnswerOrderHandler implements MessageHandler<DriverAnswerOrde
         Order order = message.getOrder();
         String userTokenByOrder = WebSocketUtil.getUserTokenByOrder(order);
         if(userTokenByOrder == null) {
+            logger.error("订单{}的乘客token未找到", order.getOrderId());
             return;
         }
         //获取真正的订单

@@ -5,6 +5,8 @@ import com.apicaller.sosotaxi.webSocket.message.ArriveDepartPointMessage;
 import com.apicaller.sosotaxi.webSocket.message.ArriveDepartPointResponse;
 import com.apicaller.sosotaxi.webSocket.message.ArriveDepartPointToPassenger;
 import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.Session;
@@ -18,12 +20,22 @@ import javax.websocket.Session;
 
 @Component
 public class ArriveDepartPointMessageHandler implements MessageHandler<ArriveDepartPointMessage> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArriveDepartPointMessageHandler.class);
+
     @Override
     public void execute(Session session, ArriveDepartPointMessage message) {
 
         String userTokenByOrder = WebSocketUtil.getUserTokenByOrder(message.getOrder());
+        if(userTokenByOrder == null) {
+            LOGGER.error("[到达出发点]订单{}的乘客token未找到", message.getOrder().getOrderId());
+            return;
+        }
         Order order = WebSocketUtil.getOrderByUserToken(userTokenByOrder);
-        Session passengerSessionByToken = WebSocketUtil.getPassengerSessionByToken(userTokenByOrder);
+        if(order == null) {
+            LOGGER.error("[到达出发点]订单{}未找到", message.getOrder().getOrderId());
+            return;
+        }
 
         order.setStatus(2);
         ArriveDepartPointResponse arriveDepartPointResponse = new ArriveDepartPointResponse();
@@ -37,6 +49,7 @@ public class ArriveDepartPointMessageHandler implements MessageHandler<ArriveDep
         arriveDepartPointToPassenger.setMsg("司机已到达上车点");
         arriveDepartPointToPassenger.setStatusCode(200);
 
+        Session passengerSessionByToken = WebSocketUtil.getPassengerSessionByToken(userTokenByOrder);
         WebSocketUtil.send(passengerSessionByToken,ArriveDepartPointToPassenger.TYPE,arriveDepartPointToPassenger);
 
     }

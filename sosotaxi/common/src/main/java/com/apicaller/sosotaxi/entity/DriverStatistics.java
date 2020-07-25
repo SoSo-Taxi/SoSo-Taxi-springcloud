@@ -22,7 +22,7 @@ public class DriverStatistics {
 
     private Double accountFlow;
 
-    private Integer workMinutes;
+    private Integer workSeconds;
 
     private Integer orderNum;
 }

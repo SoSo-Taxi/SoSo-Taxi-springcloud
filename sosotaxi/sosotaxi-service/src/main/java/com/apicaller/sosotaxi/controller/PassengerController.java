@@ -1,10 +1,7 @@
 package com.apicaller.sosotaxi.controller;
 
 import com.apicaller.sosotaxi.entity.*;
-import com.apicaller.sosotaxi.feignClients.CouponFeignClient;
-import com.apicaller.sosotaxi.feignClients.OrderFeignClient;
-import com.apicaller.sosotaxi.feignClients.PassengerFeignClient;
-import com.apicaller.sosotaxi.feignClients.WalletFeignClient;
+import com.apicaller.sosotaxi.feignClients.*;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
@@ -19,6 +16,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/passenger")
 public class PassengerController {
+    @Resource
+    private UserServiceFeignClient userServiceFeignClient;
+
     @Resource
     private PassengerFeignClient passengerFeignClient;
 
@@ -60,8 +60,20 @@ public class PassengerController {
     }
 
     @PutMapping("/updatePassenger")
-    public ResponseBean updatePassenger(@RequestBody PassengerVo passenger) {
-        int result = passengerFeignClient.updatePassenger(passenger);
+    public ResponseBean updatePassenger(@RequestBody Passenger passenger) {
+
+        User user = new User();
+        user.setUserId(passenger.getUserId());
+        user.setPhoneNumber(passenger.getPhoneNumber());
+        user.setBirthYear(passenger.getBirthYear());
+        user.setGender(passenger.getGender());
+        user.setIdCardNumber(passenger.getGender());
+        user.setRealName(passenger.getRealName());
+
+        userServiceFeignClient.updateUser(user);
+        PassengerVo passengerVo = PassengerVo.fromPassenger(passenger);
+
+        int result = passengerFeignClient.updatePassenger(passengerVo);
         if(result == 0) {
             return new ResponseBean(201, "修改乘客个人信息失败", null);
         }
@@ -115,5 +127,23 @@ public class PassengerController {
         walletFeignClient.updateAccount(wallet);
         couponFeignClient.deleteCoupon(couponId);
         return new ResponseBean(200, "支付成功", null);
+    }
+
+    @GetMapping("/getWalletById")
+    public ResponseBean getWalletById(long userId) {
+        UserWallet userWallet = walletFeignClient.getById(userId);
+        if(userWallet == null) {
+            return new ResponseBean(403, "未找到该用户的钱包，请重试", null);
+        }
+        return new ResponseBean(200, "找到该用户的钱包信息", userWallet);
+    }
+
+    @GetMapping("/getCouponById")
+    public ResponseBean getCouponById(long userId) {
+        List<UserCoupon> coupons = couponFeignClient.getByUserId(userId);
+        if(coupons == null || coupons.isEmpty()) {
+            return new ResponseBean(403, "该用户没有优惠券", null);
+        }
+        return new ResponseBean(200, "找到该用户的优惠券", coupons);
     }
 }

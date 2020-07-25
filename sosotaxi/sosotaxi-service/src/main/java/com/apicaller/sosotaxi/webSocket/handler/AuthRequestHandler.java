@@ -40,6 +40,9 @@ public class AuthRequestHandler implements MessageHandler<AuthRequest> {
          */
         String userRole = JwtTokenUtils.getUserRolesByToken(token);
         String userName = JwtTokenUtils.getUsernameByToken(token);
+        if(userName == null || userName.isEmpty()) {
+            LOGGER.error("用户名为空");
+        }
         LOGGER.info("[session({}) 接入成功,用户名是({})]\"",session, userName);
         LOGGER.info("[session({}) 用户身份是({})]\"", session,userRole);
 

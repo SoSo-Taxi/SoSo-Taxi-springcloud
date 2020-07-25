@@ -4,6 +4,7 @@ package com.apicaller.sosotaxi.controller;
 import com.apicaller.sosotaxi.entity.*;
 import com.apicaller.sosotaxi.feignClients.DriverFeignClient;
 import com.apicaller.sosotaxi.feignClients.OrderFeignClient;
+import com.apicaller.sosotaxi.service.DriverStatisticsService;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
@@ -22,6 +23,9 @@ public class DriverController {
 
     @Resource
     private OrderFeignClient orderFeignClient;
+
+    @Resource
+    private DriverStatisticsService driverStatisticsService;
 
     @GetMapping("/getByName")
     public ResponseBean getByName(String userName) {
@@ -92,5 +96,14 @@ public class DriverController {
             return new ResponseBean(200, "评价乘客成功", null);
         }
         return new ResponseBean(403, "评价乘客失败", null);
+    }
+
+    @PostMapping("/setStatistics")
+    public ResponseBean setStatistics(@RequestBody DriverStatistics driverStatistics) {
+        DriverStatistics statistics = driverStatisticsService.setStatistics(driverStatistics);
+        if(statistics == null) {
+            return new ResponseBean(403, "更新统计信息失败", null);
+        }
+        return new ResponseBean(200, "更新统计信息成功", statistics);
     }
 }
