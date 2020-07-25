@@ -1,7 +1,7 @@
 package com.apicaller.sosotaxi.service;
 
-import com.apicaller.sosotaxi.entity.MinimizedDriver;
-import com.apicaller.sosotaxi.entity.UnsettledOrder;
+import com.apicaller.sosotaxi.entity.dispatchservice.MinimizedDriver;
+import com.apicaller.sosotaxi.entity.dispatchservice.UnsettledOrder;
 
 public interface DispatchService {
 
