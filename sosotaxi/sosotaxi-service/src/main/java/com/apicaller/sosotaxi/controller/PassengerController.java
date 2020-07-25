@@ -99,7 +99,7 @@ public class PassengerController {
     }
 
     @GetMapping("/payOrder")
-    public ResponseBean payOrder(long userId, long orderId, int pointDiscount, long couponId) {
+    public ResponseBean payOrder(long userId, long orderId, int pointDiscount, Long couponId) {
         UserWallet wallet = walletFeignClient.getById(userId);
         if(wallet == null) {
             return new ResponseBean(403, "未找到该乘客的账户", null);
@@ -108,16 +108,24 @@ public class PassengerController {
         if(order == null) {
             return new ResponseBean(403, "未找到该订单", null);
         }
-        UserCoupon coupon = couponFeignClient.getById(couponId);
-        if(coupon == null || coupon.getUserId() != userId) {
-            return new ResponseBean(403, "未找到该优惠券", null);
+
+        double realCost = 0;
+        if(couponId != null) {
+            UserCoupon coupon = couponFeignClient.getById(couponId);
+            if(coupon == null || coupon.getUserId() != userId) {
+                return new ResponseBean(403, "未找到该优惠券", null);
+            }
+            realCost = order.getCost() - (double)pointDiscount / 100 - coupon.getWorth();
+            order.setCouponDiscount(coupon.getWorth());
+        }
+        else {
+            realCost = order.getCost() - (double)pointDiscount / 100;
+            order.setCouponDiscount(0.0);
         }
 
-        double realCost = order.getCost() - (double)pointDiscount / 100 - coupon.getWorth();
         if(wallet.getBalance() < realCost || wallet.getPoint() < pointDiscount) {
             return new ResponseBean(403, "账户余额不足", null);
         }
-        order.setCouponDiscount(coupon.getWorth());
         order.setPointDiscount((double)pointDiscount / 100);
         order.setStatus(5);
         wallet.setBalance(wallet.getBalance() - realCost);
