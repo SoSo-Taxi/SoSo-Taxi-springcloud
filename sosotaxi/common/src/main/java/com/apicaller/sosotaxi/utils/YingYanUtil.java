@@ -93,6 +93,7 @@ public class YingYanUtil {
      * 获取一个实体最新的位置点。
      * 适用于获取司机的位置。
      * @param username
+     *
      */
     public static GeoPoint getLatestPointVer2(String username) {
         JSONObject result =  getLatestPoint(username, 3, true, CoordType.bd09ll);
@@ -107,6 +108,7 @@ public class YingYanUtil {
      * 获取一个实体一段时间内的轨迹里程。
      * @param startTime 开始的时间，以秒记的unix时间戳
      * @param endTime 结束时间，以秒记的unix时间戳
+     * 返回值以米为单位。
      */
     public static Double getDistance(String username, int startTime, int endTime,
                                    int denoiseGrade, boolean mapMatch) {
@@ -147,9 +149,10 @@ public class YingYanUtil {
      * 获取一个实体一段时间内的轨迹里程。简略版。
      * @param startTime 开始的时间，以秒记的unix时间戳
      * @param endTime 结束时间，以秒记的unix时间戳
+     * 返回值以米为单位。
      */
     public static Double getDistance(String username, int startTime, int endTime) {
-        return getDistance(username, startTime, endTime, 4, true);
+        return getDistance(username, startTime, endTime, 3, true);
     }
 
     /**

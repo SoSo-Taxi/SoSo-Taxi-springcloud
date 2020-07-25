@@ -65,7 +65,7 @@ public class DispatchController {
         List<AvailableServiceTypeResponse> result = new ArrayList<AvailableServiceTypeResponse>();
         result.add(new AvailableServiceTypeResponse(0, 4));
         result.add(new AvailableServiceTypeResponse(1, 4));
-        return new ResponseBean(200, null, result);
+        return new ResponseBean(200, "获取给定地点可用的服务成功", result);
     }
 
     /**
@@ -84,7 +84,7 @@ public class DispatchController {
         else if (serviceType.equals((short)1)) {
             result.add(new AvailableServiceCalResponse(1, 1.4, 0.3, "CNY", 0.3, 8));
         }
-        return new ResponseBean(200, null, result);
+        return new ResponseBean(200, "获取预计价格成功", result);
     }
 
     /**
@@ -130,7 +130,13 @@ public class DispatchController {
         if(loginDriver == null) {
             return new ResponseBean(403, "未找到该订单", null);
         }
-        return new ResponseBean(403, "未找到该订单", loginDriver.getGeoPoint());
+        GeoPoint latestPoint = YingYanUtil.getLatestPointVer2(loginDriver.getUserName());
+        latestPoint = latestPoint == null ? loginDriver.getGeoPoint() : latestPoint;
+
+        if(latestPoint == null) {
+            return new ResponseBean(403, "查询司机位置失败", null);
+        }
+        return new ResponseBean(200, "查询司机位置成功", latestPoint);
     }
 
     /**
