@@ -41,8 +41,6 @@ public class UserController {
     }
 
 
-
-
     @PreAuthorize("hasAnyRole('ROLE_admin')")
     @PostMapping(value = "/getUserByUserName")
     public ResponseBean getUserByName(@RequestBody String userName)
@@ -88,6 +86,15 @@ public class UserController {
         else {
             return new ResponseBean(200,"该手机号未注册",null);
         }
+    }
+
+    @PostMapping(value = "/updateUser")
+    public ResponseBean updateUser(@RequestBody User user) {
+        User user1 = userServiceFeignClient.updateUser(user);
+        if(user1 == null) {
+            return new ResponseBean(403,"更新用户信息失败",null);
+        }
+        return new ResponseBean(403,"更新用户信息成功",null);
     }
 }
 
