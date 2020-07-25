@@ -8,6 +8,8 @@ import com.apicaller.sosotaxi.utils.YingYanUtil;
 import com.apicaller.sosotaxi.webSocket.message.CheckBondedDriverGeoRequest;
 import com.apicaller.sosotaxi.webSocket.message.CheckBondedDriverGeoResponse;
 import com.apicaller.sosotaxi.webSocket.util.WebSocketUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.Session;
@@ -20,6 +22,9 @@ import javax.websocket.Session;
  */
 @Component
 public class CheckBondedDriverGeoHandler implements MessageHandler<CheckBondedDriverGeoRequest> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CheckBondedDriverGeoHandler.class);
+
     @Override
     public void execute(Session session, CheckBondedDriverGeoRequest message) {
 
@@ -37,8 +42,19 @@ public class CheckBondedDriverGeoHandler implements MessageHandler<CheckBondedDr
         GeoPoint latestPoint = YingYanUtil.getLatestPointVer2(loginDriverByOrder.getUserName());
         latestPoint = latestPoint == null ? loginDriverByOrder.getGeoPoint() : latestPoint;
         checkBondedDriverGeoResponse.setPoint(latestPoint);
-        Double distance = BDmapUtil.calcDistance(message.getPoint(), latestPoint, null);
-        checkBondedDriverGeoResponse.setDistance(distance);
+        LOGGER.info(latestPoint == null ? "null latestPoint" : latestPoint.toString());
+        LOGGER.info(message.getPoint() == null ? "null msg point" : message.getPoint().toString());
+
+        Double distance = null;
+        if(latestPoint != null) {
+            try {
+                distance = BDmapUtil.calcDistance(message.getPoint(), latestPoint, null);
+            }
+            catch (Exception e) {
+                LOGGER.error("计算距离出错");
+            }
+            checkBondedDriverGeoResponse.setDistance(distance);
+        }
 
         WebSocketUtil.send(session,CheckBondedDriverGeoResponse.TYPE,checkBondedDriverGeoResponse);
 

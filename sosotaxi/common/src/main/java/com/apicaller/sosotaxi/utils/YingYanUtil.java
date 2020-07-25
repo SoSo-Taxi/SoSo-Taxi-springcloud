@@ -101,7 +101,12 @@ public class YingYanUtil {
             return null;
         }
         JSONObject latestPoint = result.getJSONObject("latest_point");
-        return new GeoPoint(latestPoint.getDouble("latitude"), latestPoint.getDouble("longitude"));
+        Double latitude = latestPoint.getDouble("latitude");
+        Double longitude = latestPoint.getDouble("longitude");
+        if(latitude == null || longitude == null || latitude.equals(0.0) || longitude.equals(0.0)) {
+            return  null;
+        }
+        return new GeoPoint(latitude, longitude);
     }
 
     /**

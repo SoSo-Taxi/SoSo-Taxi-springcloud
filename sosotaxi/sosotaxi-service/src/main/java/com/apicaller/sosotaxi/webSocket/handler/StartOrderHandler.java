@@ -98,7 +98,7 @@ public class StartOrderHandler implements MessageHandler<StartOrderMessage> {
         uOrder.setOriginPoint(order.getDepartPoint());
         uOrder.setDestinationPoint(order.getDestPoint());
 
-        MinimizedDriver driver = dispatchFeignClient.submit(uOrder);
+        //MinimizedDriver driver = dispatchFeignClient.submit(uOrder);
 
         //TODO:通过司机的id通知司机接单
         ///

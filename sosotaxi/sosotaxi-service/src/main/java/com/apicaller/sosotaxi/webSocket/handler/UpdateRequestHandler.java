@@ -41,8 +41,7 @@ public class UpdateRequestHandler implements MessageHandler<UpdateRequest> {
         LOGGER.info("[接入session{}]",session);
         LOGGER.info("[司机{} ]\"",loginDriver);
 
-        loginDriver.getGeoPoint().setLat(message.getLat());
-        loginDriver.getGeoPoint().setLng(message.getLng());
+        loginDriver.setGeoPoint(new GeoPoint(message.getLat(), message.getLng()));
         loginDriver.setDispatched(message.isDispatched());
         loginDriver.setServiceType(message.getServiceType());
         //更新鹰眼状态
@@ -50,13 +49,13 @@ public class UpdateRequestHandler implements MessageHandler<UpdateRequest> {
             YingYanUtil.updateDriver(loginDriver.getUserName(), true);
             //开始司机的听单状态
             DriverLoginMsg liMsg = new DriverLoginMsg(loginDriver.getGeoPoint(),"NL",loginDriver.getServiceType(),loginDriver.getUserName());
-            dispatchFeignClient.login(liMsg);
+            //dispatchFeignClient.login(liMsg);
         }
         if(! message.isStartListening() && loginDriver.isStartListening()) {
             YingYanUtil.updateDriver(loginDriver.getUserName(), false);
             //取消司机的听单状态
             DriverLogoutMsg loMsg = new DriverLogoutMsg(loginDriver.getUserName());
-            dispatchFeignClient.logout(loMsg);
+            //dispatchFeignClient.logout(loMsg);
         }
         loginDriver.setStartListening(message.isStartListening());
 
